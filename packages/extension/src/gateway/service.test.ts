@@ -110,6 +110,13 @@ describe("CatherdGateway profiles", () => {
     expect(calls.some((c) => c.tool === "profile_set")).toBe(false);
   });
 
+  it("creates a profile as a copy through catherd's CLI", async () => {
+    const actions: string[][] = [];
+    const g = gatewayWith([], {}, actions);
+    await g.createProfile("new-profile", "default");
+    expect(actions).toEqual([["profile", "new", "new-profile", "--from", "default"]]);
+  });
+
   it("sends only the patch, then activates; reports catherd refusals", async () => {
     const calls: { tool: string; args: unknown }[] = [];
     const actions: string[][] = [];

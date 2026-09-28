@@ -42,6 +42,7 @@ export function ProfilesPage() {
   const [result, setResult] = useState<ProfileSaveResult>();
   const [filter, setFilter] = useState("");
   const filterRef = useRef<HTMLInputElement>(null);
+  const [creating, setCreating] = useState(false);
   const [confirm, setConfirm] = useState<
     | { kind: "activate"; scope: "global" | "repo" }
     | { kind: "discard" }
@@ -204,23 +205,7 @@ export function ProfilesPage() {
               {t("profiles.unbind")}
             </Button>
           )}
-          <Button
-            variant="secondary"
-            onClick={() => {
-              const n = window.prompt(t("profiles.newPrompt"));
-              if (!n) return;
-              if (!/^[a-z0-9][a-z0-9-]{0,31}$/.test(n))
-                return setMsg({ tone: "bad", text: t("profiles.badName") });
-              if (s.names.includes(n))
-                return setMsg({ tone: "bad", text: t("profiles.exists", { name: n }) });
-              void act(
-                () => request("profiles.create", { name: n, from: shown }),
-                t("profiles.created", { name: n }),
-              ).then((created) => {
-                if (created) setName(n);
-              });
-            }}
-          >
+          <Button variant="secondary" onClick={() => setCreating(true)}>
             {t("profiles.new")}
           </Button>
           {shown !== s.active && bound.length === 0 && (
@@ -386,6 +371,129 @@ export function ProfilesPage() {
           }}
         />
       )}
+      {creating && (
+        <NewProfileDialog
+          existing={s.names}
+          onCancel={() => setCreating(false)}
+          onCreate={async (newName) => {
+            const created = await act(
+              () => request("profiles.create", { name: newName, from: shown }),
+              t("profiles.created", { name: newName }),
+            );
+            if (created) {
+              setName(newName);
+              setResult(undefined);
+              setCreating(false);
+            }
+            return created;
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+function NewProfileDialog({
+  existing,
+  onCreate,
+  onCancel,
+}: {
+  existing: string[];
+  onCreate: (name: string) => Promise<boolean>;
+  onCancel: () => void;
+}) {
+  const [name, setName] = useState("");
+  const [error, setError] = useState<string>();
+  const [busy, setBusy] = useState(false);
+  const input = useRef<HTMLInputElement>(null);
+  const dialog = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    input.current?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !busy) onCancel();
+      if (event.key !== "Tab") return;
+      const focusable = dialog.current?.querySelectorAll<HTMLElement>(
+        "button:not([disabled]), input:not([disabled])",
+      );
+      if (!focusable?.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [busy, onCancel]);
+
+  const submit = async () => {
+    const value = name.trim();
+    if (!/^[a-z0-9][a-z0-9-]{0,31}$/.test(value)) {
+      setError(t("profiles.badName"));
+      return;
+    }
+    if (existing.includes(value)) {
+      setError(t("profiles.exists", { name: value }));
+      return;
+    }
+    setError(undefined);
+    setBusy(true);
+    if (!(await onCreate(value))) setBusy(false);
+  };
+
+  return (
+    <div
+      ref={dialog}
+      className="fixed inset-0 z-20 flex items-center justify-center bg-background/90 p-4"
+      role="presentation"
+    >
+      <Card
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="new-profile-title"
+        className="flex w-full max-w-md flex-col gap-3 bg-background"
+      >
+        <h2 id="new-profile-title" className="font-semibold">
+          {t("profiles.newTitle")}
+        </h2>
+        <label className="flex flex-col gap-1">
+          <span>{t("profiles.name")}</span>
+          <input
+            ref={input}
+            className={inputClass}
+            value={name}
+            disabled={busy}
+            aria-describedby={error ? "new-profile-error" : undefined}
+            onChange={(event) => {
+              setName(event.target.value);
+              setError(undefined);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                void submit();
+              }
+            }}
+          />
+        </label>
+        {error && (
+          <p id="new-profile-error" role="alert" className="text-danger">
+            {error}
+          </p>
+        )}
+        <div className="flex justify-end gap-2">
+          <Button variant="secondary" disabled={busy} onClick={onCancel}>
+            {t("common.cancel")}
+          </Button>
+          <Button disabled={busy || !name.trim()} onClick={() => void submit()}>
+            {busy ? t("profiles.creating") : t("profiles.create")}
+          </Button>
+        </div>
+      </Card>
     </div>
   );
 }

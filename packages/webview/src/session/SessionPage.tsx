@@ -93,6 +93,7 @@ export function SessionPage({
               onChange={(e) => setTask(e.target.value)}
               placeholder={t("session.taskPlaceholder")}
             />
+            <span className="text-xs text-muted-foreground">{t("session.roleGuide")}</span>
           </label>
           {!canStart && (
             <p className="text-warning">{t("session.blocked", { reason: blockedReason ?? "" })}</p>

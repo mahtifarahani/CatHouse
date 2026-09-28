@@ -5,6 +5,8 @@ const en = {
   "session.taskLabel": "Task for catherd",
   "session.taskPlaceholder":
     "Describe what catherd should build. It plans, dispatches roles and reports back.",
+  "session.roleGuide":
+    "You are talking to the catherd orchestrator, which chooses and dispatches roles automatically. To steer the next step, ask it to use a role such as researcher or reviewer in your task or follow-up.",
   "session.start": "Start task",
   "session.resume": "Resume saved run",
   "session.interrupt": "Interrupt",
@@ -114,7 +116,7 @@ const en = {
   "profiles.filterHelp": "Searches section paths, labels and current values. Press / to focus.",
   "profiles.noFilterResults": "No profile setting matches this filter.",
   "profiles.help.roles":
-    "Choose which roles run, their access, ordered model ladder and starting rung.",
+    "catherd 1.0.0 defines these eight roles. Configure whether they run, their access, ordered model ladder and starting rung; custom roles are not supported.",
   "profiles.help.routing":
     "Prefer lower cost or higher speed; Jev can refine routing from run history.",
   "profiles.help.billing": "Tell catherd which quota or billing pool each backend consumes.",
@@ -132,7 +134,10 @@ const en = {
   "profiles.bound": "This repo now runs on {name}.",
   "profiles.unbound": "This repo runs on the active profile again.",
   "profiles.new": "New profile…",
-  "profiles.newPrompt": "Name for the new profile (a copy of this one):",
+  "profiles.newTitle": "Create a profile",
+  "profiles.name": "Profile name",
+  "profiles.create": "Create",
+  "profiles.creating": "Creating…",
   "profiles.badName": "Profile names use lowercase letters, digits and dashes (max 32).",
   "profiles.exists": "A profile named {name} already exists.",
   "profiles.created": "Created {name}.",
