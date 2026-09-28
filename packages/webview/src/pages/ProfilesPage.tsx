@@ -247,7 +247,10 @@ export function ProfilesPage() {
         <Button
           variant="secondary"
           disabled={dirty === 0}
-          onClick={() => dispatch({ type: "reset", base: draft.base })}
+          onClick={() =>
+            window.confirm(t("profiles.discardConfirm")) &&
+            dispatch({ type: "reset", base: draft.base })
+          }
         >
           {t("profiles.discard")}
         </Button>

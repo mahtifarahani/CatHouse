@@ -160,6 +160,10 @@ export class OrchestratorSession {
     await this.query?.interrupt();
   }
 
+  async setPermissionMode(mode: NonNullable<SessionOptions["permissionMode"]>): Promise<void> {
+    await this.query?.setPermissionMode(mode);
+  }
+
   /** Resolves when the SDK stream ends (after close(), or if the CLI exits). */
   finished(): Promise<void> {
     return this.done ?? Promise.resolve();

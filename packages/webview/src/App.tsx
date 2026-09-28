@@ -1,6 +1,6 @@
-import { Button, cn } from "@cathouse/ui";
-import { useState } from "react";
-import { request, viewState } from "./lib/rpc";
+import { Button, cn, inputClass } from "@cathouse/ui";
+import { useEffect, useState } from "react";
+import { onEvent, request, viewState } from "./lib/rpc";
 import { type StringKey, t } from "./lib/strings";
 import { DiagnosticsPage } from "./pages/DiagnosticsPage";
 import { ModelsPage } from "./pages/ModelsPage";
@@ -42,6 +42,47 @@ interface Nav {
   run?: string | undefined;
 }
 
+const loadWs = () => request("app.workspace", {});
+
+function RepoBar() {
+  const [ws, setWs] = useState<Awaited<ReturnType<typeof loadWs>>>();
+  useEffect(() => {
+    void loadWs().then(setWs);
+    return onEvent("app", () => void loadWs().then(setWs));
+  }, []);
+  if (!ws) return null;
+  return (
+    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+      {ws.folders.length > 1 ? (
+        <label className="flex items-center gap-1">
+          {t("app.repo")}
+          <select
+            className={inputClass}
+            value={ws.repo ?? ""}
+            onChange={(e) =>
+              void request("app.setRepo", { path: e.target.value }).then(() => loadWs().then(setWs))
+            }
+          >
+            {ws.folders.map((f) => (
+              <option key={f.path} value={f.path}>
+                {f.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      ) : (
+        ws.repo && (
+          <span>
+            {t("app.repo")} {ws.folders[0]?.name}
+          </span>
+        )
+      )}
+      {ws.folders.length === 0 && <span className="text-warning">{t("app.noFolder")}</span>}
+      <span className="ms-auto">catherd {ws.catherdVersion}</span>
+    </div>
+  );
+}
+
 function Dashboard() {
   const { state } = useSetup();
   const [nav, setNavState] = useState<Nav>(() => viewState.get<Nav>() ?? { tab: "overview" });
@@ -54,6 +95,7 @@ function Dashboard() {
   const active: Tab = gateOpen ? nav.tab : "setup";
   return (
     <div className="flex flex-col gap-3">
+      <RepoBar />
       {gateOpen && (
         <div role="tablist" className="flex flex-wrap gap-1 border-b border-border">
           {TABS.map((id) => (
@@ -84,7 +126,12 @@ function Dashboard() {
         <SessionPage canStart={state?.canStart === true} blockedReason={state?.canStartReason} />
       )}
       {active === "runs" && (
-        <RunsPage openRun={nav.run} onOpenRun={(run) => setNav({ tab: "runs", run })} />
+        <RunsPage
+          openRun={nav.run}
+          onOpenRun={(run) => setNav({ tab: "runs", run })}
+          onContinue={() => setNav({ tab: "session" })}
+          canStart={state?.canStart === true}
+        />
       )}
       {active === "profiles" && <ProfilesPage />}
       {active === "models" && <ModelsPage />}

@@ -70,6 +70,12 @@ export function Transcript({ events }: { events: SessionEvent[] }) {
                 {it.durationMs !== undefined && ` · ${mmss(it.durationMs / 1000)}`}
               </li>
             );
+          case "compacted":
+            return (
+              <li key={key} className="border-y border-warning py-1 text-xs text-warning">
+                {t("session.compacted")}
+              </li>
+            );
           case "result":
             return (
               <li

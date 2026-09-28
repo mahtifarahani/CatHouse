@@ -20,6 +20,20 @@ const en = {
   "sidebar.phase": "Session: {phase}",
   "sidebar.setupRequired": "Setup needed before CatHouse can run catherd.",
   "sidebar.openSetup": "Open Setup",
+  "app.repo": "Repository:",
+  "app.noFolder": "Open a folder (a git repository) to run tasks and see its runs.",
+  "runs.continue": "Continue in orchestrator",
+  "runs.continueHelp":
+    "Resume this repo's saved orchestrator session (or start one that resumes the latest run).",
+  "session.mode": "Permissions:",
+  "session.modeHelp":
+    "catherd's own tools are always allowed; this sets how other tool calls are handled.",
+  "session.mode.default": "ask (your Claude settings)",
+  "session.mode.acceptEdits": "auto-accept file edits",
+  "session.mode.plan": "plan only",
+  "session.mode.auto": "auto (classifier)",
+  "session.compacted":
+    "The conversation was compacted. catherd runs can lose track of their protocol after this; check that routing, the reviewer and the verifier still run.",
   "tabs.setup": "Setup",
   "tabs.session": "Orchestrator",
   "tabs.overview": "Overview",

@@ -7,6 +7,10 @@ type Sink = MessageSink & { broadcaster: Broadcaster };
 export class DashboardPanel {
   private static current: DashboardPanel | undefined;
 
+  static get visible(): boolean {
+    return DashboardPanel.current?.panel.visible === true;
+  }
+
   static show(extensionUri: vscode.Uri, sink: Sink): void {
     if (DashboardPanel.current) {
       DashboardPanel.current.panel.reveal();

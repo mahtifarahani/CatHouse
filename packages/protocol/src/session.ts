@@ -55,6 +55,8 @@ export const SessionEventSchema = z.discriminatedUnion("kind", [
     text: z.string().optional(),
   }),
   z.object({ kind: z.literal("user"), text: z.string() }),
+  /** The conversation was compacted; the catherd skill is known to decay after this. */
+  z.object({ kind: z.literal("compacted") }),
 ]);
 export type SessionEvent = z.infer<typeof SessionEventSchema>;
 
@@ -99,6 +101,7 @@ export type PendingPrompt = z.infer<typeof PendingPromptSchema>;
 
 export const SessionStateSchema = z.object({
   phase: z.enum(["idle", "starting", "running", "ended"]),
+  permissionMode: z.string().optional(),
   repo: z.string().optional(),
   sessionId: z.string().optional(),
   runId: z.string().optional(),

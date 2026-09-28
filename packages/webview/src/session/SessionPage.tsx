@@ -6,6 +6,8 @@ import { PromptCard } from "./PromptCard";
 import { Transcript } from "./Transcript";
 import { useSession } from "./useSession";
 
+const MODES = ["default", "acceptEdits", "plan", "auto"] as const;
+
 export function SessionPage({
   canStart,
   blockedReason,
@@ -15,6 +17,7 @@ export function SessionPage({
 }) {
   const s = useSession();
   const [task, setTask] = useState("");
+  const [mode, setMode] = useState<"default" | "acceptEdits" | "plan" | "auto">("default");
   const [followUp, setFollowUp] = useState("");
   const [error, setError] = useState<string | null>(null);
   const active = s.phase === "starting" || s.phase === "running";
@@ -40,6 +43,20 @@ export function SessionPage({
         {s.runId && <span className="font-mono text-xs text-muted-foreground">{s.runId}</span>}
         {active && (
           <span className="ms-auto flex gap-2">
+            <select
+              aria-label={t("session.mode")}
+              className="rounded-sm border border-input-border bg-input px-1 text-input-foreground"
+              value={s.permissionMode ?? "default"}
+              onChange={(e) =>
+                void call(() => request("session.setMode", { mode: e.target.value as typeof mode }))
+              }
+            >
+              {MODES.map((m) => (
+                <option key={m} value={m}>
+                  {t(`session.mode.${m}`)}
+                </option>
+              ))}
+            </select>
             <Button
               variant="secondary"
               onClick={() => void call(() => request("session.interrupt", {}))}
@@ -61,7 +78,10 @@ export function SessionPage({
           className="flex flex-col gap-2"
           onSubmit={(e) => {
             e.preventDefault();
-            if (task.trim()) void call(() => request("session.start", { task: task.trim() }));
+            if (task.trim())
+              void call(() =>
+                request("session.start", { task: task.trim(), permissionMode: mode }),
+              );
           }}
         >
           <label className="flex flex-col gap-1">
@@ -77,6 +97,21 @@ export function SessionPage({
           {!canStart && (
             <p className="text-warning">{t("session.blocked", { reason: blockedReason ?? "" })}</p>
           )}
+          <label className="flex items-center gap-2 text-xs">
+            {t("session.mode")}
+            <select
+              className="rounded-sm border border-input-border bg-input px-1 text-input-foreground"
+              value={mode}
+              onChange={(e) => setMode(e.target.value as typeof mode)}
+            >
+              {MODES.map((m) => (
+                <option key={m} value={m}>
+                  {t(`session.mode.${m}`)}
+                </option>
+              ))}
+            </select>
+            <span className="text-muted-foreground">{t("session.modeHelp")}</span>
+          </label>
           <div className="flex flex-wrap gap-2">
             <Button type="submit" disabled={!task.trim() || !canStart}>
               {t("session.start")}

@@ -33,6 +33,19 @@ suite("CatHouse pages (real catherd)", () => {
     console.log("RUN", id, "records", d.records.length, "routes", d.routes.length);
   });
 
+  test("workspace and repo selection", async () => {
+    const ws = (await call("app.workspace")) as {
+      folders: { path: string }[];
+      repo: string;
+      catherdVersion: string;
+    };
+    assert.strictEqual(ws.folders.length, 1);
+    assert.strictEqual(ws.repo, ws.folders[0]?.path);
+    assert.strictEqual(ws.catherdVersion, "1.0.0");
+    const set = (await call("app.setRepo", { path: ws.repo })) as { repo: string };
+    assert.strictEqual(set.repo, ws.repo);
+  });
+
   test("profiles and catalog", async function () {
     this.timeout(180_000);
     const p = (await call("profiles.get")) as {

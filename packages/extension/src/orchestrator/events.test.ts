@@ -76,6 +76,12 @@ describe("event mapper", () => {
     ).toEqual([{ kind: "tool_progress", toolUseId: "toolu_1", elapsedSecs: 30 }]);
   });
 
+  it("marks compaction", () => {
+    expect(createEventMapper()({ type: "system", subtype: "compact_boundary" })).toEqual([
+      { kind: "compacted" },
+    ]);
+  });
+
   it("maps task messages and results", () => {
     const map = createEventMapper();
     expect(

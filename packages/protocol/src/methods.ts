@@ -24,6 +24,22 @@ export const methods = {
     params: z.object({}),
     result: z.object({ opened: z.literal(true) }),
   },
+  "app.workspace": {
+    params: z.object({}),
+    result: z.object({
+      folders: z.array(z.object({ path: z.string(), name: z.string() })),
+      repo: z.string().nullable(),
+      catherdVersion: z.string(),
+    }),
+  },
+  "app.setRepo": {
+    params: z.object({ path: z.string() }),
+    result: z.object({ repo: z.string() }),
+  },
+  "session.setMode": {
+    params: z.object({ mode: z.enum(["default", "acceptEdits", "plan", "auto"]) }),
+    result: z.object({}),
+  },
   "catherd.status": {
     params: z.object({}),
     result: z.object({
@@ -121,7 +137,11 @@ export const methods = {
   },
   "session.state": { params: z.object({}), result: SessionStateSchema },
   "session.start": {
-    params: z.object({ task: z.string().min(1), repo: z.string().optional() }),
+    params: z.object({
+      task: z.string().min(1),
+      repo: z.string().optional(),
+      permissionMode: z.enum(["default", "acceptEdits", "plan", "auto"]).default("default"),
+    }),
     result: SessionStateSchema,
   },
   "session.resume": {

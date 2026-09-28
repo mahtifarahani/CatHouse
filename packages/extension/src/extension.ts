@@ -24,12 +24,15 @@ interface RequestContext {
 }
 
 const LINKS_KEY = "cathouse.links.v1";
+const REPO_KEY = "cathouse.repo.v1";
 
-/** Phase 1: the first workspace folder is the repo. Multi-root selection arrives in Phase 4. */
+/** The repo CatHouse works on: the requested folder, else the selected one, else the first. */
+let selectedRepo: string | undefined;
 function repoFor(requested?: string): string {
   const folders = vscode.workspace.workspaceFolders ?? [];
-  const match = requested ? folders.find((f) => f.uri.fsPath === requested) : folders[0];
-  if (!match) {
+  const pick = requested ?? selectedRepo;
+  const match = (pick ? folders.find((f) => f.uri.fsPath === pick) : undefined) ?? folders[0];
+  if (!match || (requested && match.uri.fsPath !== requested)) {
     throw new HandlerError("E_NO_WORKSPACE", "open a folder (a git repository) to use CatHouse");
   }
   return match.uri.fsPath;
@@ -37,6 +40,7 @@ function repoFor(requested?: string): string {
 
 export function activate(context: vscode.ExtensionContext): void {
   const extensionVersion = String(context.extension.packageJSON.version ?? "0.0.0");
+  selectedRepo = context.workspaceState.get<string>(REPO_KEY);
   const output = vscode.window.createOutputChannel("CatHouse", { log: true });
   const broadcaster = new Broadcaster();
   const publish = (topic: EventTopic, payload: unknown) =>
@@ -85,6 +89,20 @@ export function activate(context: vscode.ExtensionContext): void {
     createSession: (opts) => new OrchestratorSession(opts),
     broadcast: (payload) => publish("session", payload),
     log: (line) => output.info(line),
+    onPromptsChanged: (count, latest) => {
+      sidebar.setBadge(count);
+      if (latest && !DashboardPanel.visible) {
+        const what =
+          latest.kind === "question" ? "has a question" : `asks to use ${latest.toolName}`;
+        void vscode.window
+          .showInformationMessage(`CatHouse: the orchestrator ${what}.`, "Open")
+          .then((pick) => pick && openDashboard());
+      }
+    },
+  });
+  const sidebar = new SidebarProvider(context.extensionUri, {
+    broadcaster,
+    onRequest: (raw, view, webview) => sink.onRequest(raw, view, webview),
   });
 
   /** The plan's gate: tasks start only when Setup says so (login, readiness included). */
@@ -131,6 +149,25 @@ export function activate(context: vscode.ExtensionContext): void {
     "app.openDashboard": () => {
       openDashboard();
       return { opened: true };
+    },
+    "app.workspace": () => ({
+      folders: (vscode.workspace.workspaceFolders ?? []).map((f) => ({
+        path: f.uri.fsPath,
+        name: f.name,
+      })),
+      repo: (vscode.workspace.workspaceFolders?.length ?? 0) > 0 ? repoFor() : null,
+      catherdVersion: PINNED.catherd,
+    }),
+    "app.setRepo": ({ path }) => {
+      const repo = repoFor(path);
+      selectedRepo = repo;
+      void context.workspaceState.update(REPO_KEY, repo);
+      publish("app", { type: "repo", repo });
+      return { repo };
+    },
+    "session.setMode": async ({ mode }) => {
+      await controller.setPermissionMode(mode);
+      return {};
     },
     "catherd.status": async () => {
       const cli = new CatherdCli({ cwd: repoFor(), env });
@@ -204,9 +241,9 @@ export function activate(context: vscode.ExtensionContext): void {
       return { started: true };
     },
     "session.state": () => controller.snapshot(),
-    "session.start": ({ task, repo }) => {
+    "session.start": ({ task, repo, permissionMode }) => {
       requireReady();
-      return controller.start(repoFor(repo), task);
+      return controller.start(repoFor(repo), task, permissionMode);
     },
     "session.resume": ({ repo }) => {
       requireReady();
@@ -238,10 +275,7 @@ export function activate(context: vscode.ExtensionContext): void {
     output,
     { dispose: () => controller.dispose() },
     { dispose: () => void gateway?.dispose() },
-    vscode.window.registerWebviewViewProvider(
-      SidebarProvider.viewId,
-      new SidebarProvider(context.extensionUri, sink),
-    ),
+    vscode.window.registerWebviewViewProvider(SidebarProvider.viewId, sidebar),
     vscode.commands.registerCommand("cathouse.openDashboard", openDashboard),
     vscode.commands.registerCommand("cathouse.checkSetup", () => setup.check({ readiness: true })),
     // Hidden (not in package.json): e2e tests call the webview protocol through the same router.

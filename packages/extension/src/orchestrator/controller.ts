@@ -26,6 +26,7 @@ export interface SessionLike {
   start(): Promise<void>;
   send(text: string): void;
   interrupt(): Promise<void>;
+  setPermissionMode?(mode: NonNullable<SessionOptions["permissionMode"]>): Promise<void>;
   finished(): Promise<void>;
   close(): void;
 }
@@ -38,6 +39,8 @@ export interface ControllerDeps {
   createSession: (opts: SessionOptions) => SessionLike;
   broadcast: (payload: SessionTopic) => void;
   log: (line: string) => void;
+  /** Called whenever the number of pending prompt cards changes (badge, notification). */
+  onPromptsChanged?: (count: number, latest?: PromptRequest) => void;
 }
 
 const MAX_EVENTS = 500;
@@ -107,9 +110,11 @@ export class SessionController {
       const done = (answer: PromptAnswer) => {
         if (!this.prompts.delete(id)) return;
         this.deps.broadcast({ type: "prompt_resolved", id });
+        this.deps.onPromptsChanged?.(this.prompts.size);
         resolve(answer);
       };
       this.prompts.set(id, { request, resolve: done });
+      this.deps.onPromptsChanged?.(this.prompts.size, request);
       signal.addEventListener("abort", () =>
         done(
           request.kind === "question"
@@ -126,6 +131,7 @@ export class SessionController {
     prompt: string,
     resume?: string,
     first?: SessionEvent,
+    permissionMode: NonNullable<SessionOptions["permissionMode"]> = "default",
   ): Promise<SessionState> {
     if (this.session) {
       throw new HandlerError(
@@ -142,7 +148,7 @@ export class SessionController {
         "open CatHouse Setup and install the plugin",
       );
     }
-    this.state = { phase: "starting", repo, events: first ? [first] : [] };
+    this.state = { phase: "starting", repo, permissionMode, events: first ? [first] : [] };
     if (first) this.deps.broadcast({ type: "event", event: first });
     const session = this.deps.createSession({
       repo,
@@ -150,6 +156,7 @@ export class SessionController {
       pluginPath,
       env: await this.deps.env(),
       ...(resume ? { resume } : {}),
+      permissionMode,
       onEvent: (e) => this.onEvent(repo, e as SessionEvent),
       onPrompt: (req, signal) => this.onPrompt(req, signal),
       onStderr: (s) => this.deps.log(s.trimEnd()),
@@ -181,13 +188,32 @@ export class SessionController {
         this.state.phase = "ended";
         for (const p of this.prompts.values()) p.resolve({ kind: "question", answers: {} });
         this.prompts.clear();
+        this.deps.onPromptsChanged?.(0);
         this.publishState();
       });
     return this.publishState();
   }
 
-  start(repo: string, task: string): Promise<SessionState> {
-    return this.launch(repo, `/catherd:catherd ${task}`, undefined, { kind: "user", text: task });
+  start(
+    repo: string,
+    task: string,
+    permissionMode: NonNullable<SessionOptions["permissionMode"]> = "default",
+  ): Promise<SessionState> {
+    return this.launch(
+      repo,
+      `/catherd:catherd ${task}`,
+      undefined,
+      { kind: "user", text: task },
+      permissionMode,
+    );
+  }
+
+  async setPermissionMode(mode: NonNullable<SessionOptions["permissionMode"]>): Promise<void> {
+    if (!this.session?.setPermissionMode)
+      throw new HandlerError("E_SESSION_IDLE", "no orchestrator session is running");
+    await this.session.setPermissionMode(mode);
+    this.state.permissionMode = mode;
+    this.publishState();
   }
 
   /**
@@ -248,6 +274,7 @@ export class SessionController {
       );
     }
     this.prompts.clear();
+    this.deps.onPromptsChanged?.(0);
     return this.publishState();
   }
 

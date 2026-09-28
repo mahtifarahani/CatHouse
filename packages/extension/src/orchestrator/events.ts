@@ -67,6 +67,7 @@ export function createEventMapper() {
             },
           ];
         }
+        if (m.subtype === "compact_boundary") return [{ kind: "compacted" }];
         return [{ kind: "status", subtype: String(m.subtype) }];
       }
       case "assistant": {

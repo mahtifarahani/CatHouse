@@ -123,6 +123,27 @@ describe("SessionController", () => {
     expect(c.snapshot().phase).toBe("ended");
   });
 
+  it("reports the pending prompt count and switches permission mode", async () => {
+    const counts: number[] = [];
+    const modes: string[] = [];
+    const { c, created, fake } = setup({ onPromptsChanged: (n) => counts.push(n) });
+    fake.setPermissionMode = async (m) => {
+      modes.push(m);
+    };
+    await c.start("/repo", "a", "plan");
+    expect(created[0]?.permissionMode).toBe("plan");
+    const p = (created[0] as SessionOptions).onPrompt(
+      { kind: "question", questions: [] },
+      new AbortController().signal,
+    );
+    c.answer(c.snapshot().prompts[0]?.id as string, { kind: "question", answers: {} });
+    await p;
+    await c.setPermissionMode("acceptEdits");
+    expect(counts).toEqual([1, 0]);
+    expect(modes).toEqual(["acceptEdits"]);
+    expect(c.snapshot().permissionMode).toBe("acceptEdits");
+  });
+
   it("sends follow-ups into the running session", async () => {
     const { c, fake } = setup();
     await c.start("/repo", "a");

@@ -42,13 +42,26 @@ export function RunRow({ run, onOpen }: { run: RunListItem; onOpen: () => void }
 export function RunsPage({
   openRun,
   onOpenRun,
+  onContinue,
+  canStart,
 }: {
   openRun?: string | undefined;
   onOpenRun: (id: string | undefined) => void;
+  onContinue: () => void;
+  canStart: boolean;
 }) {
   const [paused, setPaused] = useState(false);
   const list = usePoll(() => request("runs.list", {}), 2000, "runs", paused || !!openRun);
-  if (openRun) return <RunDetailView id={openRun} onBack={() => onOpenRun(undefined)} />;
+  if (openRun) {
+    return (
+      <RunDetailView
+        id={openRun}
+        onBack={() => onOpenRun(undefined)}
+        onContinue={onContinue}
+        canStart={canStart}
+      />
+    );
+  }
   return (
     <Section
       title={paused ? t("runs.paused") : t("runs.updated", { ago: ago(list.updatedAt) })}
@@ -88,7 +101,17 @@ function budgetCaps(b: NonNullable<RunDetail["budget"]>): string {
     .join(" · ");
 }
 
-function RunDetailView({ id, onBack }: { id: string; onBack: () => void }) {
+function RunDetailView({
+  id,
+  onBack,
+  onContinue,
+  canStart,
+}: {
+  id: string;
+  onBack: () => void;
+  onContinue: () => void;
+  canStart: boolean;
+}) {
   const [paused, setPaused] = useState(false);
   const run = usePoll(() => request("runs.get", { id }), 1000, `run-${id}`, paused);
   const [armed, setArmed] = useState<{ name: string; at: number }>();
@@ -119,6 +142,17 @@ function RunDetailView({ id, onBack }: { id: string; onBack: () => void }) {
         <h2 className="text-base font-semibold">{d?.title ?? id}</h2>
         <span className="font-mono text-xs text-muted-foreground">{id}</span>
         <span className="ms-auto flex gap-2">
+          <Button
+            disabled={!canStart}
+            title={t("runs.continueHelp")}
+            onClick={() =>
+              void request("session.resume", {})
+                .then(onContinue)
+                .catch((e: unknown) => setNotice(errorText(e)))
+            }
+          >
+            {t("runs.continue")}
+          </Button>
           <Button variant="secondary" onClick={() => setPaused((p) => !p)}>
             {paused ? t("runs.resume") : t("runs.pause")}
           </Button>
