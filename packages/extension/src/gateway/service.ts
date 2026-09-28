@@ -48,7 +48,8 @@ const CatalogQuerySchema = z.looseObject({
   models: z.array(
     z.looseObject({
       id: z.string(),
-      name: z.string(),
+      // null for models only known from a backend's listing (seen live on 1.0.0)
+      name: z.string().nullable(),
       backend: z.string(),
       model: z.string(),
       roles: z.array(z.string()),
@@ -311,7 +312,7 @@ export class CatherdGateway {
       total: raw.total,
       models: raw.models.map((m) => ({
         id: m.id,
-        name: m.name,
+        name: m.name ?? m.model,
         backend: m.backend,
         model: m.model,
         roles: m.roles,

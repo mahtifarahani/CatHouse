@@ -19,6 +19,10 @@ if (!editor) {
 export default defineConfig({
   files: "out-test/**/*.e2e.js",
   useInstallation: { fromPath: editor },
+  // CATHOUSE_E2E_WORKSPACE opens a folder (a git repo with catherd runs) for the pages test.
+  ...(process.env.CATHOUSE_E2E_WORKSPACE
+    ? { workspaceFolder: process.env.CATHOUSE_E2E_WORKSPACE }
+    : {}),
   // The manifest declares untrustedWorkspaces.supported=false and a fresh test window is
   // untrusted; trust is disabled for the test host only.
   launchArgs: ["--disable-workspace-trust"],

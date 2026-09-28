@@ -244,6 +244,13 @@ export function activate(context: vscode.ExtensionContext): void {
     ),
     vscode.commands.registerCommand("cathouse.openDashboard", openDashboard),
     vscode.commands.registerCommand("cathouse.checkSetup", () => setup.check({ readiness: true })),
+    // Hidden (not in package.json): e2e tests call the webview protocol through the same router.
+    vscode.commands.registerCommand("cathouse._request", (method: string, params: unknown) =>
+      handle(
+        { v: PROTOCOL_VERSION, id: "e2e", kind: "request", method, params },
+        { view: "dashboard" },
+      ),
+    ),
     // Hidden (not in package.json): lets e2e tests press a Setup button. Returns the new state.
     vscode.commands.registerCommand("cathouse._runSetupAction", async (action: SetupActionId) => {
       await setup.run(action);
