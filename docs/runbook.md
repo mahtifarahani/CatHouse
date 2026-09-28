@@ -1,6 +1,6 @@
 # Runbook (dev machine from zero)
 
-Status: prerequisites are known; build/run commands get filled in during Phase 0.
+Status: Phase 0 build, run and package commands are real and verified.
 
 ## 1. Prerequisites (macOS or Linux)
 
@@ -45,7 +45,34 @@ Once CatHouse's Setup screen exists, it performs these steps from buttons. Use t
 
 ## 3. Build, run, package
 
-Filled in at the end of Phase 0 (`pnpm install`, `pnpm build`, F5 "Run CatHouse", `pnpm package --target <platform>`).
+The repo pins `packageManager: pnpm@10.29.1`. If `pnpm` fails with "Failed to switch pnpm to vX", a `package.json` higher up (e.g. `~/package.json`) pins a broken pnpm. Running inside this repo uses the repo's pin.
+
+```bash
+pnpm install
+```
+
+```bash
+# webview (Vite → packages/extension/dist/webview) then extension (esbuild → packages/extension/dist/extension.js)
+pnpm build
+```
+
+| Command | What |
+|---|---|
+| `pnpm typecheck` | `tsc` in every package (TypeScript 7) |
+| `pnpm lint` | Biome check (formatter + linter); `pnpm format` writes fixes. Note: the `rtk` shell wrapper can print "Linter process terminated abnormally"; run `rtk proxy pnpm exec biome check .` to see Biome's real output |
+| `pnpm test` | vitest unit tests (`packages/*/src/**/*.test.ts`) |
+| `pnpm test:e2e` | builds, then runs `packages/extension/src/test/e2e/*.e2e.ts` inside a downloaded VS Code (`@vscode/test-cli`, cache in `packages/extension/.vscode-test/`, ~300 MB on first run) |
+| `pnpm watch:webview` / `pnpm watch:extension` | rebuild on change (run both, then reload the dev host window) |
+| `pnpm package` | build + `vsce package` → `dist/cathouse-<version>.vsix` |
+
+**Run in a dev host:** open the repo in VS Code (or Cursor), press F5 and pick **Run CatHouse** (`.vscode/launch.json`; its preLaunchTask runs `pnpm build`). The activity bar shows the CatHouse icon. Its sidebar has "Open dashboard" and "Check connection" (an `app.ping` round-trip).
+
+**Install the VSIX:** `code --install-extension dist/cathouse-0.0.1.vsix` (or Extensions → … → Install from VSIX).
+
+**Packaging notes:**
+- `vsce package --no-dependencies`: everything is bundled by esbuild/Vite, so no `node_modules` ship. This changes in Phase 1/2, when the Agent SDK's platform binary must ship and packaging moves to `--target <platform>` (ADR 0008).
+- `.vscodeignore` lists **explicit includes**. vsce applies negations after ignores, so a trailing `**/*.map` exclude does not work.
+- Publisher `cathouse` and license `UNLICENSED` are placeholders (`--skip-license`, `--allow-missing-repository`) until the owner picks real values.
 
 ## 4. Common problems
 

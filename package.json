@@ -1,0 +1,26 @@
+{
+  "name": "cathouse-monorepo",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.29.1",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "pnpm --filter @cathouse/webview build && pnpm --filter cathouse build",
+    "watch:webview": "pnpm --filter @cathouse/webview watch",
+    "watch:extension": "pnpm --filter cathouse watch",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "test": "vitest run",
+    "package": "pnpm build && pnpm --filter cathouse package",
+    "test:e2e": "pnpm build && pnpm --filter cathouse test:e2e"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.14",
+    "@types/node": "^22.0.0",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.2"
+  }
+}

@@ -1,0 +1,59 @@
+/*
+ * CatHouse design tokens. Every colour comes from a VS Code theme variable, so Light, Dark and
+ * High Contrast themes work without extra CSS. Consumers import this after "tailwindcss" and add
+ * `@source` for this package so Tailwind scans the components.
+ */
+@theme inline {
+  --color-background: var(--vscode-editor-background);
+  --color-foreground: var(--vscode-foreground);
+  --color-muted: var(--vscode-sideBar-background, var(--vscode-editor-background));
+  --color-muted-foreground: var(--vscode-descriptionForeground);
+  --color-border: var(--vscode-panel-border, var(--vscode-widget-border, transparent));
+  --color-input: var(--vscode-input-background);
+  --color-input-foreground: var(--vscode-input-foreground);
+  --color-input-border: var(--vscode-input-border, transparent);
+  --color-primary: var(--vscode-button-background);
+  --color-primary-foreground: var(--vscode-button-foreground);
+  --color-primary-hover: var(--vscode-button-hoverBackground);
+  --color-secondary: var(--vscode-button-secondaryBackground);
+  --color-secondary-foreground: var(--vscode-button-secondaryForeground);
+  --color-secondary-hover: var(--vscode-button-secondaryHoverBackground);
+  --color-link: var(--vscode-textLink-foreground);
+  --color-focus: var(--vscode-focusBorder);
+  --color-success: var(--vscode-testing-iconPassed, var(--vscode-charts-green));
+  --color-warning: var(--vscode-editorWarning-foreground, var(--vscode-charts-yellow));
+  --color-danger: var(--vscode-errorForeground, var(--vscode-charts-red));
+  --color-info: var(--vscode-editorInfo-foreground, var(--vscode-charts-blue));
+  --color-badge: var(--vscode-badge-background);
+  --color-badge-foreground: var(--vscode-badge-foreground);
+
+  --font-sans: var(--vscode-font-family);
+  --font-mono: var(--vscode-editor-font-family);
+  --text-base: var(--vscode-font-size);
+}
+
+@layer base {
+  html,
+  body {
+    background: transparent;
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--color-focus);
+    outline-offset: 1px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      /* biome-ignore lint/complexity/noImportantStyles: reduced motion must override component styles */
+      animation-duration: 0.01ms !important;
+      /* biome-ignore lint/complexity/noImportantStyles: reduced motion must override component styles */
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

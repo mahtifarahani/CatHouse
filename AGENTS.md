@@ -42,7 +42,7 @@ docs/               knowledge base (this is where you write reports)
 
 ## Commands
 
-The toolchain is not set up yet (Phase 0). When it exists, the canonical commands are listed in `docs/runbook.md` and `docs/testing.md`. Keep them in sync.
+`pnpm install` · `pnpm build` · `pnpm typecheck` · `pnpm lint` · `pnpm test` · `pnpm test:e2e` (needs VS Code installed) · `pnpm package`. F5 → "Run CatHouse". Details: `docs/runbook.md`, `docs/testing.md`. Keep them in sync.
 
 ## Machine prerequisites to run CatHouse against real catherd
 

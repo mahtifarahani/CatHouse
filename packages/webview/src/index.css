@@ -1,0 +1,4 @@
+@import "tailwindcss";
+@import "@cathouse/ui/theme.css";
+
+@source "../../ui/src";

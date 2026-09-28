@@ -1,6 +1,26 @@
 # Architecture overview (design; update as built)
 
-Status: **designed, not built yet.** Update this file at the end of Phase 0 with the real layout.
+Status: **Phase 0 skeleton built** (protocol, ui, webview, extension shell). Gateway, setup and orchestrator are still design (Phases 1–2).
+
+## As built (Phase 0)
+
+```
+package.json, pnpm-workspace.yaml (onlyBuiltDependencies: esbuild, @vscode/vsce-sign),
+tsconfig.base.json, biome.json, vitest.config.ts, .vscode/{launch,tasks}.json
+packages/protocol/src/{envelope,methods,index}.ts (+ envelope.test.ts)
+packages/ui/src/{theme.css, cn.ts, components/button.tsx, index.ts}
+packages/webview/{vite.config.ts, src/{main.tsx, App.tsx, index.css, lib/{rpc,strings}.ts}}
+packages/extension/{package.json (VS Code manifest), package.nls.json, l10n/, media/cathouse.svg,
+  build.mjs, .vscodeignore, .vscode-test.mjs,
+  src/extension.ts, src/panel/{router,webview-html,host,sidebar,dashboard}.ts (+ tests),
+  src/test/e2e/activation.e2e.ts}
+```
+
+Workspace packages export TypeScript source (`"exports": {".": "./src/index.ts"}`). Vite and esbuild compile them, so there is no per-package build step.
+
+Manifest facts: `engines.vscode ^1.100.0`, `extensionKind: ["workspace"]`, `untrustedWorkspaces.supported: false`, `virtualWorkspaces: false`, activation inferred from contributions (the view and the `cathouse.openDashboard` command). The extension id is `cathouse.cathouse`.
+
+See `protocol.md` and `webview.md` for the details.
 
 ## Runtime processes
 

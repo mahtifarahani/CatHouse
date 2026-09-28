@@ -30,5 +30,7 @@
 | [`decisions/0008-vsix-per-platform.md`](decisions/0008-vsix-per-platform.md) | One VSIX per platform |
 | **architecture/** | |
 | [`architecture/overview.md`](architecture/overview.md) | Packages, data flow, runtime processes |
-| `architecture/{gateway,orchestrator,protocol,setup,webview}.md` | Written as each subsystem is built |
+| [`architecture/protocol.md`](architecture/protocol.md) | Webview⇄host protocol v1, methods table, router error cases, how to add a method |
+| [`architecture/webview.md`](architecture/webview.md) | Sidebar/dashboard surfaces, CSP, theming via `--vscode-*`, strings |
+| `architecture/{gateway,orchestrator,setup}.md` | Written as each subsystem is built |
 | **spikes/** | `spikes/phase1.md`: written in Phase 1 |

@@ -1,0 +1,75 @@
+{
+  "name": "cathouse",
+  "displayName": "CatHouse",
+  "description": "%cathouse.description%",
+  "version": "0.0.1",
+  "publisher": "cathouse",
+  "private": true,
+  "license": "UNLICENSED",
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "categories": [
+    "Machine Learning",
+    "Other"
+  ],
+  "extensionKind": [
+    "workspace"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "%cathouse.untrusted%"
+    },
+    "virtualWorkspaces": false
+  },
+  "main": "./dist/extension.js",
+  "l10n": "./l10n",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "cathouse",
+          "title": "%cathouse.container.title%",
+          "icon": "media/cathouse.svg"
+        }
+      ]
+    },
+    "views": {
+      "cathouse": [
+        {
+          "type": "webview",
+          "id": "cathouse.sidebar",
+          "name": "%cathouse.sidebar.name%"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "cathouse.openDashboard",
+        "title": "%cathouse.command.openDashboard%",
+        "category": "CatHouse"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch",
+    "typecheck": "tsc -p tsconfig.json",
+    "package": "mkdir -p ../../dist && vsce package --no-dependencies --skip-license --allow-missing-repository --out ../../dist/",
+    "test:e2e": "node build.mjs --e2e && vscode-test"
+  },
+  "dependencies": {
+    "@cathouse/protocol": "workspace:*",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/vscode": "1.100.0",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.2",
+    "@types/mocha": "^10.0.10",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.1.0",
+    "mocha": "^12.0.2"
+  }
+}

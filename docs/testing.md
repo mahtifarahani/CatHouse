@@ -1,6 +1,21 @@
 # Testing
 
-Status: strategy agreed; commands get filled in during Phase 0.
+Status: unit and e2e layers exist (Phase 0). Contract tests arrive with the gateway (Phase 1).
+
+| Command | Runs |
+|---|---|
+| `pnpm test` | vitest: `packages/*/src/**/*.test.ts` (config `vitest.config.ts`) |
+| `pnpm test:e2e` | `@vscode/test-cli` (config `packages/extension/.vscode-test.mjs`, mocha `tdd` UI, 60 s timeout, `--disable-workspace-trust`): esbuild bundles `src/test/e2e/*.e2e.ts` → `out-test/`, then runs them in an **installed** editor. Nothing is downloaded. Editor order: `$CATHOUSE_TEST_EDITOR`, `/Applications/Visual Studio Code.app/…`, `/Applications/Cursor.app/…` |
+
+Rules: unit-testable host code must not import `vscode` (see `panel/router.ts`, `panel/webview-html.ts`). Files named `*.test.ts` are vitest; files named `*.e2e.ts` run inside VS Code.
+
+Current tests: protocol envelope (4), router error paths (7), webview CSP/HTML (2), e2e activation + command + dashboard tab (1).
+
+**E2E status (2026-09-28): not yet green; needs VS Code installed.**
+- On the dev machine only Cursor 3.21.18 (VS Code 1.128 base) is installed. In Cursor the test host logs `Loading development extension at …/packages/extension`, yet `vscode.extensions.all` never contains it: the extension-path mappings are empty, so `cathouse.cathouse` is "not installed". This is not the trust setting (tested with `untrustedWorkspaces.supported: true`: same result). Cursor logs "Extension isolation is disabled (forced disabled in glass mode)"; its agent-first "glass" mode is the suspected cause.
+- Downloading VS Code through `@vscode/test-electron` (~300 MB) was abandoned on the owner's request. Install VS Code instead and the config picks it up automatically.
+- Manual F5 in Cursor (normal, non-test window) has not been tried yet.
+
 
 | Layer | Tool | What | Needs network / catherd |
 |---|---|---|---|

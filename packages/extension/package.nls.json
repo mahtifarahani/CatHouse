@@ -1,0 +1,7 @@
+{
+  "cathouse.description": "A home for catherd: set it up, run /catherd tasks and watch every role from VS Code.",
+  "cathouse.untrusted": "CatHouse runs catherd and coding agents in your repository, so it needs a trusted workspace.",
+  "cathouse.container.title": "CatHouse",
+  "cathouse.sidebar.name": "CatHouse",
+  "cathouse.command.openDashboard": "Open Dashboard"
+}

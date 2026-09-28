@@ -1,0 +1,7 @@
+node_modules/
+dist/
+*.vsix
+.vscode-test/
+*.tsbuildinfo
+.DS_Store
+out-test/
