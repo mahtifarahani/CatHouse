@@ -154,9 +154,10 @@ export function AttachButton({
 }) {
   return (
     <Button
-      className="min-h-9"
+      className="min-h-9 shrink-0"
       variant="secondary"
       title={t("session.attachHelp")}
+      aria-label={t("session.attach")}
       onClick={() =>
         void request("app.pickFiles", {})
           .then(({ paths }) => {
@@ -167,7 +168,8 @@ export function AttachButton({
       }
     >
       <AttachIcon />
-      {t("session.attach")}
+      {/* Icon-only in a narrow sidebar; the enclosing form is the @container. */}
+      <span className="hidden @xl:inline">{t("session.attach")}</span>
     </Button>
   );
 }

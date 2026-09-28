@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>CatHouse</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F59E42"/>
+      <stop offset="1" stop-color="#D9480F"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="240" height="240" rx="56" fill="url(#bg)"/>
+  <g fill="none" stroke="#FFF8F0" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M40 118 128 42l88 76"/>
+    <path d="M62 100v112h132V100"/>
+  </g>
+  <path d="M92 212v-52l18-24 12 18h12l12-18 18 24v52z" fill="#FFF8F0"/>
+  <circle cx="115" cy="178" r="6" fill="#D9480F"/>
+  <circle cx="141" cy="178" r="6" fill="#D9480F"/>
+  <path d="M123 192h10l-5 6z" fill="#D9480F"/>
+</svg>

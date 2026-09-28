@@ -102,6 +102,15 @@ Chat composer-action follow-up: Attach files, Resume saved run, Start task and S
 
 Composer tooltip placement follow-up: permission help tooltips in both the idle and active composer action rows now open upward, so they remain visible above the bottom edge of the Activity Bar webview. The task-label tooltip continues to open downward. Verified with lint, typecheck, unit tests and production build; the owner has not yet checked it visually in the Extension Development Host.
 
+Responsive composer follow-up: both composer forms are Tailwind `@container`s. Below 36rem (`@xl`), Attach files and Resume saved run collapse to icon-only buttons (with `aria-label` and `title`), while Start task and Send keep their labels. The action buttons stay together on one row. The mode select shrinks and truncates instead of pushing them onto another line, and the task label row wraps the repo chip when space is tight. Verified with typecheck, 83 unit tests and production build. Biome crashed with an out-of-memory error in the agent environment, so lint was not run. Not yet checked visually in the Extension Development Host.
+
+Narrow-sidebar layout follow-up. Three fixes:
+- **Chat header:** the title block is `flex-[1_1_auto]`, so it can no longer shrink to zero width and let New chat / Interrupt / Stop session draw over "Orchestrator". Below 28rem (`@md`), those three buttons are icon-only, with `aria-label` and `title`. New chat still shows its "Stop and start new?" text while it waits for confirmation.
+- **Dashboard tabs:** the tab strip stays on one line and scrolls sideways with a hidden scrollbar instead of wrapping onto two lines. The selected tab is scrolled into view.
+- **Profiles role card:** each card is a container with two rows. The first row holds the toggle, checkbox and name, rung count, and the enforcement badge at the end. The second row holds the access select and "start on" select, side by side at `@md` and wider and stacked when narrower. Both selects truncate.
+
+Verified with typecheck, 83 unit tests, production build and `biome check packages/webview/src`. The full-repo `pnpm lint` still runs out of memory in the agent environment. Not yet checked visually in the Extension Development Host.
+
 ## Open questions / risks
 
 - Phase 1 spikes decide whether long `wait` calls survive in an SDK session (see `docs/research/claude-agent-sdk.md` §9).

@@ -144,6 +144,12 @@ function Dashboard() {
   const setupNeedsAttention = state?.canStart === false;
   const active: Tab = gateOpen ? nav.tab : "setup";
   const tabs = useRef<HTMLDivElement>(null);
+  // The tab strip scrolls sideways in a narrow view; keep the selected tab visible.
+  useEffect(() => {
+    tabs.current
+      ?.querySelector<HTMLButtonElement>(`#tab-${active}`)
+      ?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }, [active]);
   const onTabKey = (event: KeyboardEvent<HTMLDivElement>) => {
     if (!gateOpen || !["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
@@ -168,7 +174,7 @@ function Dashboard() {
           role="tablist"
           aria-label={t("tabs.label")}
           onKeyDown={onTabKey}
-          className="flex flex-wrap gap-1 border-b border-border"
+          className="flex shrink-0 gap-1 overflow-x-auto overflow-y-hidden border-b border-border [scrollbar-width:none]"
         >
           {TABS.map((id) => (
             <button
@@ -181,7 +187,7 @@ function Dashboard() {
               tabIndex={active === id ? 0 : -1}
               onClick={() => setNav({ tab: id })}
               className={cn(
-                "-mb-px border-b-2 px-3 py-1",
+                "shrink-0 whitespace-nowrap border-b-2 px-3 py-1",
                 active === id ? "border-focus" : "border-transparent text-muted-foreground",
               )}
             >

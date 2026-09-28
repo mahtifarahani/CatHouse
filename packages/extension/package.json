@@ -4,11 +4,21 @@
   "description": "%cathouse.description%",
   "version": "0.0.1",
   "publisher": "cathouse",
+  "icon": "media/icon.png",
   "private": true,
   "license": "UNLICENSED",
   "engines": {
     "vscode": "^1.100.0"
   },
+  "keywords": [
+    "catherd",
+    "claude",
+    "codex",
+    "opencode",
+    "ai agents",
+    "multi-agent",
+    "orchestration"
+  ],
   "categories": [
     "Machine Learning",
     "Other"

@@ -791,7 +791,10 @@ function RolesEditor({
           const available = rungsFor(models, role).filter((r) => !cfg.rungs.includes(r.rung));
           const roleOpen = sections.isOpen(`role:${role}`);
           return (
-            <Card key={role} className={cn("flex flex-col gap-1.5", !cfg.enabled && "opacity-70")}>
+            <Card
+              key={role}
+              className={cn("@container flex flex-col gap-1.5", !cfg.enabled && "opacity-70")}
+            >
               <div className="flex flex-wrap items-center gap-2">
                 <Button
                   variant="ghost"
@@ -822,9 +825,20 @@ function RolesEditor({
                 <span className="text-xs text-muted-foreground">
                   {t("profiles.summary.rungs", { n: cfg.rungs.length })}
                 </span>
+                {enforcement[role] && (
+                  <Badge
+                    className="ms-auto"
+                    tone={enforcement[role] === "enforced" ? "good" : "warn"}
+                  >
+                    {enforcement[role]}
+                  </Badge>
+                )}
+              </div>
+              {/* Settings row: side by side when the card is wide, stacked when narrow. */}
+              <div className="grid grid-cols-1 gap-2 @md:grid-cols-2">
                 <select
                   aria-label={t("profiles.access", { role })}
-                  className={inputClass}
+                  className={cn(inputClass, "w-full min-w-0 truncate")}
                   value={cfg.access}
                   onChange={(e) =>
                     edit((d) => {
@@ -838,15 +852,10 @@ function RolesEditor({
                     </option>
                   ))}
                 </select>
-                {enforcement[role] && (
-                  <Badge tone={enforcement[role] === "enforced" ? "good" : "warn"}>
-                    {enforcement[role]}
-                  </Badge>
-                )}
-                <label className="ms-auto flex items-center gap-1 text-xs">
-                  {t("profiles.defaultRung")}
+                <label className="flex min-w-0 items-center gap-2 text-xs">
+                  <span className="shrink-0">{t("profiles.defaultRung")}</span>
                   <select
-                    className={inputClass}
+                    className={cn(inputClass, "min-w-0 flex-1 truncate")}
                     value={cfg.defaultRung ?? ""}
                     onChange={(e) =>
                       edit((d) => {

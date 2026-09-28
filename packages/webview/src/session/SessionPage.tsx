@@ -247,8 +247,8 @@ export function SessionPage({
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">
-      <header className="flex flex-wrap items-start gap-3">
-        <div className="min-w-0 flex-1">
+      <header className="@container flex flex-wrap items-start gap-3">
+        <div className="min-w-0 flex-[1_1_auto]">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-lg font-semibold leading-tight">{t("session.title")}</h2>
             <Badge>{s.phase}</Badge>
@@ -272,25 +272,34 @@ export function SessionPage({
               void call(() => request("session.reset", {}));
             }}
             onBlur={() => setConfirmNew(false)}
+            aria-label={t(confirmNew ? "session.newConfirm" : "session.new")}
+            title={t("session.new")}
           >
             <NewChatIcon />
-            {t(confirmNew ? "session.newConfirm" : "session.new")}
+            {/* The confirm prompt always shows its text; otherwise icon-only when narrow. */}
+            <span className={confirmNew ? undefined : "hidden @md:inline"}>
+              {t(confirmNew ? "session.newConfirm" : "session.new")}
+            </span>
           </Button>
           <Button
             variant="secondary"
             disabled={!active || !s.turnActive}
             onClick={() => void call(() => request("session.interrupt", {}))}
+            aria-label={t("session.interrupt")}
+            title={t("session.interrupt")}
           >
             <InterruptIcon />
-            {t("session.interrupt")}
+            <span className="hidden @md:inline">{t("session.interrupt")}</span>
           </Button>
           <Button
             variant="secondary"
             disabled={!active}
             onClick={() => void call(() => request("session.stop", {}))}
+            aria-label={t("session.stop")}
+            title={t("session.stop")}
           >
             <StopIcon />
-            {t("session.stop")}
+            <span className="hidden @md:inline">{t("session.stop")}</span>
           </Button>
         </div>
       </header>
@@ -335,7 +344,7 @@ export function SessionPage({
 
       {!active && (
         <form
-          className="flex shrink-0 flex-col gap-3"
+          className="@container flex shrink-0 flex-col gap-3"
           onSubmit={(e) => {
             e.preventDefault();
             const message = composeMessage(task, taskFiles);
@@ -352,7 +361,7 @@ export function SessionPage({
           }}
         >
           <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <label htmlFor="catherd-task" className="font-semibold">
                 {t("session.taskLabel")}
               </label>
@@ -387,11 +396,11 @@ export function SessionPage({
             </p>
           )}
           <div className="flex flex-wrap items-center gap-2">
-            <div className="me-auto flex items-center gap-2">
+            <div className="flex min-w-0 flex-1 basis-40 items-center gap-2">
               <InfoTip text={t("session.modeHelp")} side="top" />
               <select
                 aria-label={t("session.mode")}
-                className={inputClass}
+                className={`${inputClass} min-w-0 max-w-full truncate`}
                 value={mode}
                 onChange={(e) => setMode(e.target.value as typeof mode)}
               >
@@ -402,33 +411,37 @@ export function SessionPage({
                 ))}
               </select>
             </div>
-            <AttachButton onAttachments={setTaskFiles} onError={setError} />
-            <Button
-              className="min-h-9"
-              variant="secondary"
-              disabled={!ready}
-              onClick={() =>
-                void call(() => request("session.resume", { repo: workspace?.repo ?? undefined }))
-              }
-            >
-              <ResumeIcon />
-              {t("session.resume")}
-            </Button>
-            <Button
-              className="min-h-9"
-              type="submit"
-              disabled={(!task.trim() && !taskFiles.length) || !ready}
-            >
-              <StartIcon />
-              {t("session.start")}
-            </Button>
+            <div className="ms-auto flex shrink-0 items-center gap-2">
+              <AttachButton onAttachments={setTaskFiles} onError={setError} />
+              <Button
+                className="min-h-9"
+                variant="secondary"
+                disabled={!ready}
+                aria-label={t("session.resume")}
+                title={t("session.resume")}
+                onClick={() =>
+                  void call(() => request("session.resume", { repo: workspace?.repo ?? undefined }))
+                }
+              >
+                <ResumeIcon />
+                <span className="hidden @xl:inline">{t("session.resume")}</span>
+              </Button>
+              <Button
+                className="min-h-9"
+                type="submit"
+                disabled={(!task.trim() && !taskFiles.length) || !ready}
+              >
+                <StartIcon />
+                {t("session.start")}
+              </Button>
+            </div>
           </div>
         </form>
       )}
 
       {active && (
         <form
-          className="flex shrink-0 flex-col gap-2"
+          className="@container flex shrink-0 flex-col gap-2"
           onSubmit={(e) => {
             e.preventDefault();
             const text = composeMessage(followUp, followUpFiles);
@@ -449,11 +462,11 @@ export function SessionPage({
             placeholder={t("session.followUp")}
           />
           <div className="flex w-full items-center gap-2">
-            <div className="me-auto flex items-center gap-2">
+            <div className="flex min-w-0 flex-1 items-center gap-2">
               <InfoTip text={t("session.modeHelp")} side="top" />
               <select
                 aria-label={t("session.mode")}
-                className={inputClass}
+                className={`${inputClass} min-w-0 max-w-full truncate`}
                 value={s.permissionMode ?? "default"}
                 onChange={(e) =>
                   void call(() =>
@@ -470,7 +483,7 @@ export function SessionPage({
             </div>
             <AttachButton onAttachments={setFollowUpFiles} onError={setError} />
             <Button
-              className="min-h-9 min-w-20"
+              className="min-h-9 min-w-20 shrink-0"
               type="submit"
               disabled={!followUp.trim() && !followUpFiles.length}
             >
