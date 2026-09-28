@@ -1,9 +1,7 @@
 {
   "active": "default",
   "here": "default",
-  "profiles": [
-    "default"
-  ],
+  "profiles": ["default"],
   "profile": {
     "name": "default",
     "objective": "cost",
@@ -11,16 +9,12 @@
       "architect": {
         "enabled": true,
         "access": "read-only",
-        "rungs": [
-          "claude:claude-opus-5-5#high"
-        ]
+        "rungs": ["claude:claude-opus-5-5#high"]
       },
       "verifier": {
         "enabled": true,
         "access": "full",
-        "rungs": [
-          "claude:claude-opus-5-5#low"
-        ]
+        "rungs": ["claude:claude-opus-5-5#low"]
       },
       "worker": {
         "enabled": true,
@@ -36,37 +30,27 @@
       "reviewer": {
         "enabled": true,
         "access": "read-only",
-        "rungs": [
-          "codex:gpt-6-sol#high"
-        ]
+        "rungs": ["codex:gpt-6-sol#high"]
       },
       "ui-reviewer": {
         "enabled": true,
         "access": "full",
-        "rungs": [
-          "codex:gpt-6-sol#medium"
-        ]
+        "rungs": ["codex:gpt-6-sol#medium"]
       },
       "artist": {
         "enabled": true,
         "access": "workspace-write",
-        "rungs": [
-          "codex:gpt-6-sol#medium"
-        ]
+        "rungs": ["codex:gpt-6-sol#medium"]
       },
       "writer": {
         "enabled": true,
         "access": "workspace-write",
-        "rungs": [
-          "codex:gpt-6-luna#high"
-        ]
+        "rungs": ["codex:gpt-6-luna#high"]
       },
       "researcher": {
         "enabled": true,
         "access": "read-only",
-        "rungs": [
-          "codex:gpt-6-luna#high"
-        ]
+        "rungs": ["codex:gpt-6-luna#high"]
       }
     },
     "billing": {
@@ -103,11 +87,7 @@
       "confirm": false
     },
     "heavy": "cpus/2",
-    "notify": [
-      "milestone",
-      "finish",
-      "blocked"
-    ]
+    "notify": ["milestone", "finish", "blocked"]
   },
   "enforcement": {
     "architect": "advisory",

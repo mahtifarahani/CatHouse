@@ -10,7 +10,9 @@ const options = {
   platform: "node",
   format: "cjs",
   target: "node20",
-  external: ["vscode"],
+  // The Agent SDK is ESM-only and locates its platform binary relative to its package, so it
+  // stays in node_modules and is loaded with import() (see src/orchestrator/session.ts).
+  external: ["vscode", "@anthropic-ai/claude-agent-sdk"],
   sourcemap: true,
   minify: !watch,
   logLevel: "info",
@@ -24,7 +26,19 @@ if (process.argv.includes("--e2e")) {
     outfile: undefined,
     outdir: "out-test",
     minify: false,
-    external: ["vscode", "mocha"],
+    external: ["vscode", "mocha", "@anthropic-ai/claude-agent-sdk"],
+  });
+} else if (process.argv.includes("--spike")) {
+  // Phase 1 spike harness (scripts/spike.ts), run with plain node outside VS Code.
+  await esbuild.build({
+    ...options,
+    entryPoints: ["scripts/spike.ts"],
+    outfile: "dist-spike/spike.mjs",
+    format: "esm",
+    minify: false,
+    banner: {
+      js: "import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);",
+    },
   });
 } else if (watch) {
   const ctx = await esbuild.context(options);

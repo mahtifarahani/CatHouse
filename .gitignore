@@ -5,3 +5,4 @@ dist/
 *.tsbuildinfo
 .DS_Store
 out-test/
+dist-spike/

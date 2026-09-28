@@ -16,7 +16,17 @@ const WELL_KNOWN = [
 ];
 
 /** Env vars from a host Claude session that must not leak into processes CatHouse starts. */
-const STRIPPED_PREFIXES = ["CLAUDECODE", "CLAUDE_CODE_", "CLAUDE_AGENT_SDK_", "CLAUDE_PID"];
+// Also ANTHROPIC_BASE_URL etc.: a host session routes API calls through its own proxy, and the
+// child would then ignore the user's CLI login (docs/spikes/phase1.md finding 3).
+const STRIPPED_PREFIXES = [
+  "CLAUDECODE",
+  "CLAUDE_CODE_",
+  "CLAUDE_AGENT_SDK_",
+  "CLAUDE_PID",
+  "CLAUDE_EFFORT",
+  "CLAUDE_PREVIEW_",
+  "ANTHROPIC_BASE_URL",
+];
 
 let loginPath: Promise<string> | undefined;
 
