@@ -164,11 +164,13 @@ describe("CatherdGateway profiles", () => {
   it("maps catalog_query rungs (scored, treat-like, cost)", async () => {
     const g = gatewayWith([], { catalog_query: fixture("mcp-catalog_query-worker.json") });
     const c = await g.catalog({ role: "worker", scoredOnly: false });
-    const sol = c.models.find((m) => m.id === "gpt-6-sol");
-    expect(sol?.rungs.find((r) => r.rung === "codex:gpt-6-sol#medium")).toMatchObject({
+    const opus = c.models.find((m) => m.id === "claude-opus-5-5");
+    expect(opus?.rungs.find((r) => r.rung === "claude:claude-opus-5-5#low")).toMatchObject({
       enabled: true,
       scored: true,
+      costMode: "claude-plan",
     });
+    expect(opus?.rungs[0]?.treatLike).toBe("claude-opus-5-5#xhigh");
     expect(c.models[0]?.rungs[0]).toMatchObject({ scored: false, treatLike: null });
   });
 });
