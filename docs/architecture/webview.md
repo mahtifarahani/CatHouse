@@ -42,4 +42,6 @@ Navigation (`App.tsx`): tabs Overview · New Chat · Runs · Profiles · Models 
 
 Shared: `lib/usePoll.ts` (interval polling, pause, keeps the last good data on error), `ui` bits (`Section`, `Badge`, `Card`, `Meter`, `Empty`, `ErrorText`, `inputClass`).
 
+Profile hydration runs only when a new server document arrives; draft edits must never be a dependency of that effect or clean-state resets can overwrite user input. `usePoll` queues one rerun when a key change or explicit refresh occurs during an in-flight request, so New/Delete/profile switching cannot lose the load for the newly selected profile.
+
 Phase 5 adds a global dashboard status line (setup mood, current profile, dirty count, catherd version), an ARIA tablist with arrow/Home/End navigation, focus-trapped dialogs with Escape, an accessible toast live region, and non-colour symbols for model rung state. Webview asset URLs carry a per-attach cache key so a reloaded Extension Development Host cannot retain an old fixed-name Vite bundle.

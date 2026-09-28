@@ -3,6 +3,7 @@
 ## Unreleased
 
 - docs: add a public GitHub README covering CatHouse's relationship to catherd, feature set, requirements, development install, architecture boundary, and pre-release status.
+- Fixed Profiles controls being immediately overwritten by a clean-draft synchronization loop, and fixed profile switching after New/Delete when a refresh was already in flight.
 - UX: the complete dashboard now lives directly in the CatHouse Activity Bar view; the intermediary Open Dashboard screen and separate editor panel were removed, and New Chat is the default tab on each fresh view load.
 - Phase 5: platform VSIX packaging, extension README, dashboard status line, complete public-surface TUI parity, profile help/filter/confirmations, save-race rebase, accessible tabs/dialogs/toasts, Light/Dark/High Contrast verification, and webview cache busting.
 - Phase 4: repo picker, permission modes, prompt badge/notification, cancel note to the live orchestrator, Continue from a run, compaction marker.
