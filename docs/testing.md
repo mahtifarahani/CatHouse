@@ -1,6 +1,10 @@
 # Testing
 
-Status: unit and e2e layers exist (Phase 0). Contract tests arrive with the gateway (Phase 1).
+Status: unit, live-contract (opt-in) and e2e layers exist.
+
+- `CATHOUSE_CONTRACT=1 pnpm test` runs `packages/extension/src/gateway/contract.test.ts` against the real catherd on the machine; `CATHOUSE_RECORD=1` also refreshes `packages/compat/fixtures/1.0.0/`.
+- `pnpm --filter @cathouse/webview dev` serves a browser preview of the webview with a mocked VS Code API (`packages/webview/src/dev/`).
+- The spike harness (`packages/extension/scripts/spike.ts`, `node build.mjs --spike`) drives a real orchestrator session outside VS Code; see `docs/spikes/phase1.md`.
 
 | Command | Runs |
 |---|---|
@@ -9,7 +13,7 @@ Status: unit and e2e layers exist (Phase 0). Contract tests arrive with the gate
 
 Rules: unit-testable host code must not import `vscode` (see `panel/router.ts`, `panel/webview-html.ts`). Files named `*.test.ts` are vitest; files named `*.e2e.ts` run inside VS Code.
 
-Current tests: protocol envelope (4), router error paths (7), webview CSP/HTML (2), e2e activation + command + dashboard tab (1).
+Current tests: 44 unit (protocol, router, CSP, compat, gateway, event mapper, controller), 6 live contract, 1 e2e (activation + command + dashboard tab).
 
 **E2E status (2026-09-28): green in VS Code 1.139 (macOS), 1 passing.**
 - The dashboard tab appears asynchronously after `executeCommand` resolves, so the test polls (`waitFor`, 5 s).
