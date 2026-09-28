@@ -6,7 +6,9 @@
       "!**/dist",
       "!**/node_modules",
       "!**/*.vsix",
-      "!**/out-test", "!**/dist-spike",
+      "!**/out-test",
+      "!**/dist-spike",
+      "!**/.pkg",
       "!**/.vscode-test",
       "!docs"
     ]
