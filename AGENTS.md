@@ -19,7 +19,7 @@ catherd stays the source of truth. CatHouse never re-implements orchestration an
 
 1. **Document every completed section.** Before moving to the next section (phase, spike, subsystem), write or update its report in `docs/` (architecture doc, spike notes, research corrections), update `docs/STATUS.md` and, if needed, this file. Commit the docs with the code. A section without its report is not done. Reports must be self-contained: no references to chats, exact versions, `path:line` citations (catherd citations at commit `b257da7`), copy-pasteable commands, invariants and traps, remaining work, next step.
 2. **The gateway is the only boundary to catherd** (ADR 0005). Never call `wait`, `dispatch`, `run_start`, `route`, `preflight`, `climb`, `ask`, `land`, `set_next`, `record_agent_run` or `write_run_file` from CatHouse. Those belong to the orchestrator session.
-3. **Never write catherd's files.** Profiles change only through MCP `profile_set` or the CLI. The only direct read is `routes.jsonl` (ADR 0007).
+3. **Never write catherd's files.** Profiles change only through MCP `profile_set` or the CLI. Run files are read through MCP `read_run_file` (ADR 0007); Setup only reads `config.json` and Claude's plugin lists.
 4. **Pin versions:** `catherd-cli@1.0.0`, plugin `catherd@1.0.0`, `@anthropic-ai/claude-agent-sdk@0.3.283` (≥ 0.3.282). A version outside `packages/compat/compat.json` shows the Upgrade screen and runs nothing.
 5. **Installers run only after a user click.** Detectors have no side effects. `catherd doctor` has side effects, so it never runs on a timer.
 6. **Secrets never reach logs.** This covers the Jev key, tokens and env values.

@@ -1,6 +1,6 @@
 # CatherdGateway
 
-Status: **built in Phase 1** (CLI + MCP + env + schemas). `RunFilesReader` (ADR 0007) is not built yet (Phase 3, Runs page). Source: `packages/extension/src/gateway/`.
+Status: **built in Phase 1** (CLI + MCP + env + schemas); Phase 3 adds the per-repo `CatherdGateway` and run-file parsing via MCP `read_run_file` (ADR 0007). Source: `packages/extension/src/gateway/`.
 
 The gateway is CatHouse's only boundary to catherd (ADR 0005). It never imports `vscode`, so vitest can test all of it.
 

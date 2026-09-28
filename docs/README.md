@@ -26,7 +26,7 @@
 | [`decisions/0004-ui-language.md`](decisions/0004-ui-language.md) | English, i18n-ready, RTL-safe CSS |
 | [`decisions/0005-gateway-single-boundary.md`](decisions/0005-gateway-single-boundary.md) | Gateway is the only boundary; forbidden orchestrator tools |
 | [`decisions/0006-long-lived-mcp-per-repo.md`](decisions/0006-long-lived-mcp-per-repo.md) | One MCP process per repo |
-| [`decisions/0007-run-files-reader.md`](decisions/0007-run-files-reader.md) | Read-only routes.jsonl reader |
+| [`decisions/0007-run-files-reader.md`](decisions/0007-run-files-reader.md) | Run files via MCP `read_run_file`, never from disk |
 | [`decisions/0008-vsix-per-platform.md`](decisions/0008-vsix-per-platform.md) | One VSIX per platform |
 | **architecture/** | |
 | [`architecture/overview.md`](architecture/overview.md) | Packages, data flow, runtime processes |

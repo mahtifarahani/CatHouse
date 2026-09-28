@@ -4,7 +4,7 @@ catherd's public surface is the CLI (with `--json` on reads) and the 21 MCP tool
 
 | # | Gap | Where the TUI gets it | CatHouse workaround (v1) | Proposed upstream change (catherd 1.1) |
 |---|---|---|---|---|
-| 1 | Routes and climbs per lane | `readRoutes` reads `routes.jsonl` (`effects.ts:40,200`) | `RunFilesReader`: read-only parse of `<run dir>/routes.jsonl` with a zod schema matching `RouteRow` (`src/domain/route.ts:29-46`), versioned by catherd version; skip the header and a partial last line | add `routes` to `status --json` / `runs show --json` |
+| 1 | Routes and climbs per lane | `readRoutes` reads `routes.jsonl` (`effects.ts:40,200`) | MCP `read_run_file(run, "routes.jsonl")` (verified on 1.0.0), parsed with a zod `RouteRow` schema (`src/domain/route.ts:29-46`); skip the header and a partial last line (ADR 0007) | add `routes` to `status --json` / `runs show --json` |
 | 2 | `landed` and `budget` in the run list | `summarizeRun` per run | call `status <run> --json` (or MCP `status({run})`) for the visible rows only; cache by run mtime | add `landed`, `budget` to `runs list --json` |
 | 3 | Validating an unsaved draft | `validate(profile, catalog)` on the draft | submit via MCP `profile_set`, which validates before writing: `saved: false` + `errors` means nothing was written; show the errors inline. Live per-keystroke validation is not available. | `profile_validate({patch})` / `profile validate --draft <json>` |
 | 4 | Save preview: agent files added/removed | `agentFiles` in the save dialog | show after save from `profile_set` → `linked`, `pruned`, `newSessionNeededFor` | a `dryRun` flag on `profile_set` |
@@ -16,5 +16,5 @@ catherd's public surface is the CLI (with `--json` on reads) and the 21 MCP tool
 | 10 | Plugin marketplace source uses SSH | n/a | install with the HTTPS `insteadOf` env (`catherd-known-issues.md`) | `"url": "https://github.com/47vigen/catherd.git"` in `marketplace.json` |
 
 **Rules that follow:**
-- The `RunFilesReader` is the **only** place CatHouse reads catherd files directly. It never writes, and it is covered by contract tests against real catherd output. When upstream adds gap 1, the reader is deleted.
+- CatHouse reads no catherd run file from disk: `read_run_file` covers routes and state.md (ADR 0007).
 - Every gap workaround lives behind `CatherdGateway` (`packages/extension/src/gateway/`), so the UI never knows which path produced the data.
