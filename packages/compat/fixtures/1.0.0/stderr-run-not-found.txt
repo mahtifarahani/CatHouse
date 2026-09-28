@@ -1,0 +1,2 @@
+error E_RUN_NOT_FOUND: no run "nope"
+fix: catherd runs list

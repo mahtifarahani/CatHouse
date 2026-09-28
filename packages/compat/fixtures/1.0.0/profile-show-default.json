@@ -1,0 +1,138 @@
+{
+  "profile": {
+    "name": "default",
+    "objective": "cost",
+    "jev": {
+      "use": "auto"
+    },
+    "billing": {
+      "codex": "chatgpt-plan",
+      "claude": "claude-plan",
+      "claude-code": "claude-plan",
+      "opencode-go": "subscription",
+      "opencode": "metered",
+      "cursor": "metered",
+      "grok": "metered"
+    },
+    "roles": {
+      "architect": {
+        "enabled": true,
+        "access": "read-only",
+        "rungs": ["claude:claude-opus-5-5#high"]
+      },
+      "verifier": {
+        "enabled": true,
+        "access": "full",
+        "rungs": ["claude:claude-opus-5-5#low"]
+      },
+      "worker": {
+        "enabled": true,
+        "access": "workspace-write",
+        "rungs": [
+          "codex:gpt-6-luna#high",
+          "codex:gpt-6-sol#medium",
+          "codex:gpt-6-sol#high",
+          "codex:gpt-6-sol#xhigh"
+        ],
+        "defaultRung": "codex:gpt-6-sol#medium"
+      },
+      "reviewer": {
+        "enabled": true,
+        "access": "read-only",
+        "rungs": ["codex:gpt-6-sol#high"]
+      },
+      "ui-reviewer": {
+        "enabled": true,
+        "access": "full",
+        "rungs": ["codex:gpt-6-sol#medium"]
+      },
+      "artist": {
+        "enabled": true,
+        "access": "workspace-write",
+        "rungs": ["codex:gpt-6-sol#medium"]
+      },
+      "writer": {
+        "enabled": true,
+        "access": "workspace-write",
+        "rungs": ["codex:gpt-6-luna#high"]
+      },
+      "researcher": {
+        "enabled": true,
+        "access": "read-only",
+        "rungs": ["codex:gpt-6-luna#high"]
+      }
+    },
+    "harness": {
+      "codex": {
+        "isolated": false
+      },
+      "claude-code": {
+        "isolated": false
+      },
+      "opencode": {
+        "isolated": false
+      },
+      "cursor": {
+        "isolated": false
+      },
+      "grok": {
+        "isolated": false
+      }
+    },
+    "failover": {
+      "codex:gpt-6-luna#high": "opencode:opencode-go/gpt-6-luna#high",
+      "codex:gpt-6-sol#medium": "opencode:opencode-go/kimi-k3#max",
+      "codex:gpt-6-sol#high": "opencode:opencode-go/kimi-k3#max",
+      "codex:gpt-6-sol#xhigh": "opencode:opencode-go/kimi-k3#max"
+    },
+    "budget": {},
+    "timeouts": {
+      "idleMin": 15,
+      "wallMin": 90
+    },
+    "preflight": {
+      "confirm": false
+    },
+    "lock": {
+      "heavy": "cpus/2"
+    },
+    "notify": ["milestone", "finish", "blocked"]
+  },
+  "active": true,
+  "enforcement": {
+    "architect": "advisory",
+    "verifier": "advisory",
+    "worker": "enforced",
+    "reviewer": "enforced",
+    "ui-reviewer": "enforced",
+    "artist": "enforced",
+    "writer": "enforced",
+    "researcher": "enforced"
+  },
+  "standIns": [
+    {
+      "from": "codex:gpt-6-luna#high",
+      "to": "opencode:opencode-go/gpt-6-luna#high",
+      "inferred": true,
+      "via": null
+    },
+    {
+      "from": "codex:gpt-6-sol#medium",
+      "to": "opencode:opencode-go/kimi-k3#max",
+      "inferred": true,
+      "via": "gpt-6-sol#medium"
+    },
+    {
+      "from": "codex:gpt-6-sol#high",
+      "to": "opencode:opencode-go/kimi-k3#max",
+      "inferred": true,
+      "via": "gpt-6-sol#medium"
+    },
+    {
+      "from": "codex:gpt-6-sol#xhigh",
+      "to": "opencode:opencode-go/kimi-k3#max",
+      "inferred": true,
+      "via": "gpt-6-sol#medium"
+    }
+  ]
+}

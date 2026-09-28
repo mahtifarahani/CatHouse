@@ -60,16 +60,19 @@
     "test:e2e": "node build.mjs --e2e && vscode-test"
   },
   "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "0.3.283",
     "@cathouse/protocol": "workspace:*",
-    "zod": "^4.6.5"
+    "@modelcontextprotocol/sdk": "^1.30.1",
+    "zod": "^4.6.5",
+    "@cathouse/compat": "workspace:*"
   },
   "devDependencies": {
-    "@types/vscode": "1.100.0",
-    "@vscode/vsce": "^4.0.0",
-    "esbuild": "^0.28.2",
     "@types/mocha": "^10.0.10",
+    "@types/vscode": "1.100.0",
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.2",
     "mocha": "^12.0.2"
   }
 }

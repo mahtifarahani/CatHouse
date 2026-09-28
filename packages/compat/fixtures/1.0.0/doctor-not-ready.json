@@ -1,0 +1,108 @@
+{
+  "ready": false,
+  "version": "1.0.0",
+  "checks": [
+    {
+      "id": "bun",
+      "label": "Bun",
+      "state": "ok",
+      "word": "ready",
+      "detail": "1.4.2"
+    },
+    {
+      "id": "config",
+      "label": "config",
+      "state": "ok",
+      "word": "ready",
+      "detail": "active profile default"
+    },
+    {
+      "id": "profile",
+      "label": "profile default",
+      "state": "fail",
+      "word": "invalid",
+      "detail": "roles.worker.rungs: the worker role has no usable rung (and more)",
+      "fix": "enable a scored rung its backend offers, or turn the role off with: catherd profile set --profile default roles.worker.enabled false"
+    },
+    {
+      "id": "backend:codex",
+      "label": "codex",
+      "state": "ok",
+      "word": "ready",
+      "detail": "0.158.0 · ChatGPT login · 7 models"
+    },
+    {
+      "id": "backend:claude-code",
+      "label": "claude-code",
+      "state": "skip",
+      "word": "too old",
+      "detail": "claude 2.1.168 is older than 2.1.282 (no profile uses it)",
+      "fix": "claude update"
+    },
+    {
+      "id": "backend:opencode",
+      "label": "opencode",
+      "state": "warn",
+      "word": "missing",
+      "detail": "opencode is not on PATH (a failover stand-in uses it)",
+      "fix": "curl -fsSL https://opencode.ai/v2/install | bash"
+    },
+    {
+      "id": "jev",
+      "label": "Jev",
+      "state": "warn",
+      "word": "no key",
+      "detail": "optional: routing uses each lane's Kind and Difficulty instead",
+      "fix": "catherd init, or export TYPESAFE_API_KEY=<key>"
+    },
+    {
+      "id": "plugin",
+      "label": "Claude Code plugin",
+      "state": "ok",
+      "word": "ready",
+      "detail": "1.0.0"
+    },
+    {
+      "id": "agents",
+      "label": "Claude agents",
+      "state": "ok",
+      "word": "ready",
+      "detail": "2 linked"
+    },
+    {
+      "id": "mcp",
+      "label": "MCP server",
+      "state": "ok",
+      "word": "ready",
+      "detail": "answers tools/list with 21 tools"
+    },
+    {
+      "id": "locks",
+      "label": "heavy-lock dir",
+      "state": "ok",
+      "word": "ready",
+      "detail": "/Users/dev/.local/share/catherd/locks"
+    },
+    {
+      "id": "sandbox:codex",
+      "label": "heavy-lock dir from codex's sandbox",
+      "state": "skip",
+      "word": "not tested",
+      "detail": "no codex sandbox to test with on this machine"
+    },
+    {
+      "id": "access:full",
+      "label": "full access",
+      "state": "warn",
+      "word": "warning",
+      "detail": "no sandbox for: verifier (default), ui-reviewer (default)"
+    },
+    {
+      "id": "access:advisory",
+      "label": "advisory access",
+      "state": "warn",
+      "word": "warning",
+      "detail": "the backend asks but cannot force: architect on claude (default), verifier on claude (default)"
+    }
+  ]
+}

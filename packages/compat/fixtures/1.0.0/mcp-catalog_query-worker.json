@@ -1,0 +1,588 @@
+{
+  "total": 27,
+  "models": [
+    {
+      "id": "claude-fable-5-1",
+      "name": "Claude Fable 5.1",
+      "backend": "claude",
+      "model": "claude-fable-5-1",
+      "billing": "claude",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "context": 1000000,
+      "capabilities": {
+        "toolUse": true,
+        "imageIn": true,
+        "reasoning": true
+      },
+      "roles": [
+        "architect",
+        "verifier",
+        "worker",
+        "reviewer",
+        "ui-reviewer",
+        "writer",
+        "researcher"
+      ],
+      "listed": true,
+      "notes": {
+        "plan": "Pro and Team Standard pay usage credits for Fable; Max includes it up to half the weekly limit"
+      },
+      "rungs": [
+        {
+          "rung": "claude:claude-fable-5-1#low",
+          "enabled": false,
+          "why": "unscored: map it with catherd catalog treat-like <rung> <scored rung>",
+          "scores": {},
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 0.6400000000000001,
+            "mode": "claude-plan"
+          }
+        },
+        {
+          "rung": "claude:claude-fable-5-1#medium",
+          "enabled": false,
+          "why": "unscored: map it with catherd catalog treat-like <rung> <scored rung>",
+          "scores": {},
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 1.6,
+            "mode": "claude-plan"
+          }
+        },
+        {
+          "rung": "claude:claude-fable-5-1#high",
+          "enabled": false,
+          "why": "unscored: map it with catherd catalog treat-like <rung> <scored rung>",
+          "scores": {},
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 2.72,
+            "mode": "claude-plan"
+          }
+        },
+        {
+          "rung": "claude:claude-fable-5-1#xhigh",
+          "enabled": false,
+          "why": "unscored: map it with catherd catalog treat-like <rung> <scored rung>",
+          "scores": {},
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 4.16,
+            "mode": "claude-plan"
+          }
+        },
+        {
+          "rung": "claude:claude-fable-5-1#max",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 67.4,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred"
+            },
+            "terminal": {
+              "value": 55.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "verified"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 11.520000000000001,
+            "mode": "claude-plan"
+          }
+        }
+      ]
+    },
+    {
+      "id": "claude-fable-5-1",
+      "name": "Claude Fable 5.1",
+      "backend": "claude-code",
+      "model": "claude-fable-5-1",
+      "billing": "claude-code",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "context": 1000000,
+      "capabilities": {
+        "toolUse": true,
+        "imageIn": true,
+        "reasoning": true
+      },
+      "roles": [
+        "architect",
+        "verifier",
+        "worker",
+        "reviewer",
+        "ui-reviewer",
+        "writer",
+        "researcher"
+      ],
+      "listed": true,
+      "notes": {
+        "plan": "Pro and Team Standard pay usage credits for Fable; Max includes it up to half the weekly limit"
+      },
+      "rungs": [
+        {
+          "rung": "claude-code:claude-fable-5-1#low",
+          "enabled": false,
+          "why": "unscored: map it with catherd catalog treat-like <rung> <scored rung>",
+          "scores": {},
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 0.6400000000000001,
+            "mode": "claude-plan"
+          }
+        },
+        {
+          "rung": "claude-code:claude-fable-5-1#medium",
+          "enabled": false,
+          "why": "unscored: map it with catherd catalog treat-like <rung> <scored rung>",
+          "scores": {},
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 1.6,
+            "mode": "claude-plan"
+          }
+        },
+        {
+          "rung": "claude-code:claude-fable-5-1#high",
+          "enabled": false,
+          "why": "unscored: map it with catherd catalog treat-like <rung> <scored rung>",
+          "scores": {},
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 2.72,
+            "mode": "claude-plan"
+          }
+        },
+        {
+          "rung": "claude-code:claude-fable-5-1#xhigh",
+          "enabled": false,
+          "why": "unscored: map it with catherd catalog treat-like <rung> <scored rung>",
+          "scores": {},
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 4.16,
+            "mode": "claude-plan"
+          }
+        },
+        {
+          "rung": "claude-code:claude-fable-5-1#max",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 67.4,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred"
+            },
+            "terminal": {
+              "value": 55.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "verified"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 11.520000000000001,
+            "mode": "claude-plan"
+          }
+        }
+      ]
+    },
+    {
+      "id": "claude-fable-5-1",
+      "name": "Claude Fable 5.1",
+      "backend": "opencode",
+      "model": "opencode/claude-fable-5-1",
+      "billing": "opencode",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "context": 1000000,
+      "capabilities": {
+        "toolUse": true,
+        "imageIn": true,
+        "reasoning": true
+      },
+      "roles": [
+        "architect",
+        "verifier",
+        "worker",
+        "reviewer",
+        "ui-reviewer",
+        "writer",
+        "researcher"
+      ],
+      "listed": null,
+      "notes": {
+        "plan": "Pro and Team Standard pay usage credits for Fable; Max includes it up to half the weekly limit"
+      },
+      "rungs": [
+        {
+          "rung": "opencode:opencode/claude-fable-5-1#low",
+          "enabled": false,
+          "why": "unscored: map it with catherd catalog treat-like <rung> <scored rung>",
+          "scores": {},
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 0.6400000000000001,
+            "mode": "metered"
+          }
+        },
+        {
+          "rung": "opencode:opencode/claude-fable-5-1#medium",
+          "enabled": false,
+          "why": "unscored: map it with catherd catalog treat-like <rung> <scored rung>",
+          "scores": {},
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 1.6,
+            "mode": "metered"
+          }
+        },
+        {
+          "rung": "opencode:opencode/claude-fable-5-1#high",
+          "enabled": false,
+          "why": "unscored: map it with catherd catalog treat-like <rung> <scored rung>",
+          "scores": {},
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 2.72,
+            "mode": "metered"
+          }
+        },
+        {
+          "rung": "opencode:opencode/claude-fable-5-1#xhigh",
+          "enabled": false,
+          "why": "unscored: map it with catherd catalog treat-like <rung> <scored rung>",
+          "scores": {},
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 4.16,
+            "mode": "metered"
+          }
+        },
+        {
+          "rung": "opencode:opencode/claude-fable-5-1#max",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 67.4,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred"
+            },
+            "terminal": {
+              "value": 55.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "verified"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 11.520000000000001,
+            "mode": "metered"
+          }
+        }
+      ]
+    },
+    {
+      "id": "claude-opus-5-5",
+      "name": "Claude Opus 5.5",
+      "backend": "claude",
+      "model": "claude-opus-5-5",
+      "billing": "claude",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "context": 1000000,
+      "capabilities": {
+        "toolUse": true,
+        "imageIn": true,
+        "reasoning": true
+      },
+      "roles": [
+        "architect",
+        "verifier",
+        "worker",
+        "reviewer",
+        "ui-reviewer",
+        "writer",
+        "researcher"
+      ],
+      "listed": true,
+      "notes": {
+        "effort": "the API default effort is medium"
+      },
+      "rungs": [
+        {
+          "rung": "claude:claude-opus-5-5#low",
+          "enabled": true,
+          "scores": {
+            "terminal": {
+              "value": 66.4,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "inferred"
+            }
+          },
+          "treatLike": {
+            "like": "claude-opus-5-5#xhigh",
+            "source": "shipped"
+          },
+          "cost": {
+            "tier": 0,
+            "value": 0.272,
+            "mode": "claude-plan"
+          }
+        },
+        {
+          "rung": "claude:claude-opus-5-5#medium",
+          "enabled": true,
+          "scores": {
+            "terminal": {
+              "value": 66.4,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "inferred"
+            }
+          },
+          "treatLike": {
+            "like": "claude-opus-5-5#xhigh",
+            "source": "shipped"
+          },
+          "cost": {
+            "tier": 0,
+            "value": 0.68,
+            "mode": "claude-plan"
+          }
+        },
+        {
+          "rung": "claude:claude-opus-5-5#high",
+          "enabled": true,
+          "scores": {
+            "terminal": {
+              "value": 66.4,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "inferred"
+            }
+          },
+          "treatLike": {
+            "like": "claude-opus-5-5#xhigh",
+            "source": "shipped"
+          },
+          "cost": {
+            "tier": 0,
+            "value": 1.1560000000000001,
+            "mode": "claude-plan"
+          }
+        },
+        {
+          "rung": "claude:claude-opus-5-5#xhigh",
+          "enabled": true,
+          "scores": {
+            "terminal": {
+              "value": 66.4,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "verified"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 0,
+            "value": 1.7680000000000002,
+            "mode": "claude-plan"
+          }
+        },
+        {
+          "rung": "claude:claude-opus-5-5#max",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 74.2,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "verified"
+            },
+            "terminal": {
+              "value": 64.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "verified"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 0,
+            "value": 4.896000000000001,
+            "mode": "claude-plan"
+          }
+        }
+      ]
+    },
+    {
+      "id": "claude-opus-5-5",
+      "name": "Claude Opus 5.5",
+      "backend": "claude-code",
+      "model": "claude-opus-5-5",
+      "billing": "claude-code",
+      "efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "context": 1000000,
+      "capabilities": {
+        "toolUse": true,
+        "imageIn": true,
+        "reasoning": true
+      },
+      "roles": [
+        "architect",
+        "verifier",
+        "worker",
+        "reviewer",
+        "ui-reviewer",
+        "writer",
+        "researcher"
+      ],
+      "listed": true,
+      "notes": {
+        "effort": "the API default effort is medium"
+      },
+      "rungs": [
+        {
+          "rung": "claude-code:claude-opus-5-5#low",
+          "enabled": true,
+          "scores": {
+            "terminal": {
+              "value": 66.4,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "inferred"
+            }
+          },
+          "treatLike": {
+            "like": "claude-opus-5-5#xhigh",
+            "source": "shipped"
+          },
+          "cost": {
+            "tier": 0,
+            "value": 0.272,
+            "mode": "claude-plan"
+          }
+        },
+        {
+          "rung": "claude-code:claude-opus-5-5#medium",
+          "enabled": true,
+          "scores": {
+            "terminal": {
+              "value": 66.4,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "inferred"
+            }
+          },
+          "treatLike": {
+            "like": "claude-opus-5-5#xhigh",
+            "source": "shipped"
+          },
+          "cost": {
+            "tier": 0,
+            "value": 0.68,
+            "mode": "claude-plan"
+          }
+        },
+        {
+          "rung": "claude-code:claude-opus-5-5#high",
+          "enabled": true,
+          "scores": {
+            "terminal": {
+              "value": 66.4,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "inferred"
+            }
+          },
+          "treatLike": {
+            "like": "claude-opus-5-5#xhigh",
+            "source": "shipped"
+          },
+          "cost": {
+            "tier": 0,
+            "value": 1.1560000000000001,
+            "mode": "claude-plan"
+          }
+        },
+        {
+          "rung": "claude-code:claude-opus-5-5#xhigh",
+          "enabled": true,
+          "scores": {
+            "terminal": {
+              "value": 66.4,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "verified"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 0,
+            "value": 1.7680000000000002,
+            "mode": "claude-plan"
+          }
+        },
+        {
+          "rung": "claude-code:claude-opus-5-5#max",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 74.2,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "verified"
+            },
+            "terminal": {
+              "value": 64.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "verified"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 0,
+            "value": 4.896000000000001,
+            "mode": "claude-plan"
+          }
+        }
+      ]
+    }
+  ]
+}
