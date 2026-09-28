@@ -10,7 +10,7 @@ import { GIT_HTTPS_ENV, stepsFor } from "./actions";
 import { type DetectDeps, detect } from "./detect";
 import { evaluate } from "./evaluate";
 import type { SetupFacts } from "./facts";
-import { SetupService } from "./service";
+import { type ReadinessSnapshot, SetupService } from "./service";
 
 const ready: SetupFacts = {
   bun: { version: "1.4.2" },
@@ -249,6 +249,63 @@ describe("detect", () => {
 });
 
 describe("SetupService", () => {
+  it("restores the last user-triggered readiness result without running doctor on activation", async () => {
+    const home = mkdtempSync(join(tmpdir(), "cathouse-setup-"));
+    mkdirSync(join(home, "catherd", "config"), { recursive: true });
+    writeFileSync(
+      join(home, "catherd", "config", "config.json"),
+      '{"schema":1,"activeProfile":"default"}',
+    );
+    mkdirSync(join(home, "claude", "plugins"), { recursive: true });
+    writeFileSync(
+      join(home, "claude", "plugins", "installed_plugins.json"),
+      JSON.stringify({
+        version: 2,
+        plugins: {
+          "catherd@catherd": [{ scope: "user", installPath: "/p", version: "1.0.0" }],
+        },
+      }),
+    );
+    const run = fakeRun(({ cmd, args }) =>
+      cmd === "bunx"
+        ? { stdout: "1.0.0\n" }
+        : args.includes("auth")
+          ? { stdout: '{"loggedIn":true,"authMethod":"claude.ai"}' }
+          : { stdout: "1.4.2" },
+    );
+    let doctorCalls = 0;
+    let saved: ReadinessSnapshot | undefined;
+    const base = {
+      ...detectDeps(run, home),
+      cli: () =>
+        ({
+          profileShow: async () => ({ profile: { roles: {}, failover: {} } }),
+          doctor: async () => {
+            doctorCalls += 1;
+            return ready.doctor;
+          },
+        }) as unknown as CatherdCli,
+      broadcast: () => {},
+      openTerminal: async () => {},
+      log: () => {},
+    };
+    const first = new SetupService({
+      ...base,
+      persistReadiness: (snapshot) => {
+        saved = snapshot;
+      },
+    });
+    await first.check({ readiness: true });
+    expect(first.state().canStart).toBe(true);
+    expect(doctorCalls).toBe(1);
+    expect(saved?.doctor.ready).toBe(true);
+
+    const restored = new SetupService({ ...base, initialReadiness: saved });
+    await restored.check();
+    expect(restored.state()).toMatchObject({ canStart: true, doctorAt: saved?.doctorAt });
+    expect(doctorCalls).toBe(1);
+  });
+
   it("runs one action at a time, streams output, rechecks", async () => {
     const home = mkdtempSync(join(tmpdir(), "cathouse-setup-"));
     const events: SetupTopic[] = [];

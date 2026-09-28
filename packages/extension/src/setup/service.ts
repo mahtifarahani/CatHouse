@@ -3,6 +3,7 @@ import { join } from "node:path";
 import type { CompatEntry } from "@cathouse/compat";
 import type { SetupActionId, SetupState, SetupTopic } from "@cathouse/protocol";
 import type { CatherdCli } from "../gateway/cli";
+import type { DoctorReport } from "../gateway/schemas";
 import { claudeHome } from "../orchestrator/plugin";
 import { HandlerError } from "../panel/router";
 import { type ActionContext, REFRESH_AFTER, type Step, stepsFor } from "./actions";
@@ -15,6 +16,14 @@ export interface SetupDeps extends DetectDeps {
   /** Opens an interactive command in a terminal (logins); resolves when the terminal closes. */
   openTerminal: (name: string, command: string, env: Record<string, string>) => Promise<void>;
   log: (line: string) => void;
+  /** Last user-triggered doctor result for this workspace; doctor itself never runs on activation. */
+  initialReadiness?: ReadinessSnapshot;
+  persistReadiness?: (snapshot: ReadinessSnapshot | undefined) => PromiseLike<void> | void;
+}
+
+export interface ReadinessSnapshot {
+  doctor: DoctorReport;
+  doctorAt: string;
 }
 
 /** Detects, installs (on click only) and gates. vscode-free; see docs/architecture/setup.md. */
@@ -24,8 +33,12 @@ export class SetupService {
   private running: SetupActionId | undefined;
   private checkedAt: string | undefined;
   private doctorAt: string | undefined;
+  private cachedDoctor: DoctorReport | undefined;
 
-  constructor(private readonly deps: SetupDeps) {}
+  constructor(private readonly deps: SetupDeps) {
+    this.cachedDoctor = deps.initialReadiness?.doctor;
+    this.doctorAt = deps.initialReadiness?.doctorAt;
+  }
 
   state(): SetupState {
     const base = { checking: this.checking, ...(this.running ? { running: this.running } : {}) };
@@ -51,7 +64,7 @@ export class SetupService {
     this.checking = true;
     this.publish();
     try {
-      const doctor = this.facts?.doctor;
+      const doctor = this.facts?.doctor ?? this.cachedDoctor;
       this.facts = { ...(await detect(this.deps)), ...(doctor ? { doctor } : {}) };
       this.checkedAt = new Date().toISOString();
       if (opts.readiness && evaluate(this.facts, this.deps.pin).gateOpen) {
@@ -72,11 +85,16 @@ export class SetupService {
       // (docs/spikes/phase1.md finding 6), so refresh the catalog first.
       if (refresh) await cli.catalogRefresh();
       this.facts.doctor = await cli.doctor();
+      this.cachedDoctor = this.facts.doctor;
       delete this.facts.doctorError;
       this.doctorAt = new Date().toISOString();
+      await this.deps.persistReadiness?.({ doctor: this.facts.doctor, doctorAt: this.doctorAt });
     } catch (e) {
       delete this.facts.doctor;
+      this.cachedDoctor = undefined;
       this.facts.doctorError = e instanceof Error ? e.message : String(e);
+      this.doctorAt = undefined;
+      await this.deps.persistReadiness?.(undefined);
     }
   }
 

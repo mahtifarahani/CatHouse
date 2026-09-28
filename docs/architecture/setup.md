@@ -15,7 +15,7 @@ Until Bun, catherd, the Claude plugin and the bundled Claude binary are good, th
 | `detect.ts` | `detect(deps)`: side-effect-free probes, run in parallel |
 | `evaluate.ts` | `evaluate(facts, pin)` (pure): items + `gateOpen` + `canStart` + `canStartReason` |
 | `actions.ts` | `stepsFor(action, ctx)`: installer steps; `GIT_HTTPS_ENV`; `REFRESH_AFTER` |
-| `service.ts` | `SetupService`: `state()`, `check({readiness, refresh})`, `run(action)` (one at a time, output streamed) |
+| `service.ts` | `SetupService`: `state()`, `check({readiness, refresh})`, `run(action)` (one at a time, output streamed), and persistence of the last user-triggered readiness result |
 
 ## Detectors (`detect.ts`)
 
@@ -30,6 +30,8 @@ Until Bun, catherd, the Claude plugin and the bundled Claude binary are good, th
 | needs claude CLI | `catherd profile show --json` contains a `"claude-code:` rung in roles or failover | ADR 0001 |
 | claude CLI | `claude --version` (only when needed) | ≥ `PINNED.claudeCode` (2.1.282) |
 | readiness | `catherd doctor --json` (+ `catalog refresh --json` first after backend changes) | **has side effects**: runs only on "Check readiness", after installs, or via `cathouse.checkSetup` |
+
+The last successful doctor report and its timestamp are stored under `cathouse.readiness.v1` in VS Code `workspaceState`. On a later extension activation, side-effect-free detection runs normally and the stored report is merged back into the facts, so New Chat does not revert to “not checked yet”. Restoring this snapshot never runs doctor. A later user-triggered doctor failure clears the snapshot instead of leaving stale green readiness behind.
 
 ## Items and levels (`evaluate.ts`)
 
@@ -75,7 +77,7 @@ Setup works without an open folder: catherd commands then run in the home direct
 
 ## Verified (2026-09-28)
 
-- Unit (`setup.test.ts`, 10 tests): the evaluator on fresh/ready/stale/login/backend/claude-code cases, the actions, detectors with a fake runner (no install, config and plugin files), the service (one action at a time, streamed output, recheck).
+- Unit (`setup.test.ts`, 11 tests): the evaluator on fresh/ready/stale/login/backend/claude-code cases, the actions, detectors with a fake runner (no install, config and plugin files), the service (one action at a time, streamed output, recheck), and readiness restoration across service instances without a second doctor call.
 - E2E on the prepared dev machine (`CATHOUSE_EXPECT_READY=1 npx vscode-test` in `packages/extension`): all gate items ok, login ok, readiness ok, `canStart: true`.
 - E2E on a **fresh HOME** with a minimal PATH (`env -i HOME=<tmp> … CATHOUSE_EXPECT_FRESH=1`): Setup only, `install-bun` / `install-plugin` offered, bundled Claude ok.
 - E2E **install flow** on a fresh HOME (`CATHOUSE_E2E_INSTALL=1 CATHOUSE_E2E_GREP=Setup`): pressing Install Bun → Install and set up catherd → Install plugin turned each item green and opened the gate in ~70 s. Only the Claude login remained, as expected in an isolated HOME.

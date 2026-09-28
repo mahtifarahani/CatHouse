@@ -6,6 +6,7 @@ import { CatherdCli } from "./gateway/cli";
 import { processEnv } from "./gateway/env";
 import { CatherdMcp } from "./gateway/mcp-client";
 import { runProcess } from "./gateway/process";
+import { DoctorReportSchema } from "./gateway/schemas";
 import { CatherdGateway } from "./gateway/service";
 import { type SavedLink, SessionController } from "./orchestrator/controller";
 import { findCatherdPlugin } from "./orchestrator/plugin";
@@ -16,7 +17,7 @@ import { SidebarProvider } from "./panel/sidebar";
 import type { WebviewView } from "./panel/webview-html";
 import { bundledClaudePath } from "./setup/binary";
 import { catherdDataDir } from "./setup/detect";
-import { SetupService } from "./setup/service";
+import { type ReadinessSnapshot, SetupService } from "./setup/service";
 
 interface RequestContext {
   view: WebviewView;
@@ -24,6 +25,7 @@ interface RequestContext {
 
 const LINKS_KEY = "cathouse.links.v1";
 const REPO_KEY = "cathouse.repo.v1";
+const READINESS_KEY = "cathouse.readiness.v1";
 
 /** The repo CatHouse works on: the requested folder, else the selected one, else the first. */
 let selectedRepo: string | undefined;
@@ -46,6 +48,13 @@ export function activate(context: vscode.ExtensionContext): void {
     broadcaster.post({ v: PROTOCOL_VERSION, kind: "event", topic, payload });
   const env = () => processEnv();
 
+  const storedReadiness = context.workspaceState.get<Partial<ReadinessSnapshot>>(READINESS_KEY);
+  const storedDoctor = DoctorReportSchema.safeParse(storedReadiness?.doctor);
+  const initialReadiness =
+    storedDoctor.success && typeof storedReadiness?.doctorAt === "string"
+      ? { doctor: storedDoctor.data, doctorAt: storedReadiness.doctorAt }
+      : undefined;
+
   const setup = new SetupService({
     run: runProcess,
     env,
@@ -54,6 +63,8 @@ export function activate(context: vscode.ExtensionContext): void {
     cli: () =>
       new CatherdCli({ cwd: vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? homedir(), env }),
     pin: PINNED,
+    ...(initialReadiness ? { initialReadiness } : {}),
+    persistReadiness: (snapshot) => context.workspaceState.update(READINESS_KEY, snapshot),
     broadcast: (payload) => publish("setup", payload),
     log: (line) => output.info(line),
     openTerminal: (name, command, termEnv) =>

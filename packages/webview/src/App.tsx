@@ -27,7 +27,7 @@ const LABEL: Record<Tab, StringKey> = {
 
 export function App() {
   return (
-    <main className="flex flex-col gap-3 p-3">
+    <main className="flex h-screen min-h-0 flex-col gap-3 overflow-hidden p-3">
       <Dashboard />
       <ToastRegion />
     </main>
@@ -41,18 +41,39 @@ interface Nav {
 
 const loadWs = () => request("app.workspace", {});
 
-function RepoBar() {
+function ViewChrome({ gateOpen, setupReady }: { gateOpen: boolean; setupReady: boolean }) {
   const [ws, setWs] = useState<Awaited<ReturnType<typeof loadWs>>>();
+  const profiles = usePoll(
+    () => (gateOpen ? request("profiles.get", {}) : Promise.resolve(undefined)),
+    5000,
+    `chrome-profiles-${gateOpen}`,
+  );
+  const runs = usePoll(
+    () => (gateOpen ? request("runs.list", {}) : Promise.resolve(undefined)),
+    2000,
+    `chrome-runs-${gateOpen}`,
+  );
+  const [dirty, setDirty] = useState(0);
   useEffect(() => {
     void loadWs().then(setWs);
     return onEvent("app", () => void loadWs().then(setWs));
   }, []);
+  useEffect(() => {
+    const onDirty = (e: Event) => setDirty((e as CustomEvent<number>).detail);
+    window.addEventListener("cathouse:dirty", onDirty);
+    return () => window.removeEventListener("cathouse:dirty", onDirty);
+  }, []);
+  const working = runs.data?.runs.some((r) => r.live > 0) ?? false;
+  const mood = !setupReady ? t("status.failed") : working ? t("status.working") : t("status.good");
   if (!ws) return null;
   return (
-    <>
+    <div
+      className="flex flex-nowrap items-center gap-3 overflow-x-auto whitespace-nowrap border border-border px-2 py-1 text-xs text-muted-foreground"
+      role="status"
+    >
       {ws.folders.length > 1 ? (
-        <label className="flex items-center gap-1">
-          {t("app.repo")}
+        <label className="flex shrink-0 items-center">
+          <span className="sr-only">{t("app.repo")}</span>
           <select
             className={inputClass}
             value={ws.repo ?? ""}
@@ -68,15 +89,31 @@ function RepoBar() {
           </select>
         </label>
       ) : (
-        ws.repo && (
-          <span>
-            {t("app.repo")} {ws.folders[0]?.name}
-          </span>
-        )
+        ws.folders[0]?.name && <span className="shrink-0">{ws.folders[0].name}</span>
       )}
-      {ws.folders.length === 0 && <span className="text-warning">{t("app.noFolder")}</span>}
-      <span className="order-last ms-auto">catherd {ws.catherdVersion}</span>
-    </>
+      {ws.folders.length === 0 && (
+        <span className="shrink-0 text-warning">{t("app.noFolder")}</span>
+      )}
+      <span
+        className={`shrink-0 ${
+          !setupReady ? "text-danger" : working ? "text-warning" : "text-success"
+        }`}
+      >
+        ● {mood}
+      </span>
+      {profiles.data && (
+        <span className="shrink-0">
+          {profiles.data.here}
+          {profiles.data.here === profiles.data.active
+            ? ` (${t("profiles.active")})`
+            : ` (${t("profiles.thisRepo")})`}
+        </span>
+      )}
+      {dirty > 0 && (
+        <span className="shrink-0 text-warning">{t("profiles.unsaved", { n: dirty })}</span>
+      )}
+      <span className="order-last ms-auto shrink-0">catherd {ws.catherdVersion}</span>
+    </div>
   );
 }
 
@@ -103,11 +140,8 @@ function Dashboard() {
     );
   };
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border border-border px-2 py-1 text-xs text-muted-foreground">
-        <RepoBar />
-        {gateOpen && <StatusLine setupReady={state?.canStart === true} />}
-      </div>
+    <div className="flex min-h-0 flex-1 flex-col gap-3">
+      <ViewChrome gateOpen={gateOpen} setupReady={state?.canStart === true} />
       {gateOpen && (
         <div
           ref={tabs}
@@ -136,7 +170,12 @@ function Dashboard() {
           ))}
         </div>
       )}
-      <div id={`panel-${active}`} role="tabpanel" aria-labelledby={`tab-${active}`}>
+      <div
+        id={`panel-${active}`}
+        role="tabpanel"
+        aria-labelledby={`tab-${active}`}
+        className="min-h-0 flex-1 overflow-auto"
+      >
         {active === "setup" && <SetupPage />}
         {active === "overview" && (
           <OverviewPage
@@ -159,35 +198,6 @@ function Dashboard() {
         {active === "models" && <ModelsPage />}
         {active === "diagnostics" && <DiagnosticsPage />}
       </div>
-    </div>
-  );
-}
-
-function StatusLine({ setupReady }: { setupReady: boolean }) {
-  const profiles = usePoll(() => request("profiles.get", {}), 5000, "chrome-profiles");
-  const runs = usePoll(() => request("runs.list", {}), 2000, "chrome-runs");
-  const [dirty, setDirty] = useState(0);
-  useEffect(() => {
-    const onDirty = (e: Event) => setDirty((e as CustomEvent<number>).detail);
-    window.addEventListener("cathouse:dirty", onDirty);
-    return () => window.removeEventListener("cathouse:dirty", onDirty);
-  }, []);
-  const working = runs.data?.runs.some((r) => r.live > 0) ?? false;
-  const mood = !setupReady ? t("status.failed") : working ? t("status.working") : t("status.good");
-  return (
-    <div className="contents" role="status">
-      <span className={!setupReady ? "text-danger" : working ? "text-warning" : "text-success"}>
-        ● {mood}
-      </span>
-      {profiles.data && (
-        <span>
-          {profiles.data.here}
-          {profiles.data.here === profiles.data.active
-            ? ` (${t("profiles.active")})`
-            : ` (${t("profiles.thisRepo")})`}
-        </span>
-      )}
-      {dirty > 0 && <span className="text-warning">{t("profiles.unsaved", { n: dirty })}</span>}
     </div>
   );
 }

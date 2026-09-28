@@ -55,7 +55,15 @@ New Chat readability follow-up: the idle orchestrator form is now a structured c
 
 Dashboard chrome follow-up: repository, setup mood, current profile, dirty count and catherd version now share one responsive status bar; the duplicated version and separate repository row were removed.
 
+Status-bar follow-up: the native VS Code title cannot reliably display dynamic view descriptions, so repository name, setup mood, profile, dirty count and catherd version remain in one non-wrapping bar below `CatHouse`. The redundant `Repository:` prefix is hidden; multi-root workspaces keep a labelled-for-accessibility picker.
+
 New Chat density follow-up: explanatory role and permission copy moved into themed, keyboard-accessible info tooltips, the redundant subtitle and outer composer card were removed, and the active-session Send button now attaches directly to its input.
+
+Setup readiness persistence follow-up: the last successful, explicitly requested doctor result is stored per VS Code workspace and restored after extension activation. Returning to CatHouse no longer resets a ready workspace to “not checked yet”; doctor still never runs automatically, and a later failed check clears the cached result. The cross-instance behavior is covered by a unit test.
+
+New Chat action-row follow-up: the visible Permissions heading was removed; its info tooltip and select now align to the right of Start/Resume while the select retains an accessible label.
+
+Session chat-layout follow-up: the dashboard now fills the available view height, the transcript/status region scrolls above a bottom-anchored composer in both idle and running states, and the running textarea matches the new-task composer with a primary Send button immediately beside it.
 
 Post-checkpoint documentation: the repository now has a public-facing root `README.md` modelled on catherd's concise product-first structure. It explains that CatHouse brings catherd into VS Code while catherd remains the source of truth, documents the complete UI surface and trust boundary, gives a development-VSIX path without implying a public release, and states the remaining release gates.
 

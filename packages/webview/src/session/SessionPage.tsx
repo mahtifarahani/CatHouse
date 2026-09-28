@@ -7,6 +7,8 @@ import { Transcript } from "./Transcript";
 import { useSession } from "./useSession";
 
 const MODES = ["default", "acceptEdits", "plan", "auto"] as const;
+const COMPOSER_CLASS =
+  "min-h-32 w-full resize-y rounded-sm border border-input-border bg-input px-3 py-2 text-base text-input-foreground leading-6";
 
 function InfoTip({ text }: { text: string }) {
   const id = useId();
@@ -59,7 +61,7 @@ export function SessionPage({
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex h-full min-h-0 flex-col gap-4">
       <header className="flex flex-wrap items-start gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -102,9 +104,28 @@ export function SessionPage({
         )}
       </header>
 
+      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto">
+        {error && (
+          <p role="alert" className="text-danger">
+            {error}
+          </p>
+        )}
+        {s.error && (
+          <p role="alert" className="text-danger">
+            {s.error.code}: {s.error.message}
+          </p>
+        )}
+
+        {s.prompts.map((p) => (
+          <PromptCard key={p.id} prompt={p} />
+        ))}
+
+        <Transcript events={s.events} />
+      </div>
+
       {!active && (
         <form
-          className="flex flex-col gap-3"
+          className="flex shrink-0 flex-col gap-3"
           onSubmit={(e) => {
             e.preventDefault();
             if (task.trim())
@@ -123,30 +144,11 @@ export function SessionPage({
             <textarea
               id="catherd-task"
               rows={4}
-              className="min-h-32 w-full resize-y rounded-sm border border-input-border bg-input px-3 py-2 text-base text-input-foreground leading-6"
+              className={COMPOSER_CLASS}
               value={task}
               onChange={(e) => setTask(e.target.value)}
               placeholder={t("session.taskPlaceholder")}
             />
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <label htmlFor="catherd-permissions" className="font-semibold">
-              {t("session.mode")}
-            </label>
-            <InfoTip text={t("session.modeHelp")} />
-            <select
-              id="catherd-permissions"
-              className={inputClass}
-              value={mode}
-              onChange={(e) => setMode(e.target.value as typeof mode)}
-            >
-              {MODES.map((m) => (
-                <option key={m} value={m}>
-                  {t(`session.mode.${m}`)}
-                </option>
-              ))}
-            </select>
           </div>
 
           {!canStart && (
@@ -168,30 +170,28 @@ export function SessionPage({
             >
               {t("session.resume")}
             </Button>
+            <div className="ms-auto flex items-center gap-2">
+              <InfoTip text={t("session.modeHelp")} />
+              <select
+                aria-label={t("session.mode")}
+                className={inputClass}
+                value={mode}
+                onChange={(e) => setMode(e.target.value as typeof mode)}
+              >
+                {MODES.map((m) => (
+                  <option key={m} value={m}>
+                    {t(`session.mode.${m}`)}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </form>
       )}
 
-      {error && (
-        <p role="alert" className="text-danger">
-          {error}
-        </p>
-      )}
-      {s.error && (
-        <p role="alert" className="text-danger">
-          {s.error.code}: {s.error.message}
-        </p>
-      )}
-
-      {s.prompts.map((p) => (
-        <PromptCard key={p.id} prompt={p} />
-      ))}
-
-      <Transcript events={s.events} />
-
       {active && (
         <form
-          className="flex gap-0"
+          className="flex shrink-0 items-end gap-2"
           onSubmit={(e) => {
             e.preventDefault();
             const text = followUp.trim();
@@ -200,13 +200,14 @@ export function SessionPage({
             void call(() => request("session.send", { text }));
           }}
         >
-          <input
-            className={`${inputClass} min-w-0 flex-1 rounded-e-none`}
+          <textarea
+            rows={4}
+            className={`${COMPOSER_CLASS} min-w-0 flex-1`}
             value={followUp}
             onChange={(e) => setFollowUp(e.target.value)}
             placeholder={t("session.followUp")}
           />
-          <Button className="-ms-px min-h-8 rounded-s-none" type="submit" variant="secondary">
+          <Button className="min-h-9 min-w-20" type="submit">
             {t("session.send")}
           </Button>
         </form>

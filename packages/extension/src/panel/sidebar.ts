@@ -16,6 +16,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
   resolveWebviewView(view: vscode.WebviewView): void {
     this.view = view;
+    // Clear any dynamic title left by an older extension-host instance.
+    view.title = "CatHouse";
+    view.description = undefined;
     this.setBadge(this.badge);
     const sub = attachWebview(view.webview, this.extensionUri, this.sink);
     view.onDidDispose(() => {

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Reworked New Chat and running sessions into a full-height chat layout with scrollable content above a bottom composer; the running textarea now matches the new-task size and keeps a primary Send button immediately beside it.
+- Moved the compact permission info/select controls to the right side of the Start/Resume row and removed their redundant visible heading.
+- Kept repository name, setup, profile, dirty-count and catherd status in one non-wrapping bar below the native CatHouse title; the redundant `Repository:` prefix is omitted and multi-root workspaces retain their picker.
+- Persisted the last user-triggered catherd readiness report per workspace, preventing New Chat from returning to “not checked yet” after VS Code reloads without running doctor automatically.
 - Reduced New Chat density by moving role and permission guidance into accessible info tooltips, removing redundant chrome, and attaching Send directly to the follow-up input.
 - Combined the repository and dashboard status rows into one responsive bar and removed the duplicated catherd version.
 - Improved New Chat's visual hierarchy and spacing with a structured task composer, readable permission controls and a prominent readiness status; raised dense supporting text to a 13 px minimum and shared input height to 32 px across the dashboard.

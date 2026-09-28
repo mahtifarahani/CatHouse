@@ -16,7 +16,7 @@ E2E env switches: `CATHOUSE_EXPECT_READY=1` (prepared machine), `CATHOUSE_EXPECT
 
 `CATHOUSE_E2E_WORKSPACE=<git repo with catherd runs>` enables `pages.e2e.ts` (runs, profiles, catalog through the real router via the hidden `cathouse._request` command).
 
-Current tests: 70 unit (protocol, router, CSP, compat, gateway including profile-copy command, event mapper, controller, profile draft/rebase including role checkbox staging), 7 live contract, 5 e2e scenarios (Activity Bar activation; Setup on the real machine; pages: runs, workspace/repo selection, profiles/catalog).
+Current tests: 71 unit (protocol, router, CSP, compat, gateway including profile-copy command, event mapper, controller, setup readiness persistence, profile draft/rebase including role checkbox staging), 7 live contract, 5 e2e scenarios (Activity Bar activation; Setup on the real machine; pages: runs, workspace/repo selection, profiles/catalog).
 
 **E2E status (2026-09-28): green in VS Code 1.139 (macOS).** The default command has 2 passing and 3 pending because page tests require `CATHOUSE_E2E_WORKSPACE`; the prepared-workspace run has all 5 scenarios.
 - Activation verifies that the contributed `cathouse.sidebar.focus` command opens the one full Activity Bar view and that the removed `cathouse.openDashboard` command is absent.
