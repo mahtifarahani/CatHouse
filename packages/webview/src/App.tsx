@@ -141,6 +141,7 @@ function Dashboard() {
   const [nav, setNav] = useState<Nav>({ tab: "session" });
   // The plan's gate: until Bun, catherd, the plugin and the bundled Claude are good, only Setup.
   const gateOpen = state?.gateOpen === true;
+  const setupNeedsAttention = state?.canStart === false;
   const active: Tab = gateOpen ? nav.tab : "setup";
   const tabs = useRef<HTMLDivElement>(null);
   const onTabKey = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -185,6 +186,15 @@ function Dashboard() {
               )}
             >
               {t(LABEL[id])}
+              {id === "setup" && setupNeedsAttention && (
+                <>
+                  <span
+                    aria-hidden="true"
+                    className="ms-1.5 inline-block size-2 rounded-full bg-danger align-middle"
+                  />
+                  <span className="sr-only">: {t("status.failed")}</span>
+                </>
+              )}
             </button>
           ))}
         </div>

@@ -29,7 +29,7 @@ It loads the Vite build directly. `retainContextWhenHidden` is off; safety-criti
 
 ## Pages (`packages/webview/src/pages/`, `session/`, `setup/`)
 
-Navigation (`App.tsx`): tabs Overview · Chat · Runs · Repos · Profiles · Models · Diagnostics · Setup. **Chat is the default on every fresh webview load**; tab selection lasts only for the current mounted view. **Only Setup is shown until `gateOpen`** (docs/architecture/setup.md).
+Navigation (`App.tsx`): tabs Overview · Chat · Runs · Repos · Profiles · Models · Diagnostics · Setup. **Chat is the default on every fresh webview load**; tab selection lasts only for the current mounted view. **Only Setup is shown until `gateOpen`** (docs/architecture/setup.md). When the status bar reports `setup needs attention` (`canStart === false`), the Setup tab carries a theme-aware red dot and exposes the same warning in its accessible name; the signal is therefore not colour-only.
 
 | Page | Data (protocol → gateway) | Behaviour |
 |---|---|---|
