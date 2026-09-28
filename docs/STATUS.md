@@ -61,9 +61,17 @@ New Chat density follow-up: explanatory role and permission copy moved into them
 
 Setup readiness persistence follow-up: the last successful, explicitly requested doctor result is stored per VS Code workspace and restored after extension activation. Returning to CatHouse no longer resets a ready workspace to “not checked yet”; doctor still never runs automatically, and a later failed check clears the cached result. The cross-instance behavior is covered by a unit test.
 
-New Chat action-row follow-up: the visible Permissions heading was removed; its info tooltip and select now align to the right of Start/Resume while the select retains an accessible label.
+New Chat action-row follow-up: the visible Permissions heading was removed; its info tooltip and select now stay at the far left, while Resume sits immediately left of the far-right Start button and the select retains an accessible label.
 
-Session chat-layout follow-up: the dashboard now fills the available view height, the transcript/status region scrolls above a bottom-anchored composer in both idle and running states, and the running textarea matches the new-task composer with a primary Send button immediately beside it.
+Session chat-layout follow-up: the dashboard now fills the available view height, the transcript/status region scrolls above a bottom-anchored composer in both idle and running states, and the running textarea matches the new-task composer with its primary Send button at the far right in a row below the input.
+
+Active-session permission follow-up: the permission info and selector moved from the session header to the composer action row, matching New Chat with permissions at the far left and Send at the far right; Interrupt and Stop session remain in the header.
+
+Chat input-spacing follow-up: both the idle task textarea and active follow-up textarea have a 2 px horizontal inset so their borders do not sit flush against the composer edges; their existing internal text padding and full responsive behavior are unchanged.
+
+Transcript Markdown follow-up: user and orchestrator text now renders common Markdown plus GitHub-style lists, tables, task lists and strikethrough with themed typography, code and overflow handling. Raw HTML is skipped, safe link handling is retained, and focused renderer tests cover formatting and HTML suppression.
+
+Composer keyboard/layout follow-up: Enter now submits and Shift+Enter inserts a newline in both New Chat and active-session textareas, with IME-safe handling. The Session tab no longer creates an outer scroll area; the header and composer stay fixed, only the transcript scrolls, and the extra space/scroll below the composer is removed.
 
 Post-checkpoint documentation: the repository now has a public-facing root `README.md` modelled on catherd's concise product-first structure. It explains that CatHouse brings catherd into VS Code while catherd remains the source of truth, documents the complete UI surface and trust boundary, gives a development-VSIX path without implying a public release, and states the remaining release gates.
 

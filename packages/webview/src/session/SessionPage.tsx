@@ -1,7 +1,8 @@
 import { Badge, Button, inputClass } from "@cathouse/ui";
-import { useId, useState } from "react";
+import { type KeyboardEvent, useId, useState } from "react";
 import { RpcError, request } from "../lib/rpc";
 import { t } from "../lib/strings";
+import { shouldSubmitComposer } from "./composer";
 import { PromptCard } from "./PromptCard";
 import { Transcript } from "./Transcript";
 import { useSession } from "./useSession";
@@ -47,6 +48,19 @@ export function SessionPage({
   const [error, setError] = useState<string | null>(null);
   const active = s.phase === "starting" || s.phase === "running";
 
+  const submitOnEnter = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (
+      !shouldSubmitComposer({
+        key: event.key,
+        shiftKey: event.shiftKey,
+        isComposing: event.nativeEvent.isComposing,
+      })
+    )
+      return;
+    event.preventDefault();
+    event.currentTarget.form?.requestSubmit();
+  };
+
   const call = async (fn: () => Promise<unknown>) => {
     setError(null);
     try {
@@ -74,20 +88,6 @@ export function SessionPage({
         </div>
         {active && (
           <div className="ms-auto flex flex-wrap gap-2">
-            <select
-              aria-label={t("session.mode")}
-              className={inputClass}
-              value={s.permissionMode ?? "default"}
-              onChange={(e) =>
-                void call(() => request("session.setMode", { mode: e.target.value as typeof mode }))
-              }
-            >
-              {MODES.map((m) => (
-                <option key={m} value={m}>
-                  {t(`session.mode.${m}`)}
-                </option>
-              ))}
-            </select>
             <Button
               variant="secondary"
               onClick={() => void call(() => request("session.interrupt", {}))}
@@ -104,7 +104,7 @@ export function SessionPage({
         )}
       </header>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto">
+      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto overscroll-contain">
         {error && (
           <p role="alert" className="text-danger">
             {error}
@@ -128,7 +128,7 @@ export function SessionPage({
           className="flex shrink-0 flex-col gap-3"
           onSubmit={(e) => {
             e.preventDefault();
-            if (task.trim())
+            if (task.trim() && canStart)
               void call(() =>
                 request("session.start", { task: task.trim(), permissionMode: mode }),
               );
@@ -141,14 +141,18 @@ export function SessionPage({
               </label>
               <InfoTip text={t("session.roleGuide")} />
             </div>
-            <textarea
-              id="catherd-task"
-              rows={4}
-              className={COMPOSER_CLASS}
-              value={task}
-              onChange={(e) => setTask(e.target.value)}
-              placeholder={t("session.taskPlaceholder")}
-            />
+            <div className="px-[2px]">
+              <textarea
+                id="catherd-task"
+                rows={4}
+                className={COMPOSER_CLASS}
+                value={task}
+                onChange={(e) => setTask(e.target.value)}
+                onKeyDown={submitOnEnter}
+                aria-keyshortcuts="Enter Shift+Enter"
+                placeholder={t("session.taskPlaceholder")}
+              />
+            </div>
           </div>
 
           {!canStart && (
@@ -159,18 +163,8 @@ export function SessionPage({
               {t("session.blocked", { reason: blockedReason ?? "" })}
             </p>
           )}
-          <div className="flex flex-wrap gap-2">
-            <Button className="min-h-9" type="submit" disabled={!task.trim() || !canStart}>
-              {t("session.start")}
-            </Button>
-            <Button
-              className="min-h-9"
-              variant="secondary"
-              onClick={() => void call(() => request("session.resume", {}))}
-            >
-              {t("session.resume")}
-            </Button>
-            <div className="ms-auto flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="me-auto flex items-center gap-2">
               <InfoTip text={t("session.modeHelp")} />
               <select
                 aria-label={t("session.mode")}
@@ -185,13 +179,23 @@ export function SessionPage({
                 ))}
               </select>
             </div>
+            <Button
+              className="min-h-9"
+              variant="secondary"
+              onClick={() => void call(() => request("session.resume", {}))}
+            >
+              {t("session.resume")}
+            </Button>
+            <Button className="min-h-9" type="submit" disabled={!task.trim() || !canStart}>
+              {t("session.start")}
+            </Button>
           </div>
         </form>
       )}
 
       {active && (
         <form
-          className="flex shrink-0 items-end gap-2"
+          className="flex shrink-0 flex-col gap-2"
           onSubmit={(e) => {
             e.preventDefault();
             const text = followUp.trim();
@@ -200,16 +204,41 @@ export function SessionPage({
             void call(() => request("session.send", { text }));
           }}
         >
-          <textarea
-            rows={4}
-            className={`${COMPOSER_CLASS} min-w-0 flex-1`}
-            value={followUp}
-            onChange={(e) => setFollowUp(e.target.value)}
-            placeholder={t("session.followUp")}
-          />
-          <Button className="min-h-9 min-w-20" type="submit">
-            {t("session.send")}
-          </Button>
+          <div className="w-full px-[2px]">
+            <textarea
+              rows={4}
+              className={COMPOSER_CLASS}
+              value={followUp}
+              onChange={(e) => setFollowUp(e.target.value)}
+              onKeyDown={submitOnEnter}
+              aria-keyshortcuts="Enter Shift+Enter"
+              placeholder={t("session.followUp")}
+            />
+          </div>
+          <div className="flex w-full items-center gap-2">
+            <div className="me-auto flex items-center gap-2">
+              <InfoTip text={t("session.modeHelp")} />
+              <select
+                aria-label={t("session.mode")}
+                className={inputClass}
+                value={s.permissionMode ?? "default"}
+                onChange={(e) =>
+                  void call(() =>
+                    request("session.setMode", { mode: e.target.value as typeof mode }),
+                  )
+                }
+              >
+                {MODES.map((m) => (
+                  <option key={m} value={m}>
+                    {t(`session.mode.${m}`)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <Button className="min-h-9 min-w-20" type="submit">
+              {t("session.send")}
+            </Button>
+          </div>
         </form>
       )}
     </div>

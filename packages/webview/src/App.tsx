@@ -174,7 +174,7 @@ function Dashboard() {
         id={`panel-${active}`}
         role="tabpanel"
         aria-labelledby={`tab-${active}`}
-        className="min-h-0 flex-1 overflow-auto"
+        className={cn("min-h-0 flex-1", active === "session" ? "overflow-hidden" : "overflow-auto")}
       >
         {active === "setup" && <SetupPage />}
         {active === "overview" && (

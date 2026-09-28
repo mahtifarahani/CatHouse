@@ -3,6 +3,7 @@ import { cn } from "@cathouse/ui";
 import { useMemo } from "react";
 import { t } from "../lib/strings";
 import { mmss, oneLine, shortTool } from "./format";
+import { MarkdownText } from "./MarkdownText";
 import { toTranscript } from "./useSession";
 
 export function Transcript({ events }: { events: SessionEvent[] }) {
@@ -14,8 +15,8 @@ export function Transcript({ events }: { events: SessionEvent[] }) {
         switch (it.type) {
           case "user":
             return (
-              <li key={key} className="rounded-sm bg-secondary px-2 py-1 whitespace-pre-wrap">
-                {it.text}
+              <li key={key} className="rounded-sm bg-secondary px-2 py-1">
+                <MarkdownText>{it.text}</MarkdownText>
               </li>
             );
           case "init":
@@ -29,11 +30,8 @@ export function Transcript({ events }: { events: SessionEvent[] }) {
             );
           case "text":
             return (
-              <li
-                key={key}
-                className={cn("whitespace-pre-wrap", it.nested && "ms-4 text-muted-foreground")}
-              >
-                {it.text}
+              <li key={key} className={cn(it.nested && "ms-4 text-muted-foreground")}>
+                <MarkdownText>{it.text}</MarkdownText>
               </li>
             );
           case "tool":
