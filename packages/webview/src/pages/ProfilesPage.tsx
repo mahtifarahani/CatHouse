@@ -50,11 +50,14 @@ export function ProfilesPage() {
   >();
 
   const loaded = state.data?.profile;
+  const draftRef = useRef(draft);
+  draftRef.current = draft;
   useEffect(() => {
-    if (loaded && (!draft || draft.base.name !== loaded.name || dirtyCount(draft) === 0)) {
+    const current = draftRef.current;
+    if (loaded && (!current || current.base.name !== loaded.name || dirtyCount(current) === 0)) {
       dispatch({ type: "reset", base: loaded });
     }
-  }, [loaded, draft]);
+  }, [loaded]);
 
   const dirty = draft ? dirtyCount(draft) : 0;
   useEffect(() => {
@@ -97,10 +100,12 @@ export function ProfilesPage() {
       setMsg({ tone: "ok", text: ok });
       toast(ok, "ok");
       state.refresh();
+      return true;
     } catch (e) {
       const text = errorText(e);
       setMsg({ tone: "bad", text });
       toast(text, "bad");
+      return false;
     }
   };
 
@@ -211,7 +216,9 @@ export function ProfilesPage() {
               void act(
                 () => request("profiles.create", { name: n, from: shown }),
                 t("profiles.created", { name: n }),
-              ).then(() => setName(n));
+              ).then((created) => {
+                if (created) setName(n);
+              });
             }}
           >
             {t("profiles.new")}
@@ -226,7 +233,9 @@ export function ProfilesPage() {
                 void act(
                   () => request("profiles.remove", { name: shown }),
                   t("profiles.removed", { name: shown }),
-                ).then(() => setName(undefined));
+                ).then((removed) => {
+                  if (removed) setName(undefined);
+                });
               }}
             >
               {confirmDelete ? t("profiles.deleteConfirm") : t("profiles.delete")}

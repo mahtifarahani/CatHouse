@@ -2,6 +2,7 @@
 
 | Doc | What it holds |
 |---|---|
+| [`../README.md`](../README.md) | Public project overview, features, requirements, getting started, development and release status |
 | [`../AGENTS.md`](../AGENTS.md) | Entry point for any agent: goal, rules, stack, layout |
 | [`STATUS.md`](STATUS.md) | Live checklist of phases, the exact next step, environment facts, open risks |
 | [`plan.md`](plan.md) | The approved execution plan (Persian with English identifiers) |

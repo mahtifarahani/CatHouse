@@ -70,4 +70,18 @@ describe("profile draft", () => {
     expect(d.doc.timeouts.idleMin).toBe(20);
     expect(dirtyCount(d)).toBe(1);
   });
+
+  it("stages a role checkbox toggle", () => {
+    let d = initDraft(base);
+    d = draftReducer(d, {
+      type: "edit",
+      fn: (x) => {
+        const worker = x.roles.worker as NonNullable<(typeof x.roles)[string]>;
+        x.roles.worker = { ...worker, enabled: false };
+      },
+    });
+    expect(d.doc.roles.worker?.enabled).toBe(false);
+    expect(dirtyCount(d)).toBe(1);
+    expect(d.past).toHaveLength(1);
+  });
 });

@@ -31,20 +31,26 @@ export function usePoll<T>(
   const loadRef = useRef(load);
   loadRef.current = load;
   const inFlight = useRef(false);
+  const rerun = useRef(false);
 
   const run = useCallback(async () => {
-    if (inFlight.current) return;
-    inFlight.current = true;
-    try {
-      setData(await loadRef.current());
-      setError(undefined);
-      setUpdatedAt(Date.now());
-    } catch (e) {
-      setError(errorText(e));
-    } finally {
-      inFlight.current = false;
-      setLoading(false);
+    if (inFlight.current) {
+      rerun.current = true;
+      return;
     }
+    inFlight.current = true;
+    do {
+      rerun.current = false;
+      try {
+        setData(await loadRef.current());
+        setError(undefined);
+        setUpdatedAt(Date.now());
+      } catch (e) {
+        setError(errorText(e));
+      }
+    } while (rerun.current);
+    inFlight.current = false;
+    setLoading(false);
   }, []);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: `key` restarts polling on purpose
