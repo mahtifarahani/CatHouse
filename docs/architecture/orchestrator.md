@@ -1,6 +1,6 @@
 # Orchestrator session
 
-Status: **built in Phase 1** (session, controller, event mapper, panel wiring). The multi-repo picker, permission-mode selector and cancel-role note come in Phase 4. Source: `packages/extension/src/orchestrator/`.
+Status: **built in Phases 1 and 4** (session, controller, event mapper, panel wiring; repo picker, permission modes, prompt badge/notification, cancel-role note, Continue, compaction marker). Source: `packages/extension/src/orchestrator/`.
 
 ## Pieces
 
@@ -56,6 +56,15 @@ Methods: `session.state`, `session.start {task, repo?}`, `session.resume {repo?}
 `packages/webview/src/session/`: `useSession` (snapshot + live events), `toTranscript` (folds tool_use + result + progress), `Transcript`, `PromptCard` (question with options, multi-select and "Other"; permission with Allow once / Always / Deny + note), `SessionPage` (task form, Resume, Interrupt/Stop, follow-up). The sidebar shows the phase, run id and the count of pending prompts.
 
 
+## Phase 4 additions
+
+- **Repo:** `app.workspace` lists the workspace folders and the selected repo; `app.setRepo` changes it (stored in `workspaceState["cathouse.repo.v1"]`, broadcast on topic `app`). `repoFor()` in `extension.ts` resolves requested → selected → first folder. The per-repo gateway follows the selection. One orchestrator session per window, on the repo it started in.
+- **Permission mode:** `session.start {permissionMode}` (default `default`; also `acceptEdits`, `plan`, `auto`) and `session.setMode` (→ `query.setPermissionMode`). catherd's own tools stay allowed in every mode (ADR 0002).
+- **Waiting prompts:** the controller calls `onPromptsChanged(count, latest)`. The extension shows the count as the activity-bar badge (`SidebarProvider.setBadge`) and, if the dashboard panel isn't visible, a notification ("the orchestrator has a question / asks to use X") with an Open action.
+- **Cancel note:** `runs.cancelRole` calls `controller.noteRoleCancelled(run, name, status)`, which sends the live session a message (its `wait` will never return that record; ADR 0005).
+- **Continue:** a run's detail page has "Continue in orchestrator" (→ `session.resume`, then the Orchestrator tab).
+- **Compaction:** `system/compact_boundary` → `{kind: "compacted"}` → a warning line in the transcript (the skill is known to decay after compaction; `docs/research/catherd-known-issues.md`).
+
 ## Tests
 
-`events.test.ts` (init, run_started, failed run_start, heartbeat, task/result) and `controller.test.ts` (start prompt + link, single session, missing plugin, resume without task, fresh fallback, prompt round-trip + kind mismatch, deny on stop, follow-ups).
+`events.test.ts` (init, run_started, failed run_start, heartbeat, task/result) and `controller.test.ts` (start prompt + link, single session, missing plugin, resume without task, fresh fallback, prompt round-trip + kind mismatch, deny on stop, follow-ups, prompt count + permission mode). E2E `pages.e2e.ts` covers `app.workspace` / `app.setRepo`.

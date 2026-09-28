@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Phase 4: repo picker, permission modes, prompt badge/notification, cancel note to the live orchestrator, Continue from a run, compaction marker.
 - Phase 3: Overview, Runs (list + detail with cancel, climbs, routes, records, debug), Profiles editor (staged draft, undo/redo, diff preview, treat-like), Models, Diagnostics; per-repo gateway; run files via MCP `read_run_file`.
 - Phase 2: mandatory Setup (detectors, click-only installers, gate, Setup page, `CatHouse: Check Setup`); verified on a fresh HOME end to end.
 - Phase 1: catherd gateway (CLI + MCP, allowlist, compat pins, fixtures, live contract tests); orchestrator session on the Agent SDK with prompt cards, run↔session links and resume; Session page; spikes a/b/d green.

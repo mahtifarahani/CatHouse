@@ -4,7 +4,7 @@ Last updated: 2026-09-28. Update this file at the end of every section.
 
 ## Current phase
 
-**Phase 3 (main pages): done.** Next: **Phase 4 (run control polish)**, then Phase 5 (release).
+**Phase 4 (run control): done** (owner re-check of the live prompt flow pending). Next: **Phase 5 (release prep: platform VSIX with the SDK binary, remote, a11y, themes)**.
 
 ## Checklist
 
@@ -15,8 +15,8 @@ Last updated: 2026-09-28. Update this file at the end of every section.
 | 1 | Proof of execution + risk spikes (long `wait`, native agents, canUseTool, resume) | ✅ done | `docs/spikes/phase1.md`, `docs/architecture/orchestrator.md`, `docs/architecture/gateway.md` |
 | 2 | Mandatory Setup | ✅ done | `docs/architecture/setup.md` |
 | 3 | Main pages (Overview, Runs, Profiles, Models, Diagnostics) | ✅ done | `docs/architecture/webview.md`, parity checklist ticks in `docs/research/catherd-tui-parity.md` |
-| 4 | Run control in UI (start, prompts, cancel, resume) | ⏭ next (core done in Phase 1) | `docs/architecture/orchestrator.md` |
-| 5 | Release prep (remote, trust, a11y, themes, VSIX per platform) | ⬜ | `docs/runbook.md`, `docs/CHANGELOG.md` |
+| 4 | Run control in UI (start, prompts, cancel, resume) | ✅ done | `docs/architecture/orchestrator.md` |
+| 5 | Release prep (remote, trust, a11y, themes, VSIX per platform) | ⏭ next | `docs/runbook.md`, `docs/CHANGELOG.md` |
 
 ## Phase 0 outcome
 
@@ -37,18 +37,16 @@ Setup is built and verified end to end (`docs/architecture/setup.md`): detectors
 
 Pages built (`docs/architecture/webview.md` §Pages) on a per-repo `CatherdGateway` (`docs/architecture/gateway.md`). ADR 0007 was revised: run files are read via MCP `read_run_file`, so there are no disk reads. The TUI parity checklist is ticked where built; 8 items remain open or partial (marked in the checklist), plus three public-surface gaps. Verified: 65 unit tests; e2e `pages.e2e.ts` against real catherd (runs list/detail/reply/debug, profiles, catalog, unchanged save), which caught two live contract details (object `treatLike`, `name: null`). **Visual check of the pages in VS Code by the owner: pending.**
 
-## Exact next step (Phase 4)
+## Phase 4 outcome
 
-1. Owner: open the dashboard in VS Code (reload the dev-host window, or F5 "Run CatHouse" on a repo with runs) and look through every tab in Light / Dark / High Contrast; report anything off.
-2. Phase 4 polish (plan §مرحلهٔ ۴):
-   - Start form: repo picker over workspace folders (multi-root: one gateway + one session per repo), permission-mode selector (`setPermissionMode`).
-   - Notifications when a prompt card waits and the panel is hidden (`vscode.window.showInformationMessage` with an "Open" action; a badge on the view).
-   - "Continue" on a run in the Runs list: resume its saved session (links store) or a fresh `/catherd:catherd`.
-   - A `compact_boundary` marker in the transcript (the skill decays after compaction; known issue).
-   - Filter `CLAUDE_SDK_CAN_USE_TOOL_SHADOWED` out of the OutputChannel.
-   - The open/partial parity items in `docs/research/catherd-tui-parity.md` (unticked): header status, notifications, profile help lines + filter, confirm dialogs, unsaved-changes guard on panel close, edits during save.
-   - Re-verify spike (c) details: question card, permission card, reload → Resume (owner).
-3. Update `docs/architecture/orchestrator.md`, tick Phase 4 here.
+Repo picker, permission modes, prompt badge + notification, cancel note, Continue from a run, compaction marker, Discard confirm (`docs/architecture/orchestrator.md` §Phase 4). 67 unit + 5 e2e green. Still open from the parity list: header status line, profile help lines + filter, confirm dialogs for activate, unsaved-changes guard on panel close, edits during save (`docs/research/catherd-tui-parity.md`, unticked).
+
+## Exact next step (Phase 5)
+
+1. **Platform VSIX (ADR 0008):** ship `node_modules/@anthropic-ai/claude-agent-sdk` + its platform package (+ the SDK's runtime deps) inside the VSIX. `vsce package --no-dependencies` can't do this, so stage a `dist-pkg/` folder (manifest + dist + a pruned `node_modules` with only the SDK for one target) and package that with `--target <platform>`. Verify by installing the VSIX into VS Code with `--install-extension` and running the Setup e2e against the installed copy (bundled Claude resolves).
+2. Remote (SSH / Dev Containers): `extensionKind: workspace` is set; test on a remote if available, otherwise document as untested.
+3. Accessibility pass (keyboard-only walk, focus order, ARIA on tabs and dialogs) and a High Contrast check; the owner does the visual pass.
+4. README for the Marketplace-style listing (installing the VSIX, requirements, what Setup does), CHANGELOG, version 0.1.0.
 
 ## Environment facts (planning machine, 2026-09-28)
 
