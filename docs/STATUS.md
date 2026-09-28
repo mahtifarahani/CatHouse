@@ -35,7 +35,7 @@ Setup is built and verified end to end (`docs/architecture/setup.md`): detectors
 
 ## Phase 3 outcome
 
-Pages built (`docs/architecture/webview.md` §Pages) on a per-repo `CatherdGateway` (`docs/architecture/gateway.md`). ADR 0007 was revised: run files are read via MCP `read_run_file`, so there are no disk reads. The TUI parity checklist is ticked, with three documented gaps. Verified: 65 unit tests; e2e `pages.e2e.ts` against real catherd (runs list/detail/reply/debug, profiles, catalog, unchanged save), which caught two live contract details (object `treatLike`, `name: null`). **Visual check of the pages in VS Code by the owner: pending.**
+Pages built (`docs/architecture/webview.md` §Pages) on a per-repo `CatherdGateway` (`docs/architecture/gateway.md`). ADR 0007 was revised: run files are read via MCP `read_run_file`, so there are no disk reads. The TUI parity checklist is ticked where built; 8 items remain open or partial (marked in the checklist), plus three public-surface gaps. Verified: 65 unit tests; e2e `pages.e2e.ts` against real catherd (runs list/detail/reply/debug, profiles, catalog, unchanged save), which caught two live contract details (object `treatLike`, `name: null`). **Visual check of the pages in VS Code by the owner: pending.**
 
 ## Exact next step (Phase 4)
 
@@ -46,6 +46,7 @@ Pages built (`docs/architecture/webview.md` §Pages) on a per-repo `CatherdGatew
    - "Continue" on a run in the Runs list: resume its saved session (links store) or a fresh `/catherd:catherd`.
    - A `compact_boundary` marker in the transcript (the skill decays after compaction; known issue).
    - Filter `CLAUDE_SDK_CAN_USE_TOOL_SHADOWED` out of the OutputChannel.
+   - The open/partial parity items in `docs/research/catherd-tui-parity.md` (unticked): header status, notifications, profile help lines + filter, confirm dialogs, unsaved-changes guard on panel close, edits during save.
    - Re-verify spike (c) details: question card, permission card, reload → Resume (owner).
 3. Update `docs/architecture/orchestrator.md`, tick Phase 4 here.
 
