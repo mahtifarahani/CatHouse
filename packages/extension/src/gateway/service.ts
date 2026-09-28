@@ -60,7 +60,11 @@ const CatalogQuerySchema = z.looseObject({
           enabled: z.boolean(),
           why: z.string().optional(),
           scores: z.record(z.string(), z.unknown()).optional(),
-          treatLike: z.string().nullable().optional(),
+          // {like, source: "shipped" | "user"} in 1.0.0; a bare string is accepted too.
+          treatLike: z
+            .union([z.string(), z.looseObject({ like: z.string(), source: z.string().optional() })])
+            .nullable()
+            .optional(),
           cost: z
             .looseObject({ tier: z.number().optional(), mode: z.string().optional() })
             .optional(),
@@ -322,7 +326,10 @@ export class CatherdGateway {
           enabled: r.enabled,
           ...(r.why ? { why: r.why } : {}),
           scored: Object.keys(r.scores ?? {}).length > 0,
-          treatLike: r.treatLike ?? null,
+          treatLike:
+            typeof r.treatLike === "object" && r.treatLike
+              ? r.treatLike.like
+              : (r.treatLike ?? null),
           ...(r.cost?.tier === undefined ? {} : { costTier: r.cost.tier }),
           ...(r.cost?.mode ? { costMode: r.cost.mode } : {}),
         })),
