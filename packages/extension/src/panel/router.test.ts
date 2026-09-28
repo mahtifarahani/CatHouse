@@ -18,7 +18,6 @@ function router(overrides: Partial<Handlers<typeof ctx>> = {}) {
   return createRouter<typeof ctx>({
     ...unused,
     "app.ping": (_p, c) => ({ pong: true, extensionVersion: "1.2.3", protocol: 1, view: c.view }),
-    "app.openDashboard": () => ({ opened: true }),
     ...overrides,
   });
 }

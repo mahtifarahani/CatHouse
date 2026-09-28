@@ -10,7 +10,6 @@ import { CatherdGateway } from "./gateway/service";
 import { type SavedLink, SessionController } from "./orchestrator/controller";
 import { findCatherdPlugin } from "./orchestrator/plugin";
 import { OrchestratorSession } from "./orchestrator/session";
-import { DashboardPanel } from "./panel/dashboard";
 import { Broadcaster, type MessageSink } from "./panel/host";
 import { createRouter, HandlerError } from "./panel/router";
 import { SidebarProvider } from "./panel/sidebar";
@@ -91,12 +90,12 @@ export function activate(context: vscode.ExtensionContext): void {
     log: (line) => output.info(line),
     onPromptsChanged: (count, latest) => {
       sidebar.setBadge(count);
-      if (latest && !DashboardPanel.visible) {
+      if (latest && !sidebar.visible) {
         const what =
           latest.kind === "question" ? "has a question" : `asks to use ${latest.toolName}`;
         void vscode.window
           .showInformationMessage(`CatHouse: the orchestrator ${what}.`, "Open")
-          .then((pick) => pick && openDashboard());
+          .then((pick) => pick && sidebar.show());
       }
     },
   });
@@ -112,7 +111,7 @@ export function activate(context: vscode.ExtensionContext): void {
       throw new HandlerError(
         "E_SETUP_REQUIRED",
         s.canStartReason ?? "finish Setup first",
-        "open the Setup page in the CatHouse dashboard",
+        "open the Setup tab in CatHouse",
       );
     }
   };
@@ -137,8 +136,6 @@ export function activate(context: vscode.ExtensionContext): void {
     t.sendText(command);
   };
 
-  const openDashboard = () => DashboardPanel.show(context.extensionUri, sink);
-
   const handle = createRouter<RequestContext>({
     "app.ping": (_params, ctx) => ({
       pong: true,
@@ -146,10 +143,6 @@ export function activate(context: vscode.ExtensionContext): void {
       protocol: PROTOCOL_VERSION,
       view: ctx.view,
     }),
-    "app.openDashboard": () => {
-      openDashboard();
-      return { opened: true };
-    },
     "app.workspace": () => ({
       folders: (vscode.workspace.workspaceFolders ?? []).map((f) => ({
         path: f.uri.fsPath,
@@ -276,13 +269,12 @@ export function activate(context: vscode.ExtensionContext): void {
     { dispose: () => controller.dispose() },
     { dispose: () => void gateway?.dispose() },
     vscode.window.registerWebviewViewProvider(SidebarProvider.viewId, sidebar),
-    vscode.commands.registerCommand("cathouse.openDashboard", openDashboard),
     vscode.commands.registerCommand("cathouse.checkSetup", () => setup.check({ readiness: true })),
     // Hidden (not in package.json): e2e tests call the webview protocol through the same router.
     vscode.commands.registerCommand("cathouse._request", (method: string, params: unknown) =>
       handle(
         { v: PROTOCOL_VERSION, id: "e2e", kind: "request", method, params },
-        { view: "dashboard" },
+        { view: "sidebar" },
       ),
     ),
     // Hidden (not in package.json): lets e2e tests press a Setup button. Returns the new state.

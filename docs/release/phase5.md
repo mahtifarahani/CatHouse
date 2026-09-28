@@ -34,7 +34,7 @@ Results: 68 unit tests passed (7 opt-in/live tests skipped); default e2e run 2 p
 ## Invariants and traps
 
 - CatHouse still does not write catherd files and does not call forbidden orchestrator tools.
-- `beforeunload` is the only browser lifecycle hook available to a `WebviewPanel`; VS Code has no cancellable `onWillDispose` event and not every close path guarantees a browser dialog. The exact serializable draft is therefore also persisted through `acquireVsCodeApi().setState` and restored on reopen. Profile switching and Discard use an explicit in-webview confirmation.
+- `beforeunload` is the only browser lifecycle hook available inside the webview; VS Code exposes no cancellable view-dispose event and not every close path guarantees a browser dialog. The exact serializable draft is therefore also persisted through `acquireVsCodeApi().setState` and restored on reopen. Profile switching and Discard use an explicit in-webview confirmation.
 - Keep the query cache key on both `index.js` and `index.css`; fixed Vite filenames otherwise survive some Extension Development Host reloads.
 - A live remote test must install the Linux-target VSIX on the remote extension host; running only the UI locally does not verify workspace-extension placement.
 

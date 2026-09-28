@@ -66,7 +66,7 @@ pnpm build
 | `pnpm package` | build + platform VSIX for this machine → `dist/cathouse-<target>-<version>.vsix` (~96–105 MB: includes the Agent SDK's Claude binary; ADR 0008) |
 | `pnpm package:all` | VSIX for darwin-arm64, darwin-x64, linux-x64, linux-arm64 (other targets' binaries fetched with `npm pack`) |
 
-**Run in a dev host:** open the repo in VS Code (or Cursor), press F5 and pick **Run CatHouse** (`.vscode/launch.json`; its preLaunchTask runs `pnpm build`). The activity bar shows the CatHouse icon. Its sidebar has "Open dashboard" and "Check connection" (an `app.ping` round-trip).
+**Run in a dev host:** open the repo in VS Code (or Cursor), press F5 and pick **Run CatHouse** (`.vscode/launch.json`; its preLaunchTask runs `pnpm build`). The Activity Bar shows the CatHouse icon; selecting it opens the complete application directly, with New Chat as the default tab after Setup is complete.
 
 **Install the VSIX:** `code --install-extension dist/cathouse-<target>-<version>.vsix` (or Extensions → … → Install from VSIX). To test without touching your real extensions: `code --extensions-dir <tmp> --install-extension …`, then `CATHOUSE_E2E_EXT_PATH=<tmp>/cathouse.cathouse-<version> npx vscode-test` in `packages/extension`.
 

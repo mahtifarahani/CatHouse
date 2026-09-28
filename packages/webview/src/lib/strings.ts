@@ -1,9 +1,6 @@
 // User-facing strings live here (ADR 0004). Replace with @vscode/l10n bundles when a second
 // locale is added; call sites keep using t().
 const en = {
-  "app.title": "CatHouse",
-  "app.tagline": "herds coding agents",
-  "sidebar.openDashboard": "Open dashboard",
   "session.title": "Orchestrator",
   "session.taskLabel": "Task for catherd",
   "session.taskPlaceholder":
@@ -17,9 +14,6 @@ const en = {
   "session.transcript": "Session transcript",
   "session.runStarted": "catherd run {run} started",
   "session.turnEnded": "turn ended: {subtype} · {cost}",
-  "sidebar.phase": "Session: {phase}",
-  "sidebar.setupRequired": "Setup needed before CatHouse can run catherd.",
-  "sidebar.openSetup": "Open Setup",
   "app.repo": "Repository:",
   "app.noFolder": "Open a folder (a git repository) to run tasks and see its runs.",
   "runs.continue": "Continue in orchestrator",
@@ -35,7 +29,7 @@ const en = {
   "session.compacted":
     "The conversation was compacted. catherd runs can lose track of their protocol after this; check that routing, the reviewer and the verifier still run.",
   "tabs.setup": "Setup",
-  "tabs.session": "Orchestrator",
+  "tabs.session": "New Chat",
   "tabs.overview": "Overview",
   "tabs.runs": "Runs",
   "tabs.profiles": "Profiles",
@@ -238,7 +232,6 @@ const en = {
   "setup.done": "{action} finished",
   "setup.output": "Output",
   "session.blocked": "Tasks can't start yet: {reason}",
-  "sidebar.pending": "{count} waiting for you",
   "prompt.question.title": "The orchestrator asks",
   "prompt.question.other": "Other (type your own answer)",
   "prompt.question.submit": "Answer",

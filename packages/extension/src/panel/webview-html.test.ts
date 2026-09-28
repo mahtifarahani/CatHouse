@@ -6,7 +6,6 @@ const html = buildWebviewHtml({
   scriptUri: "vscode-resource:/dist/webview/index.js",
   styleUri: "vscode-resource:/dist/webview/index.css",
   nonce: "abc123",
-  view: "dashboard",
   title: "CatHouse",
 });
 
@@ -19,8 +18,8 @@ describe("webview html", () => {
     expect(html).not.toContain("unsafe-eval");
   });
 
-  it("tags the script with the nonce and the root with the view", () => {
+  it("tags the script with the nonce", () => {
     expect(html).toContain('nonce="abc123" src="vscode-resource:/dist/webview/index.js"');
-    expect(html).toContain('data-view="dashboard"');
+    expect(html).toContain('<div id="root"></div>');
   });
 });

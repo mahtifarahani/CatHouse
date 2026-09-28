@@ -16,10 +16,10 @@ E2E env switches: `CATHOUSE_EXPECT_READY=1` (prepared machine), `CATHOUSE_EXPECT
 
 `CATHOUSE_E2E_WORKSPACE=<git repo with catherd runs>` enables `pages.e2e.ts` (runs, profiles, catalog through the real router via the hidden `cathouse._request` command).
 
-Current tests: 68 unit (protocol, router, CSP, compat, gateway, event mapper, controller, profile draft/rebase), 7 live contract, 5 e2e scenarios (activation; Setup on the real machine; pages: runs, workspace/repo selection, profiles/catalog).
+Current tests: 68 unit (protocol, router, CSP, compat, gateway, event mapper, controller, profile draft/rebase), 7 live contract, 5 e2e scenarios (Activity Bar activation; Setup on the real machine; pages: runs, workspace/repo selection, profiles/catalog).
 
 **E2E status (2026-09-28): green in VS Code 1.139 (macOS).** The default command has 2 passing and 3 pending because page tests require `CATHOUSE_E2E_WORKSPACE`; the prepared-workspace run has all 5 scenarios.
-- The dashboard tab appears asynchronously after `executeCommand` resolves, so the test polls (`waitFor`, 5 s).
+- Activation verifies that the contributed `cathouse.sidebar.focus` command opens the one full Activity Bar view and that the removed `cathouse.openDashboard` command is absent.
 - **Cursor cannot run the e2e tests:** Cursor 3.21.18 (VS Code 1.128 base) logs `Loading development extension …` in its test host but never registers the extension (`vscode.extensions.all` lacks it; extension-path mappings are empty). Workspace trust is not the cause. Its "glass mode" is suspected. The config therefore prefers VS Code.
 - Nothing is downloaded: `@vscode/test-electron`'s ~300 MB download was dropped on the owner's request.
 
@@ -28,8 +28,8 @@ Current tests: 68 unit (protocol, router, CSP, compat, gateway, event mapper, co
 |---|---|---|---|
 | Unit | vitest | gateway adapters (raw → protocol) on recorded fixtures; stderr error parser; SDK message → event mapper; profile draft reducer and patch diff; allowlist of MCP tools (forbidden tools rejected) | no |
 | Contract | vitest, tagged `contract` | real `catherd-cli@1.0.0` in an isolated env (`CATHERD_HOME`, `CLAUDE_CONFIG_DIR`, `CATHERD_CLAUDE_AGENTS_DIR` in temp dirs): `init --no-input` → `doctor --json` → MCP `profile_set` valid/invalid → `profile_validate` → `catalog_query` → `status`. Records fixtures to `packages/compat/fixtures/1.0.0/` | Bun + network on first run |
-| E2E | `@vscode/test-electron` | fresh install (temp HOME) shows only Setup; old Bun / stale plugin / missing CLI / failed install each show a specific message and action; the dashboard opens after Setup passes | depends on scenario |
+| E2E | `@vscode/test-electron` | fresh install (temp HOME) shows only Setup; old Bun / stale plugin / missing CLI / failed install each show a specific message and action; the full Activity Bar view opens directly | depends on scenario |
 | Manual E2E | human + checklist | a 3-lane task on a scratch repo from the UI; live roles; answer a question and a permission card; reload mid-run → Continue the same run (verify no duplicate with `catherd runs list --json`); cancel a role; edit a profile, treat-like, refresh models, see a doctor failure | real accounts |
-| Visual | manual screenshots | sidebar and panel in Light, Dark, High Contrast | no |
+| Visual | manual screenshots | full Activity Bar view in Light, Dark, High Contrast | no |
 
 Fixtures are real catherd output, redacted. When catherd's version changes, re-record them under a new version folder and add an adapter entry to `compat.json`.

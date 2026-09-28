@@ -1,6 +1,6 @@
 // Kept free of the `vscode` module so it can be unit-tested with plain vitest.
 
-export type WebviewView = "sidebar" | "dashboard";
+export type WebviewView = "sidebar";
 
 export interface WebviewHtmlInput {
   /** `webview.cspSource` */
@@ -10,7 +10,6 @@ export interface WebviewHtmlInput {
   /** `webview.asWebviewUri(dist/webview/index.css)` as a string */
   styleUri: string;
   nonce: string;
-  view: WebviewView;
   title: string;
 }
 
@@ -40,7 +39,7 @@ export function buildWebviewHtml(i: WebviewHtmlInput): string {
 <link rel="stylesheet" href="${escapeAttr(i.styleUri)}">
 </head>
 <body>
-<div id="root" data-view="${i.view}"></div>
+<div id="root"></div>
 <script type="module" nonce="${escapeAttr(i.nonce)}" src="${escapeAttr(i.scriptUri)}"></script>
 </body>
 </html>`;

@@ -45,6 +45,8 @@ Repo picker, permission modes, prompt badge + notification, cancel note, Continu
 
 All eight remaining public-surface parity items are ticked. The dashboard has a live status line and ARIA tab navigation; Profiles has help, `/` filtering, accessible activation/revert/switch dialogs, dirty-close guarding, and a tested three-way rebase for edits made during Save. Toasts use an accessible live region and model usability is not colour-only. Light Modern, Dark Modern and Dark High Contrast were inspected in the real Extension Development Host; Arrow-key tab navigation was verified through the accessibility tree. A stale-webview bug found during the pass was fixed with per-attach cache keys. Verification: lint, 68 unit tests, typecheck, build, and default e2e (2 passed, 3 workspace-dependent pending). Full report: `docs/release/phase5.md`.
 
+Post-checkpoint UX correction: the status-only sidebar, Open Dashboard button and separate editor panel were removed. The entire app now renders directly in the CatHouse Activity Bar view, notifications reveal that view, and New Chat is the default tab for each fresh webview load. This exact layout and default selection were verified in the real Extension Development Host.
+
 ## Exact next step (Phase 5)
 
 1. Owner chooses the publisher id, SPDX license, and whether to publish as `0.1.0`; update the manifest and generate the license file.

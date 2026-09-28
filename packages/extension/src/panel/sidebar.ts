@@ -1,4 +1,4 @@
-import type * as vscode from "vscode";
+import * as vscode from "vscode";
 import { attachWebview, type Broadcaster, type MessageSink } from "./host";
 
 type Sink = MessageSink & { broadcaster: Broadcaster };
@@ -17,11 +17,21 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   resolveWebviewView(view: vscode.WebviewView): void {
     this.view = view;
     this.setBadge(this.badge);
-    const sub = attachWebview(view.webview, this.extensionUri, "sidebar", this.sink);
+    const sub = attachWebview(view.webview, this.extensionUri, this.sink);
     view.onDidDispose(() => {
       sub.dispose();
       this.view = undefined;
     });
+  }
+
+  get visible(): boolean {
+    return this.view?.visible === true;
+  }
+
+  /** Reveal the one CatHouse surface in the Activity Bar. */
+  async show(): Promise<void> {
+    await vscode.commands.executeCommand("cathouse.sidebar.focus");
+    this.view?.show(false);
   }
 
   /** Pending prompt cards, shown on the activity-bar icon. */

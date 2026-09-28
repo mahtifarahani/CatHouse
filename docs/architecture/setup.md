@@ -71,7 +71,7 @@ Setup works without an open folder: catherd commands then run in the home direct
 
 ## UI
 
-`SetupPage` groups items by level ("Required to use CatHouse" / "Required to start tasks" / "Optional"), with a state glyph, detail, action button (disabled while busy), doctor fix with Copy, a Re-check button, the live output of the running (or last) action, and the result line. The dashboard shows only Setup until `gateOpen`; then it has Orchestrator | Setup tabs, and the Orchestrator's Start/Resume are disabled with `canStartReason`. The sidebar says "Setup needed" and its button opens Setup.
+`SetupPage` groups items by level ("Required to use CatHouse" / "Required to start tasks" / "Optional"), with a state glyph, detail, action button (disabled while busy), doctor fix with Copy, a Re-check button, the live output of the running (or last) action, and the result line. The Activity Bar view shows only Setup until `gateOpen`; then all tabs become available, and New Chat's Start/Resume are disabled with `canStartReason` when readiness is incomplete.
 
 ## Verified (2026-09-28)
 

@@ -53,14 +53,14 @@ Methods: `session.state`, `session.start {task, repo?}`, `session.resume {repo?}
 
 ## Webview
 
-`packages/webview/src/session/`: `useSession` (snapshot + live events), `toTranscript` (folds tool_use + result + progress), `Transcript`, `PromptCard` (question with options, multi-select and "Other"; permission with Allow once / Always / Deny + note), `SessionPage` (task form, Resume, Interrupt/Stop, follow-up). The sidebar shows the phase, run id and the count of pending prompts.
+`packages/webview/src/session/`: `useSession` (snapshot + live events), `toTranscript` (folds tool_use + result + progress), `Transcript`, `PromptCard` (question with options, multi-select and "Other"; permission with Allow once / Always / Deny + note), `SessionPage` (task form, Resume, Interrupt/Stop, follow-up). It is the Activity Bar view's default **New Chat** tab.
 
 
 ## Phase 4 additions
 
 - **Repo:** `app.workspace` lists the workspace folders and the selected repo; `app.setRepo` changes it (stored in `workspaceState["cathouse.repo.v1"]`, broadcast on topic `app`). `repoFor()` in `extension.ts` resolves requested → selected → first folder. The per-repo gateway follows the selection. One orchestrator session per window, on the repo it started in.
 - **Permission mode:** `session.start {permissionMode}` (default `default`; also `acceptEdits`, `plan`, `auto`) and `session.setMode` (→ `query.setPermissionMode`). catherd's own tools stay allowed in every mode (ADR 0002).
-- **Waiting prompts:** the controller calls `onPromptsChanged(count, latest)`. The extension shows the count as the activity-bar badge (`SidebarProvider.setBadge`) and, if the dashboard panel isn't visible, a notification ("the orchestrator has a question / asks to use X") with an Open action.
+- **Waiting prompts:** the controller calls `onPromptsChanged(count, latest)`. The extension shows the count as the Activity Bar badge (`SidebarProvider.setBadge`) and, if the CatHouse view isn't visible, a notification ("the orchestrator has a question / asks to use X") whose Open action reveals that same view.
 - **Cancel note:** `runs.cancelRole` calls `controller.noteRoleCancelled(run, name, status)`, which sends the live session a message (its `wait` will never return that record; ADR 0005).
 - **Continue:** a run's detail page has "Continue in orchestrator" (→ `session.resume`, then the Orchestrator tab).
 - **Compaction:** `system/compact_boundary` → `{kind: "compacted"}` → a warning line in the transcript (the skill is known to decay after compaction; `docs/research/catherd-known-issues.md`).

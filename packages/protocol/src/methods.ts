@@ -17,12 +17,8 @@ export const methods = {
       pong: z.literal(true),
       extensionVersion: z.string(),
       protocol: z.literal(PROTOCOL_VERSION),
-      view: z.enum(["sidebar", "dashboard"]),
+      view: z.literal("sidebar"),
     }),
-  },
-  "app.openDashboard": {
-    params: z.object({}),
-    result: z.object({ opened: z.literal(true) }),
   },
   "app.workspace": {
     params: z.object({}),

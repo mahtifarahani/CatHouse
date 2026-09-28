@@ -12,13 +12,13 @@ packages/ui/src/{theme.css, cn.ts, components/button.tsx, index.ts}
 packages/webview/{vite.config.ts, src/{main.tsx, App.tsx, index.css, lib/{rpc,strings}.ts}}
 packages/extension/{package.json (VS Code manifest), package.nls.json, l10n/, media/cathouse.svg,
   build.mjs, .vscodeignore, .vscode-test.mjs,
-  src/extension.ts, src/panel/{router,webview-html,host,sidebar,dashboard}.ts (+ tests),
+  src/extension.ts, src/panel/{router,webview-html,host,sidebar}.ts (+ tests),
   src/test/e2e/activation.e2e.ts}
 ```
 
 Workspace packages export TypeScript source (`"exports": {".": "./src/index.ts"}`). Vite and esbuild compile them, so there is no per-package build step.
 
-Manifest facts: `engines.vscode ^1.100.0`, `extensionKind: ["workspace"]`, `untrustedWorkspaces.supported: false`, `virtualWorkspaces: false`, activation inferred from contributions (the view and the `cathouse.openDashboard` command). The extension id is `cathouse.cathouse`.
+Manifest facts: `engines.vscode ^1.100.0`, `extensionKind: ["workspace"]`, `untrustedWorkspaces.supported: false`, `virtualWorkspaces: false`, activation inferred from the contributed Activity Bar view. The extension id is `cathouse.cathouse`.
 
 See `protocol.md` and `webview.md` for the details.
 
@@ -34,7 +34,7 @@ VS Code window
 │   │    └─ RunFilesReader ─read─► <data>/repos/<key>/runs/<id>/routes.jsonl              [ADR 0007]
 │   ├─ OrchestratorSession (per active run) ── Agent SDK query() ──► bundled Claude Code binary
 │   │        └─ loads plugin catherd@1.0.0 from installPath → its own `catherd mcp` (the orchestrator's)
-│   ├─ Panel host: WebviewView (sidebar) + WebviewPanel (dashboard) ── message router
+│   ├─ Panel host: one full WebviewView in the Activity Bar ── message router
 │   └─ State: workspaceState {runId ↔ sessionId, repo, createdAt}, UI prefs
 └─ Webview (React) ◄── postMessage protocol v1 (zod) ──► panel host
 ```

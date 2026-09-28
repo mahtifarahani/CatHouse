@@ -53,7 +53,7 @@ cathouse/
         run-files.ts              # read-only routes.jsonl reader (zod, versioned)
         adapters/v1_0.ts          # map raw → protocol models; compat matrix
       src/orchestrator/           # OrchestratorSession (Agent SDK)
-      src/panel/                  # WebviewPanel + WebviewView host, message router
+      src/panel/                  # WebviewView host + message router
       src/state/                  # workspaceState: {runId ↔ sessionId}, UI prefs
     compat/        # compat.json: catherd↔plugin↔SDK matrix + contract fixtures
   test/            # contract tests (live catherd), e2e (@vscode/test-electron)
@@ -132,7 +132,7 @@ docs/
 
 ### مرحلهٔ ۰ — اسکلت (۱–۲ روز)
 - pnpm workspace، tsconfig، biome، esbuild برای extension، Vite برای webview، `@vscode/vsce` برای بسته‌بندی.
-- `package.json` افزونه: `engines.vscode`، `activationEvents` (onView/onCommand)، view container در activity bar (آیکن گربه)، یک `WebviewView` (sidebar: وضعیت + runهای زنده) و یک `WebviewPanel` (داشبورد کامل)، `capabilities.untrustedWorkspaces: {supported:false}`، `extensionKind:["workspace"]`.
+- `package.json` افزونه: `engines.vscode`، `activationEvents` (onView/onCommand)، view container در activity bar (آیکن گربه) و یک `WebviewView` شامل کل داشبورد (بدون صفحهٔ واسط یا `WebviewPanel` جدا)، `capabilities.untrustedWorkspaces: {supported:false}`، `extensionKind:["workspace"]`.
 - CSP سخت در webview (nonce، فقط `webview.cspSource`).
 
 ### مرحلهٔ ۱ — اثبات اجرا (spike؛ پیش‌نیاز بقیه)
@@ -169,7 +169,7 @@ docs/
 ### مرحلهٔ ۴ — کنترل اجرا در UI
 - **Start task:** فرم (task، repo انتخابی از workspace folders، profile نمایشی، permission mode)؛ دکمهٔ «Resume latest run».
 - **Session view:** transcript استریم (markdown، tool calls جمع‌شونده، subagentها با `parent_tool_use_id`)، ورودی پیام آزاد (`streamInput`)، Interrupt.
-- **Prompt cards:** AskUserQuestion (۱–۴ سؤال، multiSelect، گزینهٔ Other متنی، preview)، Permission (نام ابزار، command/diff، Allow once/Always/Deny + پیام)؛ badge روی sidebar و notification VS Code وقتی پنل مخفی است. **پیش‌نمایش preflight** (`needsConfirmation`) هم به‌صورت سؤال عادی orchestrator می‌آید.
+- **Prompt cards:** AskUserQuestion (۱–۴ سؤال، multiSelect، گزینهٔ Other متنی، preview)، Permission (نام ابزار، command/diff، Allow once/Always/Deny + پیام)؛ badge روی Activity Bar و notification VS Code وقتی نمای CatHouse مخفی است. **پیش‌نمایش preflight** (`needsConfirmation`) هم به‌صورت سؤال عادی orchestrator می‌آید.
 - **Cancel role:** Gateway `cancel` → اگر session زنده است، `streamInput`: «CatHouse: user cancelled role <name>; record: <status>».
 - **بازسازی پس از reload:** فهرست run از catherd؛ نگاشت run→session از `workspaceState`؛ دکمهٔ Continue طبق منطق resume بالا.
 - یک session فعال per repo (قفل)؛ چند repo در یک پنجره = چند session مستقل.
@@ -186,7 +186,7 @@ docs/
 - **Contract (مقابل catherd 1.0.0 واقعی، `CATHERD_HOME` موقت):** `init --no-input` → `doctor --json` → `profile_set` معتبر/نامعتبر → `profile_validate` → `catalog_query` → `status`؛ fixtureها در `packages/compat/fixtures/1.0.0/` ذخیره و در CI بدون شبکه replay شوند.
 - **E2E (`@vscode/test-electron`):** نصب تازه (HOME موقت) → فقط Setup دیده شود؛ نسخهٔ قدیمی Bun/plugin ناهم‌نسخه/CLI خارج از PATH/نصب ناموفق هر کدام پیام و اقدام مشخص دارند.
 - **دستی end-to-end:** task سه-lane روی repo اسکرچ از UI؛ run و roleها زنده؛ پاسخ به سؤال و permission از UI؛ reload پنجره وسط run → Continue همان run بدون run تکراری (بررسی با `catherd runs list --json`)؛ لغو role؛ ویرایش profile + treat-like + refresh مدل‌ها + خطای doctor.
-- **تصویری:** sidebar و پنل در Light / Dark / High Contrast (اسکرین‌شات دستی چک‌لیستی).
+- **تصویری:** نمای کامل Activity Bar در Light / Dark / High Contrast (اسکرین‌شات دستی چک‌لیستی).
 
 ## پیوست — PRهای پیشنهادی upstream (catherd 1.1، غیرمسدودکننده)
 1. `routes` و `landed`/`budget` در `status --json` / `runs list --json`.

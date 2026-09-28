@@ -2,14 +2,11 @@
 
 Status: **pages built in Phases 1–3** (Setup, Orchestrator, Overview, Runs, Profiles, Models, Diagnostics).
 
-## Two surfaces, one app
+## One Activity Bar surface
 
-| Surface | VS Code API | id | Source |
-|---|---|---|---|
-| Sidebar | `WebviewView` in the `cathouse` activity-bar container | `cathouse.sidebar` | `packages/extension/src/panel/sidebar.ts` |
-| Dashboard | `WebviewPanel`, one per window, revealed if open | `cathouse.dashboard` (command `cathouse.openDashboard`) | `packages/extension/src/panel/dashboard.ts` |
+The complete application is one `WebviewView` in the `cathouse` Activity Bar container (`cathouse.sidebar`, `packages/extension/src/panel/sidebar.ts`). There is no intermediary status-only sidebar, Open Dashboard button, or separate editor `WebviewPanel`.
 
-Both load the same Vite build. `#root[data-view]` (`sidebar` or `dashboard`) tells the React app which surface it is (`packages/webview/src/main.tsx`). `retainContextWhenHidden` is off; per-view UI state goes in `viewState` (see `protocol.md`).
+It loads the Vite build directly. `retainContextWhenHidden` is off; safety-critical draft state goes in `viewState` (see `protocol.md`).
 
 ## Loading and CSP (`packages/extension/src/panel/webview-html.ts`, `host.ts`)
 
@@ -31,7 +28,7 @@ Both load the same Vite build. `#root[data-view]` (`sidebar` or `dashboard`) tel
 
 ## Pages (`packages/webview/src/pages/`, `session/`, `setup/`)
 
-Navigation (`App.tsx`): tabs Overview · Orchestrator · Runs · Profiles · Models · Diagnostics · Setup, remembered with `viewState`. **Only Setup is shown until `gateOpen`** (docs/architecture/setup.md). The sidebar shows the session phase, pending prompts, and one button (Open dashboard / Open Setup).
+Navigation (`App.tsx`): tabs Overview · New Chat · Runs · Profiles · Models · Diagnostics · Setup. **New Chat is the default on every fresh webview load**; tab selection lasts only for the current mounted view. **Only Setup is shown until `gateOpen`** (docs/architecture/setup.md).
 
 | Page | Data (protocol → gateway) | Behaviour |
 |---|---|---|

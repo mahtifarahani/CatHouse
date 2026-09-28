@@ -24,7 +24,6 @@ export class Broadcaster {
 export function attachWebview(
   webview: vscode.Webview,
   extensionUri: vscode.Uri,
-  view: WebviewView,
   sink: MessageSink & { broadcaster: Broadcaster },
 ): vscode.Disposable {
   const root = vscode.Uri.joinPath(extensionUri, "dist", "webview");
@@ -39,11 +38,10 @@ export function attachWebview(
       .asWebviewUri(vscode.Uri.joinPath(root, "index.css").with({ query: `v=${nonce}` }))
       .toString(),
     nonce,
-    view,
     title: "CatHouse",
   });
   return vscode.Disposable.from(
     sink.broadcaster.add(webview),
-    webview.onDidReceiveMessage((raw) => sink.onRequest(raw, view, webview)),
+    webview.onDidReceiveMessage((raw) => sink.onRequest(raw, "sidebar", webview)),
   );
 }

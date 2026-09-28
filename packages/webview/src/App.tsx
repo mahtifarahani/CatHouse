@@ -1,6 +1,6 @@
-import { Button, cn, inputClass } from "@cathouse/ui";
+import { cn, inputClass } from "@cathouse/ui";
 import { type KeyboardEvent, useEffect, useRef, useState } from "react";
-import { onEvent, request, viewState } from "./lib/rpc";
+import { onEvent, request } from "./lib/rpc";
 import { type StringKey, t } from "./lib/strings";
 import { ToastRegion } from "./lib/toasts";
 import { usePoll } from "./lib/usePoll";
@@ -10,11 +10,9 @@ import { OverviewPage } from "./pages/OverviewPage";
 import { ProfilesPage } from "./pages/ProfilesPage";
 import { RunsPage } from "./pages/RunsPage";
 import { SessionPage } from "./session/SessionPage";
-import { useSession } from "./session/useSession";
 import { SetupPage } from "./setup/SetupPage";
 import { useSetup } from "./setup/useSetup";
 
-type View = "sidebar" | "dashboard";
 const TABS = ["overview", "session", "runs", "profiles", "models", "diagnostics", "setup"] as const;
 type Tab = (typeof TABS)[number];
 const LABEL: Record<Tab, StringKey> = {
@@ -27,14 +25,10 @@ const LABEL: Record<Tab, StringKey> = {
   setup: "tabs.setup",
 };
 
-export function App({ view }: { view: View }) {
+export function App() {
   return (
     <main className="flex flex-col gap-3 p-3">
-      <header>
-        <h1 className="text-lg font-semibold">{t("app.title")}</h1>
-        <p className="text-muted-foreground">{t("app.tagline")}</p>
-      </header>
-      {view === "dashboard" ? <Dashboard /> : <Sidebar />}
+      <Dashboard />
       <ToastRegion />
     </main>
   );
@@ -88,14 +82,7 @@ function RepoBar() {
 
 function Dashboard() {
   const { state } = useSetup();
-  const [nav, setNavState] = useState<Nav>(() => {
-    const saved = viewState.get<{ nav?: Nav } & Partial<Nav>>();
-    return saved?.nav ?? (saved?.tab ? { tab: saved.tab, run: saved.run } : { tab: "overview" });
-  });
-  const setNav = (n: Nav) => {
-    setNavState(n);
-    viewState.update({ nav: n });
-  };
+  const [nav, setNav] = useState<Nav>({ tab: "session" });
   // The plan's gate: until Bun, catherd, the plugin and the bundled Claude are good, only Setup.
   const gateOpen = state?.gateOpen === true;
   const active: Tab = gateOpen ? nav.tab : "setup";
@@ -204,35 +191,6 @@ function StatusLine({ setupReady }: { setupReady: boolean }) {
       )}
       {dirty > 0 && <span className="text-warning">{t("profiles.unsaved", { n: dirty })}</span>}
       <span className="ms-auto">catherd {workspace.data?.catherdVersion ?? "…"}</span>
-    </div>
-  );
-}
-
-function Sidebar() {
-  const s = useSession();
-  const { state: setup } = useSetup();
-  return (
-    <div className="flex flex-col gap-2">
-      {setup && !setup.gateOpen ? (
-        <p className="text-warning">{t("sidebar.setupRequired")}</p>
-      ) : (
-        <p>
-          {t("sidebar.phase", { phase: s.phase })}
-          {s.runId && (
-            <span className="ms-1 font-mono text-xs text-muted-foreground">{s.runId}</span>
-          )}
-        </p>
-      )}
-      {s.prompts.length > 0 && (
-        <p className="font-semibold text-warning">
-          {t("sidebar.pending", { count: s.prompts.length })}
-        </p>
-      )}
-      <div className="flex flex-wrap gap-2">
-        <Button onClick={() => void request("app.openDashboard", {})}>
-          {setup && !setup.gateOpen ? t("sidebar.openSetup") : t("sidebar.openDashboard")}
-        </Button>
-      </div>
     </div>
   );
 }
