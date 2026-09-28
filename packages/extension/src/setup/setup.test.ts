@@ -254,7 +254,7 @@ describe("SetupService", () => {
     const events: SetupTopic[] = [];
     let release!: () => void;
     const gate = new Promise<void>((r) => (release = r));
-    const run = async (cmd: string, args: string[], opts: RunOptions): Promise<RunResult> => {
+    const run = async (cmd: string, _args: string[], opts: RunOptions): Promise<RunResult> => {
       if (cmd === "bash") {
         opts.onOutput?.("bun installed\n", "stdout");
         await gate;
