@@ -38,7 +38,7 @@ const components: Components = {
     <pre
       {...props}
       className={cn(
-        "my-2 max-w-full overflow-auto rounded-sm border border-border bg-background p-2 font-mono text-xs [&>code]:bg-transparent [&>code]:p-0",
+        "my-2 max-w-full overflow-x-hidden rounded-sm border border-border bg-background p-2 font-mono text-xs whitespace-pre-wrap wrap-anywhere [&>code]:bg-transparent [&>code]:p-0",
         className,
       )}
     />

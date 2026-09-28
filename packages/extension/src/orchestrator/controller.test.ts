@@ -13,15 +13,18 @@ function setup(overrides: Partial<ControllerDeps> = {}) {
   const sent: SessionTopic[] = [];
   const created: SessionOptions[] = [];
   let finish!: () => void;
-  const fake: SessionLike & { sentTexts: string[] } = {
+  const fake: SessionLike & { sentTexts: string[]; interruptions: number } = {
     sessionId: undefined,
     runId: undefined,
     sentTexts: [],
+    interruptions: 0,
     start: async () => {},
     send(t) {
       this.sentTexts.push(t);
     },
-    interrupt: async () => {},
+    interrupt: async function () {
+      this.interruptions += 1;
+    },
     finished: () => new Promise<void>((r) => (finish = r)),
     close: () => finish?.(),
   };
@@ -123,6 +126,17 @@ describe("SessionController", () => {
     expect(c.snapshot().phase).toBe("ended");
   });
 
+  it("resets to an empty idle chat and keeps the saved link", async () => {
+    const { c, links, created } = setup();
+    await c.start("/repo", "a");
+    (created[0] as SessionOptions).onEvent({ kind: "run_started", runId: "r1", dir: "/d" });
+    links.set("/repo", { sessionId: "s1", runId: "r1", savedAt: "t" });
+    c.reset();
+    expect(c.snapshot()).toMatchObject({ phase: "idle", events: [], prompts: [] });
+    expect(links.get("/repo")).toBeDefined();
+    await expect(c.start("/repo", "b")).resolves.toMatchObject({ phase: "starting" });
+  });
+
   it("reports the pending prompt count and switches permission mode", async () => {
     const counts: number[] = [];
     const modes: string[] = [];
@@ -153,5 +167,28 @@ describe("SessionController", () => {
       c.stop();
       c.send("x");
     }).toThrow();
+  });
+
+  it("tracks whether the current turn can be interrupted", async () => {
+    const { c, created, fake } = setup();
+    await c.start("/repo", "a");
+    expect(c.snapshot().turnActive).toBe(true);
+
+    await c.interrupt();
+    expect(fake.interruptions).toBe(1);
+    expect(c.snapshot().turnActive).toBe(false);
+
+    await c.interrupt();
+    expect(fake.interruptions).toBe(1);
+
+    c.send("continue");
+    expect(c.snapshot().turnActive).toBe(true);
+    (created[0] as SessionOptions).onEvent({
+      kind: "result",
+      subtype: "success",
+      sessionId: "s1",
+      isError: false,
+    });
+    expect(c.snapshot().turnActive).toBe(false);
   });
 });

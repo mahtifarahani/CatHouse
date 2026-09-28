@@ -10,7 +10,7 @@ import {
   profilePatch,
   ROLES,
 } from "@cathouse/protocol";
-import { Badge, Button, Card, cn, ErrorText, inputClass, Section } from "@cathouse/ui";
+import { Badge, Button, Card, Collapsible, cn, ErrorText, inputClass } from "@cathouse/ui";
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { request, viewState } from "../lib/rpc";
 import { t } from "../lib/strings";
@@ -19,6 +19,18 @@ import { errorText, usePoll } from "../lib/usePoll";
 import { type Draft, dirtyCount, draftReducer } from "./profileDraft";
 
 type Edit = (fn: (d: ProfileDoc) => void, treatLike?: { rung: string; like: string }) => void;
+type Sections = { isOpen: (key: string) => boolean; toggle: (key: string) => void };
+
+const GENERAL_SECTIONS = [
+  "routing",
+  "billing",
+  "harness",
+  "budget",
+  "failover",
+  "timeouts",
+  "notify",
+] as const;
+const SECTION_KEYS = ["roles", ...ROLES.map((r) => `role:${r}`), ...GENERAL_SECTIONS];
 
 export function ProfilesPage() {
   const [name, setName] = useState<string>();
@@ -42,6 +54,16 @@ export function ProfilesPage() {
   const [result, setResult] = useState<ProfileSaveResult>();
   const [filter, setFilter] = useState("");
   const filterRef = useRef<HTMLInputElement>(null);
+  // Sections start closed; a filter opens every match until the user closes one.
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>(
+    () => viewState.get<{ profileSections?: Record<string, boolean> }>()?.profileSections ?? {},
+  );
+  const [filterOpen, setFilterOpen] = useState<Record<string, boolean>>({});
+  useEffect(() => {
+    viewState.update({ profileSections: openSections });
+  }, [openSections]);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: reset overrides whenever the filter changes
+  useEffect(() => setFilterOpen({}), [filter]);
   const [creating, setCreating] = useState(false);
   const [confirm, setConfirm] = useState<
     | { kind: "activate"; scope: "global" | "repo" }
@@ -147,6 +169,15 @@ export function ProfilesPage() {
   };
 
   const bound = s.bindings[shown] ?? [];
+  const filtering = filter.trim() !== "";
+  const isOpen = (key: string) => (filtering ? (filterOpen[key] ?? true) : !!openSections[key]);
+  const setOpen = filtering ? setFilterOpen : setOpenSections;
+  const sections: Sections = {
+    isOpen,
+    toggle: (key) => setOpen((o) => ({ ...o, [key]: !isOpen(key) })),
+  };
+  const setAll = (value: boolean) =>
+    setOpen(Object.fromEntries(SECTION_KEYS.map((k) => [k, value])));
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-2">
@@ -249,6 +280,14 @@ export function ProfilesPage() {
           placeholder={t("profiles.filterHelp")}
         />
       </label>
+      <div className="flex gap-2">
+        <Button variant="ghost" onClick={() => setAll(true)}>
+          {t("profiles.expandAll")}
+        </Button>
+        <Button variant="ghost" onClick={() => setAll(false)}>
+          {t("profiles.collapseAll")}
+        </Button>
+      </div>
       <SaveResultView
         result={result}
         onRebase={(current) => {
@@ -278,6 +317,7 @@ export function ProfilesPage() {
         models={catalog.data?.models ?? []}
         enforcement={s.enforcement}
         filter={filter}
+        sections={sections}
       />
       <GeneralEditor
         doc={draft.doc}
@@ -285,6 +325,7 @@ export function ProfilesPage() {
         models={catalog.data?.models ?? []}
         standIns={s.standIns}
         filter={filter}
+        sections={sections}
       />
 
       <div className="sticky bottom-0 flex flex-wrap items-center gap-2 border-t border-border bg-background py-2">
@@ -712,12 +753,14 @@ function RolesEditor({
   models,
   enforcement,
   filter,
+  sections,
 }: {
   doc: ProfileDoc;
   edit: Edit;
   models: CatalogModel[];
   enforcement: Record<string, string>;
   filter: string;
+  sections: Sections;
 }) {
   const [treatFor, setTreatFor] = useState<{ role: string; rung: string; like: string }>();
   const scored = useMemo(
@@ -733,16 +776,37 @@ function RolesEditor({
     return !needle || `roles ${role} access ${JSON.stringify(cfg)}`.toLowerCase().includes(needle);
   });
   if (roles.length === 0) return null;
+  const enabled = ROLES.filter((role) => doc.roles[role]?.enabled).length;
   return (
-    <Section title={t("profiles.roles")}>
+    <Collapsible
+      title={t("profiles.roles")}
+      summary={t("profiles.summary.roles", { n: enabled, total: ROLES.length })}
+      open={sections.isOpen("roles")}
+      onToggle={() => sections.toggle("roles")}
+    >
       <p className="text-xs text-muted-foreground">{t("profiles.help.roles")}</p>
       <div className="flex flex-col gap-2">
         {roles.map((role) => {
           const cfg = doc.roles[role] ?? { enabled: false, access: "read-only", rungs: [] };
           const available = rungsFor(models, role).filter((r) => !cfg.rungs.includes(r.rung));
+          const roleOpen = sections.isOpen(`role:${role}`);
           return (
             <Card key={role} className={cn("flex flex-col gap-1.5", !cfg.enabled && "opacity-70")}>
               <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  variant="ghost"
+                  className="px-1 py-0"
+                  aria-expanded={roleOpen}
+                  aria-label={t("profiles.toggleRungs", { role })}
+                  onClick={() => sections.toggle(`role:${role}`)}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={cn("inline-block transition-transform", roleOpen && "rotate-90")}
+                  >
+                    ▸
+                  </span>
+                </Button>
                 <label className="flex items-center gap-1 font-medium">
                   <input
                     type="checkbox"
@@ -755,6 +819,9 @@ function RolesEditor({
                   />
                   {role}
                 </label>
+                <span className="text-xs text-muted-foreground">
+                  {t("profiles.summary.rungs", { n: cfg.rungs.length })}
+                </span>
                 <select
                   aria-label={t("profiles.access", { role })}
                   className={inputClass}
@@ -799,122 +866,126 @@ function RolesEditor({
                   </select>
                 </label>
               </div>
-              <ol className="flex flex-col gap-0.5">
-                {cfg.rungs.map((r, i) => (
-                  <li key={r} className="flex items-center gap-1 font-mono text-xs">
-                    <span className="w-4 text-muted-foreground">{i + 1}</span>
-                    <span className="flex-1">{r}</span>
-                    <Button
-                      variant="ghost"
-                      className="px-1 py-0"
-                      aria-label={t("profiles.up")}
-                      disabled={i === 0}
-                      onClick={() =>
-                        edit((d) => {
-                          const rs = [...cfg.rungs];
-                          [rs[i - 1], rs[i]] = [rs[i] as string, rs[i - 1] as string];
-                          d.roles[role] = { ...cfg, rungs: rs };
-                        })
-                      }
-                    >
-                      ↑
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="px-1 py-0"
-                      aria-label={t("profiles.down")}
-                      disabled={i === cfg.rungs.length - 1}
-                      onClick={() =>
-                        edit((d) => {
-                          const rs = [...cfg.rungs];
-                          [rs[i + 1], rs[i]] = [rs[i] as string, rs[i + 1] as string];
-                          d.roles[role] = { ...cfg, rungs: rs };
-                        })
-                      }
-                    >
-                      ↓
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="px-1 py-0"
-                      aria-label={t("profiles.remove")}
-                      onClick={() =>
-                        edit((d) => {
-                          const next = { ...cfg, rungs: cfg.rungs.filter((x) => x !== r) };
-                          if (next.defaultRung && !next.rungs.includes(next.defaultRung))
-                            delete next.defaultRung;
-                          d.roles[role] = next;
-                        })
-                      }
-                    >
-                      ✕
-                    </Button>
-                  </li>
-                ))}
-              </ol>
-              <select
-                aria-label={t("profiles.addRung", { role })}
-                className={cn(inputClass, "text-xs")}
-                value=""
-                onChange={(e) => {
-                  const pick = available.find((a) => a.rung === e.target.value);
-                  if (!pick) return;
-                  if (!pick.scored && !pick.treatLike)
-                    setTreatFor({ role, rung: pick.rung, like: "" });
-                  else
-                    edit((d) => {
-                      d.roles[role] = { ...cfg, rungs: [...cfg.rungs, pick.rung] };
-                    });
-                }}
-              >
-                <option value="">{t("profiles.addRungPlaceholder")}</option>
-                {available.map((a) => (
-                  <option key={a.rung} value={a.rung}>
-                    {a.rung}
-                    {!a.scored && !a.treatLike ? ` — ${t("profiles.unscored")}` : ""}
-                    {a.listed === false ? ` — ${t("models.notListed")}` : ""}
-                  </option>
-                ))}
-              </select>
-              {treatFor?.role === role && (
-                <div className="flex flex-wrap items-center gap-2 text-xs">
-                  {t("profiles.treatPrompt", { rung: treatFor.rung })}
+              {roleOpen && (
+                <>
+                  <ol className="flex flex-col gap-0.5">
+                    {cfg.rungs.map((r, i) => (
+                      <li key={r} className="flex items-center gap-1 font-mono text-xs">
+                        <span className="w-4 text-muted-foreground">{i + 1}</span>
+                        <span className="flex-1">{r}</span>
+                        <Button
+                          variant="ghost"
+                          className="px-1 py-0"
+                          aria-label={t("profiles.up")}
+                          disabled={i === 0}
+                          onClick={() =>
+                            edit((d) => {
+                              const rs = [...cfg.rungs];
+                              [rs[i - 1], rs[i]] = [rs[i] as string, rs[i - 1] as string];
+                              d.roles[role] = { ...cfg, rungs: rs };
+                            })
+                          }
+                        >
+                          ↑
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="px-1 py-0"
+                          aria-label={t("profiles.down")}
+                          disabled={i === cfg.rungs.length - 1}
+                          onClick={() =>
+                            edit((d) => {
+                              const rs = [...cfg.rungs];
+                              [rs[i + 1], rs[i]] = [rs[i] as string, rs[i + 1] as string];
+                              d.roles[role] = { ...cfg, rungs: rs };
+                            })
+                          }
+                        >
+                          ↓
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="px-1 py-0"
+                          aria-label={t("profiles.remove")}
+                          onClick={() =>
+                            edit((d) => {
+                              const next = { ...cfg, rungs: cfg.rungs.filter((x) => x !== r) };
+                              if (next.defaultRung && !next.rungs.includes(next.defaultRung))
+                                delete next.defaultRung;
+                              d.roles[role] = next;
+                            })
+                          }
+                        >
+                          ✕
+                        </Button>
+                      </li>
+                    ))}
+                  </ol>
                   <select
-                    className={inputClass}
-                    value={treatFor.like}
-                    onChange={(e) => setTreatFor({ ...treatFor, like: e.target.value })}
+                    aria-label={t("profiles.addRung", { role })}
+                    className={cn(inputClass, "text-xs")}
+                    value=""
+                    onChange={(e) => {
+                      const pick = available.find((a) => a.rung === e.target.value);
+                      if (!pick) return;
+                      if (!pick.scored && !pick.treatLike)
+                        setTreatFor({ role, rung: pick.rung, like: "" });
+                      else
+                        edit((d) => {
+                          d.roles[role] = { ...cfg, rungs: [...cfg.rungs, pick.rung] };
+                        });
+                    }}
                   >
-                    <option value="">{t("models.pickScored")}</option>
-                    {[...new Set(scored)].map((x) => (
-                      <option key={x} value={x}>
-                        {x}
+                    <option value="">{t("profiles.addRungPlaceholder")}</option>
+                    {available.map((a) => (
+                      <option key={a.rung} value={a.rung}>
+                        {a.rung}
+                        {!a.scored && !a.treatLike ? ` — ${t("profiles.unscored")}` : ""}
+                        {a.listed === false ? ` — ${t("models.notListed")}` : ""}
                       </option>
                     ))}
                   </select>
-                  <Button
-                    disabled={!treatFor.like}
-                    onClick={() => {
-                      edit(
-                        (d) => {
-                          d.roles[role] = { ...cfg, rungs: [...cfg.rungs, treatFor.rung] };
-                        },
-                        { rung: treatFor.rung, like: treatFor.like },
-                      );
-                      setTreatFor(undefined);
-                    }}
-                  >
-                    {t("profiles.addWithTreat")}
-                  </Button>
-                  <Button variant="ghost" onClick={() => setTreatFor(undefined)}>
-                    {t("common.cancel")}
-                  </Button>
-                </div>
+                  {treatFor?.role === role && (
+                    <div className="flex flex-wrap items-center gap-2 text-xs">
+                      {t("profiles.treatPrompt", { rung: treatFor.rung })}
+                      <select
+                        className={inputClass}
+                        value={treatFor.like}
+                        onChange={(e) => setTreatFor({ ...treatFor, like: e.target.value })}
+                      >
+                        <option value="">{t("models.pickScored")}</option>
+                        {[...new Set(scored)].map((x) => (
+                          <option key={x} value={x}>
+                            {x}
+                          </option>
+                        ))}
+                      </select>
+                      <Button
+                        disabled={!treatFor.like}
+                        onClick={() => {
+                          edit(
+                            (d) => {
+                              d.roles[role] = { ...cfg, rungs: [...cfg.rungs, treatFor.rung] };
+                            },
+                            { rung: treatFor.rung, like: treatFor.like },
+                          );
+                          setTreatFor(undefined);
+                        }}
+                      >
+                        {t("profiles.addWithTreat")}
+                      </Button>
+                      <Button variant="ghost" onClick={() => setTreatFor(undefined)}>
+                        {t("common.cancel")}
+                      </Button>
+                    </div>
+                  )}
+                </>
               )}
             </Card>
           );
         })}
       </div>
-    </Section>
+    </Collapsible>
   );
 }
 
@@ -929,12 +1000,14 @@ function GeneralEditor({
   models,
   standIns,
   filter,
+  sections,
 }: {
   doc: ProfileDoc;
   edit: Edit;
   models: CatalogModel[];
   standIns: { from: string; to: string; inferred: boolean }[];
   filter: string;
+  sections: Sections;
 }) {
   const [fo, setFo] = useState({ from: "", to: "" });
   const ladderRungs = [
@@ -947,13 +1020,40 @@ function GeneralEditor({
   const allRungs = models.flatMap((m) =>
     m.rungs.filter((r) => r.scored || r.treatLike).map((r) => r.rung),
   );
+  const none = t("profiles.summary.none");
+  const isolatedCount = Object.values(doc.isolated).filter(Boolean).length;
+  const caps = (["minutes", "tokens", "usd"] as const)
+    .filter((k) => doc.budget[k] !== undefined)
+    .map((k) => `${k} ${doc.budget[k]}`);
+  const summaries: Record<(typeof GENERAL_SECTIONS)[number], string> = {
+    routing: `${doc.objective} · jev ${doc.jev.use}`,
+    billing: Object.entries(doc.billing)
+      .map(([k, v]) => `${k} ${v}`)
+      .join(" · "),
+    harness: t("profiles.summary.harness", {
+      n: isolatedCount,
+      total: Object.keys(doc.isolated).length,
+    }),
+    budget: caps.join(" · ") || t("profiles.noCap"),
+    failover: t("profiles.summary.failover", { n: Object.keys(doc.failover).length }),
+    timeouts: t("profiles.summary.timeouts", {
+      idle: doc.timeouts.idleMin,
+      wall: doc.timeouts.wallMin,
+    }),
+    notify: doc.notify.join(" · ") || none,
+  };
+  const section = (key: (typeof GENERAL_SECTIONS)[number]) => ({
+    summary: summaries[key],
+    open: sections.isOpen(key),
+    onToggle: () => sections.toggle(key),
+  });
   const visible = (path: string, value: unknown) =>
     !filter.trim() ||
     `${path} ${JSON.stringify(value)}`.toLowerCase().includes(filter.trim().toLowerCase());
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="flex flex-col gap-2">
       {visible("routing objective jev", { objective: doc.objective, jev: doc.jev }) && (
-        <Section title={t("profiles.routing")}>
+        <Collapsible title={t("profiles.routing")} {...section("routing")}>
           <p className="text-xs text-muted-foreground">{t("profiles.help.routing")}</p>
           <label className="flex items-center gap-2">
             {t("profiles.objective")}
@@ -985,10 +1085,10 @@ function GeneralEditor({
               <option value="off">off</option>
             </select>
           </label>
-        </Section>
+        </Collapsible>
       )}
       {visible("billing", doc.billing) && (
-        <Section title={t("profiles.billing")}>
+        <Collapsible title={t("profiles.billing")} {...section("billing")}>
           <p className="text-xs text-muted-foreground">{t("profiles.help.billing")}</p>
           {Object.entries(doc.billing).map(([k, v]) => (
             <label key={k} className="flex items-center gap-2 text-xs">
@@ -1010,10 +1110,10 @@ function GeneralEditor({
               </select>
             </label>
           ))}
-        </Section>
+        </Collapsible>
       )}
       {visible("harness isolation", doc.isolated) && (
-        <Section title={t("profiles.harness")}>
+        <Collapsible title={t("profiles.harness")} {...section("harness")}>
           <p className="text-xs text-muted-foreground">{t("profiles.help.harness")}</p>
           {Object.entries(doc.isolated).map(([k, v]) => (
             <label key={k} className="flex items-center gap-2">
@@ -1032,10 +1132,10 @@ function GeneralEditor({
               </span>
             </label>
           ))}
-        </Section>
+        </Collapsible>
       )}
       {visible("budget minutes tokens usd", doc.budget) && (
-        <Section title={t("profiles.budget")}>
+        <Collapsible title={t("profiles.budget")} {...section("budget")}>
           <p className="text-xs text-muted-foreground">{t("profiles.help.budget")}</p>
           {(["minutes", "tokens", "usd"] as const).map((k) => (
             <label key={k} className="flex items-center gap-2 text-xs">
@@ -1056,10 +1156,10 @@ function GeneralEditor({
               />
             </label>
           ))}
-        </Section>
+        </Collapsible>
       )}
       {visible("failover stand in", doc.failover) && (
-        <Section title={t("profiles.failover")}>
+        <Collapsible title={t("profiles.failover")} {...section("failover")}>
           <p className="text-xs text-muted-foreground">{t("profiles.help.failover")}</p>
           <ul className="font-mono text-xs">
             {Object.entries(doc.failover).map(([from, to]) => (
@@ -1125,14 +1225,14 @@ function GeneralEditor({
               {t("profiles.add")}
             </Button>
           </div>
-        </Section>
+        </Collapsible>
       )}
       {visible("timeouts limits idle wall preflight heavy", {
         timeouts: doc.timeouts,
         preflight: doc.preflight,
         heavy: doc.heavy,
       }) && (
-        <Section title={t("profiles.timeouts")}>
+        <Collapsible title={t("profiles.timeouts")} {...section("timeouts")}>
           <p className="text-xs text-muted-foreground">{t("profiles.help.timeouts")}</p>
           {(["idleMin", "wallMin"] as const).map((k) => (
             <label key={k} className="flex items-center gap-2 text-xs">
@@ -1180,10 +1280,10 @@ function GeneralEditor({
               }}
             />
           </label>
-        </Section>
+        </Collapsible>
       )}
       {visible("notify push notifications", doc.notify) && (
-        <Section title={t("profiles.notify")}>
+        <Collapsible title={t("profiles.notify")} {...section("notify")}>
           <p className="text-xs text-muted-foreground">{t("profiles.help.notify")}</p>
           {NOTIFY.map((n) => (
             <label key={n} className="flex items-center gap-2">
@@ -1201,7 +1301,7 @@ function GeneralEditor({
               {n}
             </label>
           ))}
-        </Section>
+        </Collapsible>
       )}
     </div>
   );

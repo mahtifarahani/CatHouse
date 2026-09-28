@@ -36,6 +36,10 @@ export const methods = {
     params: z.object({}),
     result: z.object({ changed: z.boolean() }),
   },
+  "app.pickFiles": {
+    params: z.object({}),
+    result: z.object({ paths: z.array(z.string()) }),
+  },
   "app.removeFolder": {
     params: z.object({ path: z.string() }),
     result: z.object({ changed: z.boolean() }),
@@ -155,6 +159,7 @@ export const methods = {
   "session.send": { params: z.object({ text: z.string().min(1) }), result: z.object({}) },
   "session.interrupt": { params: z.object({}), result: z.object({}) },
   "session.stop": { params: z.object({}), result: SessionStateSchema },
+  "session.reset": { params: z.object({}), result: SessionStateSchema },
   "session.answer": {
     params: z.object({ id: z.string(), answer: PromptAnswerSchema }),
     result: z.object({ accepted: z.boolean() }),

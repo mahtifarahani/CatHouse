@@ -31,7 +31,7 @@ Until Bun, catherd, the Claude plugin and the bundled Claude binary are good, th
 | claude CLI | `claude --version` (only when needed) | ≥ `PINNED.claudeCode` (2.1.282) |
 | readiness | `catherd doctor --json` (+ `catalog refresh --json` first after backend changes) | **has side effects**: runs only on "Check readiness", after installs, or via `cathouse.checkSetup` |
 
-The last successful doctor report and its timestamp are stored under `cathouse.readiness.v1` in VS Code `workspaceState`. On a later extension activation, side-effect-free detection runs normally and the stored report is merged back into the facts, so New Chat does not revert to “not checked yet”. Restoring this snapshot never runs doctor. A later user-triggered doctor failure clears the snapshot instead of leaving stale green readiness behind.
+The last successful doctor report and its timestamp are stored under `cathouse.readiness.v1` in VS Code `workspaceState`. On a later extension activation, side-effect-free detection runs normally and the stored report is merged back into the facts, so Chat does not revert to “not checked yet”. Restoring this snapshot never runs doctor. A later user-triggered doctor failure clears the snapshot instead of leaving stale green readiness behind.
 
 ## Items and levels (`evaluate.ts`)
 
@@ -73,7 +73,7 @@ Setup works without an open folder: catherd commands then run in the home direct
 
 ## UI
 
-`SetupPage` groups items by level ("Required to use CatHouse" / "Required to start tasks" / "Optional"), with a state glyph, detail, action button (disabled while busy), doctor fix with Copy, a Re-check button, the live output of the running (or last) action, and the result line. The Activity Bar view shows only Setup until `gateOpen`; then all tabs become available, and New Chat's Start/Resume are disabled with `canStartReason` when readiness is incomplete.
+`SetupPage` groups items by level ("Required to use CatHouse" / "Required to start tasks" / "Optional"), with a state glyph, detail, action button (disabled while busy), doctor fix with Copy, a Re-check button, the live output of the running (or last) action, and the result line. The Activity Bar view shows only Setup until `gateOpen`; then all tabs become available, and Chat's Start/Resume are disabled with `canStartReason` when readiness is incomplete.
 
 ## Verified (2026-09-28)
 

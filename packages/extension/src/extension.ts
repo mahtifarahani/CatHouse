@@ -209,6 +209,17 @@ export function activate(context: vscode.ExtensionContext): void {
       publish("app", { type: "workspace" });
       return { changed: true };
     },
+    "app.pickFiles": async () => {
+      const picked = await vscode.window.showOpenDialog({
+        canSelectFiles: true,
+        canSelectFolders: true,
+        canSelectMany: true,
+        openLabel: "Attach",
+        title: "Attach files for the orchestrator",
+        ...(selectedRepo ? { defaultUri: vscode.Uri.file(selectedRepo) } : {}),
+      });
+      return { paths: (picked ?? []).map((uri) => uri.fsPath) };
+    },
     "app.removeFolder": async ({ path }) => {
       requireIdleSession();
       const folders = vscode.workspace.workspaceFolders ?? [];
@@ -328,6 +339,7 @@ export function activate(context: vscode.ExtensionContext): void {
       return {};
     },
     "session.stop": () => controller.stop(),
+    "session.reset": () => controller.reset(),
     "session.answer": ({ id, answer }) => ({ accepted: controller.answer(id, answer) }),
   });
 

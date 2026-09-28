@@ -51,7 +51,11 @@ type Pending = { request: PromptRequest; resolve: (a: PromptAnswer) => void };
 
 export class SessionController {
   private session: SessionLike | undefined;
-  private state: Omit<SessionState, "prompts"> = { phase: "idle", events: [] };
+  private state: Omit<SessionState, "prompts"> = {
+    phase: "idle",
+    turnActive: false,
+    events: [],
+  };
   private readonly prompts = new Map<string, Pending>();
 
   constructor(private readonly deps: ControllerDeps) {}
@@ -91,8 +95,11 @@ export class SessionController {
       this.state.runId = e.runId;
       this.saveLink(repo);
     }
+    if (e.kind === "result") this.state.turnActive = false;
     this.push(e);
-    if (e.kind === "init" || e.kind === "run_started") this.publishState();
+    if (e.kind === "init" || e.kind === "run_started" || e.kind === "result") {
+      this.publishState();
+    }
   }
 
   private saveLink(repo: string): void {
@@ -148,7 +155,13 @@ export class SessionController {
         "open CatHouse Setup and install the plugin",
       );
     }
-    this.state = { phase: "starting", repo, permissionMode, events: first ? [first] : [] };
+    this.state = {
+      phase: "starting",
+      turnActive: true,
+      repo,
+      permissionMode,
+      events: first ? [first] : [],
+    };
     if (first) this.deps.broadcast({ type: "event", event: first });
     const session = this.deps.createSession({
       repo,
@@ -168,6 +181,7 @@ export class SessionController {
       this.session = undefined;
       this.state = {
         phase: "ended",
+        turnActive: false,
         repo,
         events: [],
         error: { code: "E_SESSION_START", message: e instanceof Error ? e.message : String(e) },
@@ -186,6 +200,7 @@ export class SessionController {
         if (this.session !== session) return;
         this.session = undefined;
         this.state.phase = "ended";
+        this.state.turnActive = false;
         for (const p of this.prompts.values()) p.resolve({ kind: "question", answers: {} });
         this.prompts.clear();
         this.deps.onPromptsChanged?.(0);
@@ -235,7 +250,9 @@ export class SessionController {
     if (!this.session)
       throw new HandlerError("E_SESSION_IDLE", "no orchestrator session is running");
     this.push({ kind: "user", text });
+    this.state.turnActive = true;
     this.session.send(text);
+    this.publishState();
   }
 
   /**
@@ -251,7 +268,10 @@ export class SessionController {
   }
 
   async interrupt(): Promise<void> {
-    await this.session?.interrupt();
+    if (!this.session || !this.state.turnActive) return;
+    await this.session.interrupt();
+    this.state.turnActive = false;
+    this.publishState();
   }
 
   answer(id: string, answer: PromptAnswer): boolean {
@@ -266,6 +286,7 @@ export class SessionController {
     this.session = undefined;
     s?.close();
     this.state.phase = "ended";
+    this.state.turnActive = false;
     for (const p of this.prompts.values()) {
       p.resolve(
         p.request.kind === "question"
@@ -275,6 +296,16 @@ export class SessionController {
     }
     this.prompts.clear();
     this.deps.onPromptsChanged?.(0);
+    return this.publishState();
+  }
+
+  /**
+   * "New chat": stops any live session and clears the transcript back to the empty composer.
+   * The run ↔ session link stays saved, so "Resume saved run" can still reopen the old chat.
+   */
+  reset(): SessionState {
+    if (this.session) this.stop();
+    this.state = { phase: "idle", turnActive: false, events: [] };
     return this.publishState();
   }
 

@@ -79,7 +79,7 @@ function QuestionForm({ prompt, req }: { prompt: PendingPrompt; req: QuestionReq
                 <span className="font-medium">{o.label}</span>
                 <span className="text-muted-foreground">{o.description}</span>
                 {o.preview && (
-                  <pre className="mt-1 overflow-x-auto font-mono text-xs whitespace-pre-wrap">
+                  <pre className="mt-1 overflow-x-hidden font-mono text-xs whitespace-pre-wrap wrap-anywhere">
                     {o.preview}
                   </pre>
                 )}
@@ -113,7 +113,7 @@ function PermissionForm({ prompt, req }: { prompt: PendingPrompt; req: Permissio
         {req.title ?? t("prompt.permission.title", { tool: shortTool(req.toolName) })}
       </h2>
       {req.decisionReason && <p className="text-muted-foreground">{req.decisionReason}</p>}
-      <pre className="max-h-48 overflow-auto rounded-sm bg-background p-2 font-mono text-xs whitespace-pre-wrap">
+      <pre className="max-h-48 overflow-x-hidden overflow-y-auto rounded-sm bg-background p-2 font-mono text-xs whitespace-pre-wrap wrap-anywhere">
         {command ?? path ?? JSON.stringify(req.input, null, 2)}
       </pre>
       <input

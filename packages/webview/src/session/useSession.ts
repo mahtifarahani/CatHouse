@@ -2,7 +2,7 @@ import { type SessionEvent, type SessionState, SessionTopicSchema } from "@catho
 import { useEffect, useState } from "react";
 import { onEvent, request } from "../lib/rpc";
 
-const EMPTY: SessionState = { phase: "idle", events: [], prompts: [] };
+const EMPTY: SessionState = { phase: "idle", turnActive: false, events: [], prompts: [] };
 
 /** Mirrors the host's SessionController: a snapshot on mount, then live "session" events. */
 export function useSession(): SessionState {

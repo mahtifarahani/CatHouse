@@ -15,7 +15,7 @@ catherd still does the real work: Claude plans and verifies, Codex, opencode, or
 ## What CatHouse adds
 
 - **Guided Setup** — checks and installs Bun, `catherd-cli@1.0.0`, the catherd Claude plugin, login, and worker backends. Installers run only after you click.
-- **New Chat** — starts `/catherd:catherd <task>` directly from the Activity Bar and streams the orchestration session into VS Code.
+- **Chat** — starts `/catherd:catherd <task>` directly from the Activity Bar and streams the orchestration session into VS Code.
 - **Human-in-the-loop cards** — answers Claude questions and permission requests without leaving the editor, with notifications when a run needs attention.
 - **Runs** — follows live roles, budget, climbs, routes, landed milestones, replies, state, and debug output; live roles can be cancelled from the UI.
 - **Profiles** — edits roles, rungs, models, effort, access, isolation, budget, routing, and failover with staged changes, undo/redo, validation, and a diff before save.
@@ -73,7 +73,7 @@ CatHouse is not publicly released yet. To try a development build:
 3. In VS Code, open **Extensions → … → Install from VSIX** and select the artifact in `dist/`.
 4. Open a Git repository and select the CatHouse icon in the Activity Bar.
 5. Complete the guided Setup checklist.
-6. Open **New Chat**, describe the task, and select **Start task**.
+6. Open **Chat**, describe the task, and select **Start task**.
 
 CatHouse does not run installers in the background. Setup checks are side-effect-free, and every installation or upgrade starts only from a user action. `catherd doctor`, which can refresh catherd state, runs only when requested or after an explicit setup action.
 

@@ -1,4 +1,4 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import { type HTMLAttributes, type ReactNode, useId } from "react";
 import { cn } from "../cn";
 
 export function Section({
@@ -21,6 +21,56 @@ export function Section({
         {actions && <div className="ms-auto flex flex-wrap gap-2">{actions}</div>}
       </div>
       {children}
+    </section>
+  );
+}
+
+/** A section whose body opens and closes from its header, like a dropdown. */
+export function Collapsible({
+  title,
+  summary,
+  open,
+  onToggle,
+  children,
+  className,
+}: {
+  title: ReactNode;
+  summary?: ReactNode;
+  open: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+  className?: string;
+}) {
+  const id = useId();
+  return (
+    <section className={cn("rounded-sm border border-border", className)}>
+      <h3 className="m-0">
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls={id}
+          onClick={onToggle}
+          className="flex min-h-8 w-full items-center gap-2 px-2 py-1.5 text-start hover:bg-secondary/40"
+        >
+          <span
+            aria-hidden="true"
+            className={cn("inline-block w-3 text-xs transition-transform", open && "rotate-90")}
+          >
+            ▸
+          </span>
+          <span className="font-semibold text-xs uppercase tracking-wide">{title}</span>
+          {summary && (
+            <span className="ms-auto min-w-0 truncate text-xs text-muted-foreground">
+              {summary}
+            </span>
+          )}
+        </button>
+      </h3>
+      {open && (
+        <div id={id} className="flex flex-col gap-1.5 border-t border-border p-2">
+          {children}
+        </div>
+      )}
     </section>
   );
 }

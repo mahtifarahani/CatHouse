@@ -101,6 +101,8 @@ export type PendingPrompt = z.infer<typeof PendingPromptSchema>;
 
 export const SessionStateSchema = z.object({
   phase: z.enum(["idle", "starting", "running", "ended"]),
+  /** True only while Claude is processing the current user turn. */
+  turnActive: z.boolean(),
   permissionMode: z.string().optional(),
   repo: z.string().optional(),
   sessionId: z.string().optional(),

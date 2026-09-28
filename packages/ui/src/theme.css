@@ -29,7 +29,9 @@
 
   --font-sans: var(--vscode-font-family);
   --font-mono: var(--vscode-editor-font-family);
-  --text-base: var(--vscode-font-size);
+  /* The CatHouse text-size setting (webview lib/settings.tsx) scales the VS Code base size; html
+     uses it too, so rem-based spacing and small text follow. */
+  --text-base: calc(var(--vscode-font-size) * var(--cathouse-font-scale, 1));
   /* Tailwind's 12px default is too small in the narrow Activity Bar surface. */
   --text-xs: 0.8125rem;
   --text-xs--line-height: 1.25rem;
