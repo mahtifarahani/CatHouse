@@ -1,0 +1,148 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+import type { CompatEntry } from "@cathouse/compat";
+import type { SetupActionId, SetupState, SetupTopic } from "@cathouse/protocol";
+import type { CatherdCli } from "../gateway/cli";
+import { claudeHome } from "../orchestrator/plugin";
+import { HandlerError } from "../panel/router";
+import { type ActionContext, REFRESH_AFTER, type Step, stepsFor } from "./actions";
+import { type DetectDeps, detect } from "./detect";
+import { evaluate } from "./evaluate";
+import type { SetupFacts } from "./facts";
+
+export interface SetupDeps extends DetectDeps {
+  broadcast: (payload: SetupTopic) => void;
+  /** Opens an interactive command in a terminal (logins); resolves when the terminal closes. */
+  openTerminal: (name: string, command: string, env: Record<string, string>) => Promise<void>;
+  log: (line: string) => void;
+}
+
+/** Detects, installs (on click only) and gates. vscode-free; see docs/architecture/setup.md. */
+export class SetupService {
+  private facts: SetupFacts | undefined;
+  private checking = false;
+  private running: SetupActionId | undefined;
+  private checkedAt: string | undefined;
+  private doctorAt: string | undefined;
+
+  constructor(private readonly deps: SetupDeps) {}
+
+  state(): SetupState {
+    const base = { checking: this.checking, ...(this.running ? { running: this.running } : {}) };
+    if (!this.facts) {
+      return { ...base, items: [], gateOpen: false, canStart: false, canStartReason: "checking…" };
+    }
+    return {
+      ...base,
+      ...evaluate(this.facts, this.deps.pin),
+      ...(this.checkedAt ? { checkedAt: this.checkedAt } : {}),
+      ...(this.doctorAt ? { doctorAt: this.doctorAt } : {}),
+    };
+  }
+
+  private publish(): SetupState {
+    const s = this.state();
+    this.deps.broadcast({ type: "state", state: s });
+    return s;
+  }
+
+  /** Quick, side-effect-free detection. With readiness: also catalog refresh (optional) + doctor. */
+  async check(opts: { readiness?: boolean; refresh?: boolean } = {}): Promise<SetupState> {
+    this.checking = true;
+    this.publish();
+    try {
+      const doctor = this.facts?.doctor;
+      this.facts = { ...(await detect(this.deps)), ...(doctor ? { doctor } : {}) };
+      this.checkedAt = new Date().toISOString();
+      if (opts.readiness && evaluate(this.facts, this.deps.pin).gateOpen) {
+        await this.readiness(opts.refresh === true);
+      }
+    } finally {
+      this.checking = false;
+    }
+    return this.publish();
+  }
+
+  /** catherd doctor has side effects; it runs only here (Setup, after installs, on "Check"). */
+  private async readiness(refresh: boolean): Promise<void> {
+    if (!this.facts) return;
+    const cli: CatherdCli = this.deps.cli();
+    try {
+      // After a backend install the listing is stale and the first doctor misreports the profile
+      // (docs/spikes/phase1.md finding 6), so refresh the catalog first.
+      if (refresh) await cli.catalogRefresh();
+      this.facts.doctor = await cli.doctor();
+      delete this.facts.doctorError;
+      this.doctorAt = new Date().toISOString();
+    } catch (e) {
+      delete this.facts.doctor;
+      this.facts.doctorError = e instanceof Error ? e.message : String(e);
+    }
+  }
+
+  private async marketplaceKnown(): Promise<boolean> {
+    try {
+      const raw = await readFile(
+        join(claudeHome(this.deps.vars), "plugins", "known_marketplaces.json"),
+        "utf8",
+      );
+      return Object.hasOwn(JSON.parse(raw) as object, "catherd");
+    } catch {
+      return false;
+    }
+  }
+
+  private async runStep(action: SetupActionId, step: Step): Promise<void> {
+    const env = await this.deps.env();
+    const out = (chunk: string) => this.deps.broadcast({ type: "output", action, chunk });
+    out(`\n$ ${step.label}\n`);
+    if (step.kind === "terminal") {
+      out("Finish it in the terminal CatHouse opened, then close that terminal.\n");
+      await this.deps.openTerminal(step.name, step.command, env);
+      return;
+    }
+    this.deps.log(`setup ${action}: ${step.cmd} ${step.args.join(" ")}`);
+    const r = await this.deps.run(step.cmd, step.args, {
+      env: { ...env, ...step.env },
+      timeoutMs: 15 * 60_000,
+      onOutput: (c) => out(c),
+    });
+    if (r.code !== 0) {
+      throw new HandlerError(
+        "E_SETUP_STEP",
+        `${step.label} failed (exit ${r.code ?? r.signal ?? "?"})`,
+        "read the output above; fix the cause and try again",
+      );
+    }
+  }
+
+  /** Runs one action (user click). One at a time; results stream on the "setup" topic. */
+  async run(action: SetupActionId): Promise<void> {
+    if (this.running) {
+      throw new HandlerError("E_SETUP_BUSY", `${this.running} is still running`);
+    }
+    this.running = action;
+    this.publish();
+    let ok = true;
+    let message: string | undefined;
+    try {
+      const ctx: ActionContext = {
+        pin: this.deps.pin,
+        claude: this.deps.bundledClaude(),
+        marketplaceKnown: await this.marketplaceKnown(),
+      };
+      for (const step of stepsFor(action, ctx)) await this.runStep(action, step);
+    } catch (e) {
+      ok = false;
+      message = e instanceof Error ? e.message : String(e);
+      this.deps.log(`setup ${action} failed: ${message}`);
+    } finally {
+      this.running = undefined;
+    }
+    this.deps.broadcast({ type: "action_done", action, ok, ...(message ? { message } : {}) });
+    const needsReadiness = action === "check-readiness" || (ok && REFRESH_AFTER.has(action));
+    await this.check({ readiness: needsReadiness, refresh: ok && REFRESH_AFTER.has(action) });
+  }
+}
+
+export type { CompatEntry };

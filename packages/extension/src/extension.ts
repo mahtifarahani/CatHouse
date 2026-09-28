@@ -1,7 +1,10 @@
-import { type EventTopic, PROTOCOL_VERSION } from "@cathouse/protocol";
+import { homedir } from "node:os";
+import { PINNED } from "@cathouse/compat";
+import { type EventTopic, PROTOCOL_VERSION, type SetupActionId } from "@cathouse/protocol";
 import * as vscode from "vscode";
 import { CatherdCli } from "./gateway/cli";
 import { processEnv } from "./gateway/env";
+import { runProcess } from "./gateway/process";
 import { type SavedLink, SessionController } from "./orchestrator/controller";
 import { findCatherdPlugin } from "./orchestrator/plugin";
 import { OrchestratorSession } from "./orchestrator/session";
@@ -10,6 +13,8 @@ import { Broadcaster, type MessageSink } from "./panel/host";
 import { createRouter, HandlerError } from "./panel/router";
 import { SidebarProvider } from "./panel/sidebar";
 import type { WebviewView } from "./panel/webview-html";
+import { bundledClaudePath } from "./setup/binary";
+import { SetupService } from "./setup/service";
 
 interface RequestContext {
   view: WebviewView;
@@ -35,6 +40,31 @@ export function activate(context: vscode.ExtensionContext): void {
     broadcaster.post({ v: PROTOCOL_VERSION, kind: "event", topic, payload });
   const env = () => processEnv();
 
+  const setup = new SetupService({
+    run: runProcess,
+    env,
+    bundledClaude: bundledClaudePath,
+    // Setup must work in an empty window too: catherd then resolves the global active profile.
+    cli: () =>
+      new CatherdCli({ cwd: vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? homedir(), env }),
+    pin: PINNED,
+    broadcast: (payload) => publish("setup", payload),
+    log: (line) => output.info(line),
+    openTerminal: (name, command, termEnv) =>
+      new Promise<void>((resolve) => {
+        const terminal = vscode.window.createTerminal({ name, env: termEnv });
+        const sub = vscode.window.onDidCloseTerminal((t) => {
+          if (t === terminal) {
+            sub.dispose();
+            resolve();
+          }
+        });
+        terminal.show();
+        terminal.sendText(command);
+      }),
+  });
+  void setup.check();
+
   const controller = new SessionController({
     env,
     findPluginPath: async () => (await findCatherdPlugin())?.installPath,
@@ -53,6 +83,18 @@ export function activate(context: vscode.ExtensionContext): void {
     broadcast: (payload) => publish("session", payload),
     log: (line) => output.info(line),
   });
+
+  /** The plan's gate: tasks start only when Setup says so (login, readiness included). */
+  const requireReady = () => {
+    const s = setup.state();
+    if (!s.canStart) {
+      throw new HandlerError(
+        "E_SETUP_REQUIRED",
+        s.canStartReason ?? "finish Setup first",
+        "open the Setup page in the CatHouse dashboard",
+      );
+    }
+  };
 
   const openDashboard = () => DashboardPanel.show(context.extensionUri, sink);
 
@@ -82,9 +124,21 @@ export function activate(context: vscode.ExtensionContext): void {
         })),
       };
     },
+    "setup.state": () => setup.state(),
+    "setup.check": ({ readiness }) => setup.check({ readiness }),
+    "setup.run": ({ action }) => {
+      void setup.run(action).catch((e: unknown) => output.warn(String(e)));
+      return { started: true };
+    },
     "session.state": () => controller.snapshot(),
-    "session.start": ({ task, repo }) => controller.start(repoFor(repo), task),
-    "session.resume": ({ repo }) => controller.resume(repoFor(repo)),
+    "session.start": ({ task, repo }) => {
+      requireReady();
+      return controller.start(repoFor(repo), task);
+    },
+    "session.resume": ({ repo }) => {
+      requireReady();
+      return controller.resume(repoFor(repo));
+    },
     "session.send": ({ text }) => {
       controller.send(text);
       return {};
@@ -115,6 +169,12 @@ export function activate(context: vscode.ExtensionContext): void {
       new SidebarProvider(context.extensionUri, sink),
     ),
     vscode.commands.registerCommand("cathouse.openDashboard", openDashboard),
+    vscode.commands.registerCommand("cathouse.checkSetup", () => setup.check({ readiness: true })),
+    // Hidden (not in package.json): lets e2e tests press a Setup button. Returns the new state.
+    vscode.commands.registerCommand("cathouse._runSetupAction", async (action: SetupActionId) => {
+      await setup.run(action);
+      return setup.state();
+    }),
   );
 }
 

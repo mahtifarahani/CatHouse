@@ -49,6 +49,11 @@
         "command": "cathouse.openDashboard",
         "title": "%cathouse.command.openDashboard%",
         "category": "CatHouse"
+      },
+      {
+        "command": "cathouse.checkSetup",
+        "title": "%cathouse.command.checkSetup%",
+        "category": "CatHouse"
       }
     ]
   },

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { PROTOCOL_VERSION } from "./envelope";
 import { PromptAnswerSchema, SessionStateSchema } from "./session";
+import { SetupActionIdSchema, SetupStateSchema } from "./setup";
 
 /**
  * Every request the webview can make, with its params and result schemas.
@@ -35,6 +36,15 @@ export const methods = {
         }),
       ),
     }),
+  },
+  "setup.state": { params: z.object({}), result: SetupStateSchema },
+  "setup.check": {
+    params: z.object({ readiness: z.boolean().default(false) }),
+    result: SetupStateSchema,
+  },
+  "setup.run": {
+    params: z.object({ action: SetupActionIdSchema }),
+    result: z.object({ started: z.boolean() }),
   },
   "session.state": { params: z.object({}), result: SessionStateSchema },
   "session.start": {

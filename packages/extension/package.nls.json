@@ -3,5 +3,6 @@
   "cathouse.untrusted": "CatHouse runs catherd and coding agents in your repository, so it needs a trusted workspace.",
   "cathouse.container.title": "CatHouse",
   "cathouse.sidebar.name": "CatHouse",
-  "cathouse.command.openDashboard": "Open Dashboard"
+  "cathouse.command.openDashboard": "Open Dashboard",
+  "cathouse.command.checkSetup": "Check Setup"
 }

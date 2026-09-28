@@ -83,6 +83,7 @@ export function Transcript({ events }: { events: SessionEvent[] }) {
               </li>
             );
         }
+        return null;
       })}
     </ol>
   );

@@ -23,4 +23,6 @@ export default defineConfig({
   // untrusted; trust is disabled for the test host only.
   launchArgs: ["--disable-workspace-trust"],
   mocha: { ui: "tdd", timeout: 60_000 },
+  // CATHOUSE_E2E_GREP narrows the run (e.g. "Setup") for the slow opt-in install test.
+  ...(process.env.CATHOUSE_E2E_GREP ? { grep: process.env.CATHOUSE_E2E_GREP } : {}),
 });

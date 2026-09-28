@@ -6,7 +6,13 @@ import { PromptCard } from "./PromptCard";
 import { Transcript } from "./Transcript";
 import { useSession } from "./useSession";
 
-export function SessionPage() {
+export function SessionPage({
+  canStart,
+  blockedReason,
+}: {
+  canStart: boolean;
+  blockedReason?: string | undefined;
+}) {
   const s = useSession();
   const [task, setTask] = useState("");
   const [followUp, setFollowUp] = useState("");
@@ -68,8 +74,11 @@ export function SessionPage() {
               placeholder={t("session.taskPlaceholder")}
             />
           </label>
+          {!canStart && (
+            <p className="text-warning">{t("session.blocked", { reason: blockedReason ?? "" })}</p>
+          )}
           <div className="flex flex-wrap gap-2">
-            <Button type="submit" disabled={!task.trim()}>
+            <Button type="submit" disabled={!task.trim() || !canStart}>
               {t("session.start")}
             </Button>
             <Button
