@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Phase 5: platform VSIX packaging, extension README, dashboard status line, complete public-surface TUI parity, profile help/filter/confirmations, save-race rebase, accessible tabs/dialogs/toasts, Light/Dark/High Contrast verification, and webview cache busting.
 - Phase 4: repo picker, permission modes, prompt badge/notification, cancel note to the live orchestrator, Continue from a run, compaction marker.
 - Phase 3: Overview, Runs (list + detail with cancel, climbs, routes, records, debug), Profiles editor (staged draft, undo/redo, diff preview, treat-like), Models, Diagnostics; per-repo gateway; run files via MCP `read_run_file`.
 - Phase 2: mandatory Setup (detectors, click-only installers, gate, Setup page, `CatHouse: Check Setup`); verified on a fresh HOME end to end.

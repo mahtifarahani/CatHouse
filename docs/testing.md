@@ -16,9 +16,9 @@ E2E env switches: `CATHOUSE_EXPECT_READY=1` (prepared machine), `CATHOUSE_EXPECT
 
 `CATHOUSE_E2E_WORKSPACE=<git repo with catherd runs>` enables `pages.e2e.ts` (runs, profiles, catalog through the real router via the hidden `cathouse._request` command).
 
-Current tests: 65 unit (protocol, router, CSP, compat, gateway, event mapper, controller), 6 live contract, 4 e2e (activation; Setup on the real machine; pages: runs, profiles/catalog).
+Current tests: 68 unit (protocol, router, CSP, compat, gateway, event mapper, controller, profile draft/rebase), 7 live contract, 5 e2e scenarios (activation; Setup on the real machine; pages: runs, workspace/repo selection, profiles/catalog).
 
-**E2E status (2026-09-28): green in VS Code 1.139 (macOS), 1 passing.**
+**E2E status (2026-09-28): green in VS Code 1.139 (macOS).** The default command has 2 passing and 3 pending because page tests require `CATHOUSE_E2E_WORKSPACE`; the prepared-workspace run has all 5 scenarios.
 - The dashboard tab appears asynchronously after `executeCommand` resolves, so the test polls (`waitFor`, 5 s).
 - **Cursor cannot run the e2e tests:** Cursor 3.21.18 (VS Code 1.128 base) logs `Loading development extension …` in its test host but never registers the extension (`vscode.extensions.all` lacks it; extension-path mappings are empty). Workspace trust is not the cause. Its "glass mode" is suspected. The config therefore prefers VS Code.
 - Nothing is downloaded: `@vscode/test-electron`'s ~300 MB download was dropped on the owner's request.

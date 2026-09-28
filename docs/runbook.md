@@ -75,7 +75,11 @@ pnpm build
 - Everything except the Agent SDK is bundled by esbuild/Vite; the SDK ships as files in `node_modules` (ADR 0008).
 - Publisher `cathouse` and license `UNLICENSED` are placeholders (`--skip-license`, `--allow-missing-repository`) until the owner picks real values.
 
-## 4. Common problems
+## 4. Remote verification
+
+`extensionKind: ["workspace"]` makes the extension host, Bun, catherd, the plugin and worker backends run on the SSH/Dev Container side. Open a remote git repository, install the matching Linux VSIX on the remote extension host, and repeat Setup plus one short run. Phase 5 could not execute this check because no SSH host or Dev Container runtime was available on the planning machine; linux-x64 is build-verified only.
+
+## 5. Common problems
 
 | Symptom | Cause | Fix |
 |---|---|---|

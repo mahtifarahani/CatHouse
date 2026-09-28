@@ -43,4 +43,31 @@ describe("profile draft", () => {
     d = draftReducer(d, { type: "reset", base });
     expect(dirtyCount(d)).toBe(0);
   });
+
+  it("keeps edits made while a save is in flight over the saved base", () => {
+    let d = initDraft(base);
+    d = draftReducer(d, {
+      type: "edit",
+      fn: (x) => {
+        x.objective = "speed";
+      },
+    });
+    const submitted = structuredClone(d.doc);
+    d = draftReducer(d, {
+      type: "edit",
+      fn: (x) => {
+        x.timeouts.idleMin = 20;
+      },
+    });
+    d = draftReducer(d, {
+      type: "saved",
+      base: submitted,
+      submitted,
+      submittedTreatLikes: [],
+    });
+    expect(d.base.objective).toBe("speed");
+    expect(d.doc.objective).toBe("speed");
+    expect(d.doc.timeouts.idleMin).toBe(20);
+    expect(dirtyCount(d)).toBe(1);
+  });
 });

@@ -1,6 +1,6 @@
 # catherd 1.0.0 TUI: feature-parity checklist for CatHouse
 
-> Status 2026-09-28 (Phase 3): ticked items are implemented (`docs/architecture/webview.md` §Pages); unticked items are still open (Phase 4). Known differences from the TUI: live per-keystroke draft validation is not possible (public-surface gap 3; errors appear on Save); the ladder column shows the role's rungs in order, not catherd's computed `candidates()` (gap 6); agent-file changes appear after save, not in the preview (gap 4).
+> Status 2026-09-28 (Phase 5): all public-surface parity items are implemented (`docs/architecture/webview.md` §Pages). Known differences from the TUI remain: live per-keystroke draft validation is not possible (public-surface gap 3; errors appear on Save); the ladder column shows the role's rungs in order, not catherd's computed `candidates()` (gap 6); agent-file changes appear after save, not in the preview (gap 4).
 
 Citations are relative to the catherd repo at commit `b257da7`. TUI code: `src/entry/tui/` (23 files). Every screen as text: `docs/tui-frames.md` (generated, checked in CI).
 
@@ -10,9 +10,9 @@ Legend for the "CatHouse source" column: **MCP** = tool on the long-lived gatewa
 
 ## Chrome (every screen)
 
-- [ ] (open: no header mood/version; the profile and unsaved count show on the Profiles page) Header: version, the profile shown with "(active)" or "(this repo)", total unsaved count, mood (failed if doctor not ready; working if any run is live; else good) (`views/app.tsx:163-185`).
+- [x] Header: version, the profile shown with "(active)" or "(this repo)", total unsaved count, mood (failed if doctor not ready; working if any run is live; else good) (`views/app.tsx:163-185`). CatHouse: `packages/webview/src/App.tsx:174-205`.
 - [x] Tabs: Status, Profiles, Runs (`state.ts:12`). CatHouse: Overview, Runs, Profiles, Models, Diagnostics, plus Setup and Session.
-- [ ] (partial: inline status lines, no VS Code notifications yet) Toasts (success/info/warning/error) → VS Code notifications or in-webview toasts.
+- [x] Toasts (success/info/warning/error) → accessible in-webview live region (`packages/webview/src/lib/toasts.tsx:8-47`), used by profile, catalog and diagnostics actions.
 - [x] "Kept lines", e.g. "start a new Claude Code session to use: …" (`profile-actions.ts:166-173`) → a persistent banner.
 - [x] Polling: doctor once and on `r`; runs every 2 s (pausable); profiles every 2 s; open run every 1 s (`providers/data.tsx:65,117,119`; `views/runs.tsx:15,138`). Change detection by file mtimes (`effects.ts:145-184`).
 - [x] Avoid the first-frame flash of "0 profiles" (a known TUI bug): show a loading state.
@@ -48,8 +48,8 @@ Top line: `PROFILE <name> (active) · N unsaved · switch · new`.
 | NOTIFY | milestone/finish/blocked `[x]` | none | toggle | patch `notify` |
 
 - [x] Per-row validation error/warning inline, with message + fix (`profiles.tsx:339-350`). Source: MCP `profile_validate` (saved profile) and `profile_set` → `saved: false` errors (draft). Live draft validation is a GAP.
-- [ ] (open) Help line per row type (`profiles.tsx:28-41`).
-- [ ] (open) Filter `/` across parent path, label and value (`profile-tree.ts:401-419`).
+- [x] Help line per row type (`profiles.tsx:28-41`).
+- [x] Filter `/` across parent path, label and value (`profile-tree.ts:401-419`).
 - [x] Error states: profiles/profile/catalog unreadable → error + fix + retry; a failed later poll keeps the last good read with a "stale" line (`profiles.tsx:47-58,134-159`).
 
 ### Edit flow (`state.ts`, `views/save-dialog.tsx`)
@@ -61,15 +61,15 @@ Top line: `PROFILE <name> (active) · N unsaved · switch · new`.
 - [x] Re-read the file before writing; if it changed on disk, ask again (TUI uses `expect`, which is a GAP; CatHouse re-reads and compares).
 - [x] Write order: each staged treat-like (CLI `catalog treat-like`), then the patch (MCP `profile_set`). Show `newSessionNeededFor` as a banner.
 - [x] Save & make active = save, then CLI `profile use <name> [--repo]`.
-- [ ] (open: the draft is rebased on the saved doc) Edits made during a save stay staged over the new base.
+- [x] Edits made during a save stay staged over the new base (three-way rebase in `packages/webview/src/pages/profileDraft.ts:32-42,84-88`; unit test).
 
 ### Dialogs
 
 - [x] Profile list (current, active, this repo, N unsaved); delete with double confirmation → CLI `profile rm` (refuses active/bound).
 - [x] New / copy (name must match `PROFILE_NAME`; duplicates refused inline) → CLI `profile new <n> [--from]` / `profile copy`.
-- [ ] (partial: no confirm dialog; unsaved-changes warning only on profile switch) Activate confirm (global vs repo binding; warns unsaved changes aren't included; re-reads the binding first) → CLI `profile use <n> [--repo]`.
-- [ ] (partial: Discard has no confirm and does not re-read) Revert confirm (re-reads the file; "changed on disk" warning).
-- [ ] (partial: only on profile switch, not on panel close) Quit/close with unsaved changes → keep editing / discard.
+- [x] Activate confirm (global vs repo binding; warns unsaved changes aren't included; re-reads the binding first) → CLI `profile use <n> [--repo]`.
+- [x] Revert confirm (re-reads the file; "changed on disk" warning).
+- [x] Quit/close with unsaved changes → browser `beforeunload` guard while dirty plus draft persistence in VS Code webview state; reopening restores the exact staged draft, where Keep editing / Discard remain available. Profile switching uses the same accessible confirmation flow.
 - [x] Pickers: default rung, failover stand-in (other quota only), treat-like; number prompt.
 
 ## Runs tab (`views/runs.tsx`; frames `docs/tui-frames.md:276-334`)

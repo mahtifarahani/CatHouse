@@ -13,11 +13,18 @@ import { fileURLToPath } from "node:url";
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..");
 const args = process.argv.slice(2);
-const target = args[args.indexOf("--target") + 1] && args.includes("--target")
-  ? args[args.indexOf("--target") + 1]
-  : `${process.platform}-${process.arch}`;
-const TARGETS = { "darwin-arm64": "darwin-arm64", "darwin-x64": "darwin-x64", "linux-x64": "linux-x64", "linux-arm64": "linux-arm64" };
-if (!TARGETS[target]) throw new Error(`unsupported target ${target}; one of ${Object.keys(TARGETS).join(", ")}`);
+const target =
+  args[args.indexOf("--target") + 1] && args.includes("--target")
+    ? args[args.indexOf("--target") + 1]
+    : `${process.platform}-${process.arch}`;
+const TARGETS = {
+  "darwin-arm64": "darwin-arm64",
+  "darwin-x64": "darwin-x64",
+  "linux-x64": "linux-x64",
+  "linux-arm64": "linux-arm64",
+};
+if (!TARGETS[target])
+  throw new Error(`unsupported target ${target}; one of ${Object.keys(TARGETS).join(", ")}`);
 
 const req = createRequire(join(root, "package.json"));
 const sdkDir = dirname(req.resolve("@anthropic-ai/claude-agent-sdk"));
@@ -48,7 +55,11 @@ for (const f of ["dist/extension.js", "dist/webview/index.js", "dist/webview/ind
 // node_modules: the SDK (without its own nested node_modules) + the target's binary package.
 const nm = join(stage, "node_modules", "@anthropic-ai");
 mkdirSync(nm, { recursive: true });
-cpSync(sdkDir, join(nm, "claude-agent-sdk"), { recursive: true, dereference: true, filter: (p) => !p.includes(`${sdkDir}/node_modules`) });
+cpSync(sdkDir, join(nm, "claude-agent-sdk"), {
+  recursive: true,
+  dereference: true,
+  filter: (p) => !p.includes(`${sdkDir}/node_modules`),
+});
 {
   const sdkPkgPath = join(nm, "claude-agent-sdk", "package.json");
   const sdkPkg = JSON.parse(readFileSync(sdkPkgPath, "utf8"));
@@ -61,7 +72,9 @@ cpSync(sdkDir, join(nm, "claude-agent-sdk"), { recursive: true, dereference: tru
 }
 let localPlatform;
 try {
-  localPlatform = dirname(createRequire(join(sdkDir, "package.json")).resolve(`${platformPkg}/package.json`));
+  localPlatform = dirname(
+    createRequire(join(sdkDir, "package.json")).resolve(`${platformPkg}/package.json`),
+  );
 } catch {}
 const platformDest = join(nm, `claude-agent-sdk-${TARGETS[target]}`);
 if (localPlatform) {
@@ -71,7 +84,13 @@ if (localPlatform) {
   const tmp = join(root, ".pkg", `tmp-${target}`);
   rmSync(tmp, { recursive: true, force: true });
   mkdirSync(tmp, { recursive: true });
-  const tgz = execFileSync("npm", ["pack", `${platformPkg}@${sdkVersion}`, "--silent"], { cwd: tmp, encoding: "utf8" }).trim().split("\n").pop();
+  const tgz = execFileSync("npm", ["pack", `${platformPkg}@${sdkVersion}`, "--silent"], {
+    cwd: tmp,
+    encoding: "utf8",
+  })
+    .trim()
+    .split("\n")
+    .pop();
   execFileSync("tar", ["-xzf", tgz], { cwd: tmp });
   cpSync(join(tmp, "package"), platformDest, { recursive: true });
   rmSync(tmp, { recursive: true, force: true });

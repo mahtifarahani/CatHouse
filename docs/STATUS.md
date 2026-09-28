@@ -4,7 +4,7 @@ Last updated: 2026-09-28. Update this file at the end of every section.
 
 ## Current phase
 
-**Phase 5 (release prep): in progress.** Platform VSIX and the extension README are done. Waiting on the owner's visual check of all tabs; then remote, a11y, the open parity items, and version/publisher/license.
+**Phase 5 (release prep): code-complete on macOS; external/owner gates remain.** Platform VSIX, extension README, the eight open parity items, accessibility and Light/Dark/High Contrast checks are done. A remote runtime was not available. Waiting on publisher/license/version decisions and native execution of non-arm64 artifacts.
 
 ## Checklist
 
@@ -16,7 +16,7 @@ Last updated: 2026-09-28. Update this file at the end of every section.
 | 2 | Mandatory Setup | ✅ done | `docs/architecture/setup.md` |
 | 3 | Main pages (Overview, Runs, Profiles, Models, Diagnostics) | ✅ done | `docs/architecture/webview.md`, parity checklist ticks in `docs/research/catherd-tui-parity.md` |
 | 4 | Run control in UI (start, prompts, cancel, resume) | ✅ done | `docs/architecture/orchestrator.md` |
-| 5 | Release prep (remote, trust, a11y, themes, VSIX per platform) | ⏭ next | `docs/runbook.md`, `docs/CHANGELOG.md` |
+| 5 | Release prep (remote, trust, a11y, themes, VSIX per platform) | 🚧 external gates | `docs/release/phase5.md`, `docs/runbook.md`, `docs/CHANGELOG.md` |
 
 ## Phase 0 outcome
 
@@ -35,18 +35,22 @@ Setup is built and verified end to end (`docs/architecture/setup.md`): detectors
 
 ## Phase 3 outcome
 
-Pages built (`docs/architecture/webview.md` §Pages) on a per-repo `CatherdGateway` (`docs/architecture/gateway.md`). ADR 0007 was revised: run files are read via MCP `read_run_file`, so there are no disk reads. The TUI parity checklist is ticked where built; 8 items remain open or partial (marked in the checklist), plus three public-surface gaps. Verified: 65 unit tests; e2e `pages.e2e.ts` against real catherd (runs list/detail/reply/debug, profiles, catalog, unchanged save), which caught two live contract details (object `treatLike`, `name: null`). **Visual check of the pages in VS Code by the owner: pending.**
+Pages built (`docs/architecture/webview.md` §Pages) on a per-repo `CatherdGateway` (`docs/architecture/gateway.md`). ADR 0007 was revised: run files are read via MCP `read_run_file`, so there are no disk reads. At the end of Phase 3, 8 public-surface parity items were still open; Phase 5 closed them. Verified then: 65 unit tests; e2e `pages.e2e.ts` against real catherd (runs list/detail/reply/debug, profiles, catalog, unchanged save), which caught two live contract details (object `treatLike`, `name: null`).
 
 ## Phase 4 outcome
 
-Repo picker, permission modes, prompt badge + notification, cancel note, Continue from a run, compaction marker, Discard confirm (`docs/architecture/orchestrator.md` §Phase 4). 67 unit + 5 e2e green. Still open from the parity list: header status line, profile help lines + filter, confirm dialogs for activate, unsaved-changes guard on panel close, edits during save (`docs/research/catherd-tui-parity.md`, unticked).
+Repo picker, permission modes, prompt badge + notification, cancel note, Continue from a run, compaction marker, Discard confirm (`docs/architecture/orchestrator.md` §Phase 4). 67 unit + 5 e2e green. The parity items left at this checkpoint were completed in Phase 5.
+
+## Phase 5 outcome
+
+All eight remaining public-surface parity items are ticked. The dashboard has a live status line and ARIA tab navigation; Profiles has help, `/` filtering, accessible activation/revert/switch dialogs, dirty-close guarding, and a tested three-way rebase for edits made during Save. Toasts use an accessible live region and model usability is not colour-only. Light Modern, Dark Modern and Dark High Contrast were inspected in the real Extension Development Host; Arrow-key tab navigation was verified through the accessibility tree. A stale-webview bug found during the pass was fixed with per-attach cache keys. Verification: lint, 68 unit tests, typecheck, build, and default e2e (2 passed, 3 workspace-dependent pending). Full report: `docs/release/phase5.md`.
 
 ## Exact next step (Phase 5)
 
-1. ~~Platform VSIX~~ **done** (ADR 0008 §Implementation): `pnpm package` / `pnpm package:all`; darwin-arm64 verified installed; linux-x64 built, not run.
-2. Remote (SSH / Dev Containers): `extensionKind: workspace` is set; test on a remote if available, otherwise document as untested.
-3. Accessibility pass (keyboard-only walk, focus order, ARIA on tabs and dialogs) and a High Contrast check; the owner does the visual pass.
-4. ~~Extension README~~ done (`packages/extension/README.md`). Still owner decisions: publisher id, license, version 0.1.0.
+1. Owner chooses the publisher id, SPDX license, and whether to publish as `0.1.0`; update the manifest and generate the license file.
+2. On an available SSH host or Dev Container, install the linux-x64 VSIX on the remote extension host and run Setup plus one short task. Docker is installed on this Mac but its daemon was not running; no SSH/Dev Container target was available, so remote remains explicitly untested.
+3. Execute the darwin-x64 and Linux VSIX artifacts on native target machines. They are build-verified only.
+4. After these gates, set Phase 5 to done and start the owner's bug/improvement backlog.
 
 ## Environment facts (planning machine, 2026-09-28)
 

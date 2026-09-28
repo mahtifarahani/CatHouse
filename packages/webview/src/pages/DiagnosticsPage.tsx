@@ -2,6 +2,7 @@ import { Badge, Button, inputClass, Section } from "@cathouse/ui";
 import { useState } from "react";
 import { request } from "../lib/rpc";
 import { t } from "../lib/strings";
+import { toast } from "../lib/toasts";
 import { errorText } from "../lib/usePoll";
 import { useSetup } from "../setup/useSetup";
 import { ago } from "./RunsPage";
@@ -17,7 +18,9 @@ export function DiagnosticsPage() {
       await fn();
       setMsg(undefined);
     } catch (e) {
-      setMsg(errorText(e));
+      const text = errorText(e);
+      setMsg(text);
+      toast(text, "bad");
     }
   };
   return (

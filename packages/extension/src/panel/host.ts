@@ -28,12 +28,17 @@ export function attachWebview(
   sink: MessageSink & { broadcaster: Broadcaster },
 ): vscode.Disposable {
   const root = vscode.Uri.joinPath(extensionUri, "dist", "webview");
+  const nonce = randomBytes(16).toString("base64");
   webview.options = { enableScripts: true, localResourceRoots: [root] };
   webview.html = buildWebviewHtml({
     cspSource: webview.cspSource,
-    scriptUri: webview.asWebviewUri(vscode.Uri.joinPath(root, "index.js")).toString(),
-    styleUri: webview.asWebviewUri(vscode.Uri.joinPath(root, "index.css")).toString(),
-    nonce: randomBytes(16).toString("base64"),
+    scriptUri: webview
+      .asWebviewUri(vscode.Uri.joinPath(root, "index.js").with({ query: `v=${nonce}` }))
+      .toString(),
+    styleUri: webview
+      .asWebviewUri(vscode.Uri.joinPath(root, "index.css").with({ query: `v=${nonce}` }))
+      .toString(),
+    nonce,
     view,
     title: "CatHouse",
   });

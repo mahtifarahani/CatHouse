@@ -7,6 +7,7 @@
 | [`plan.md`](plan.md) | The approved execution plan (Persian with English identifiers) |
 | [`runbook.md`](runbook.md) | Setting up a dev machine from zero, running against real catherd, building VSIX, common problems |
 | [`testing.md`](testing.md) | Test layers and how to run them |
+| [`release/phase5.md`](release/phase5.md) | Release-prep implementation, accessibility/theme evidence, verification and remaining external gates |
 | **research/** | |
 | [`research/catherd-overview.md`](research/catherd-overview.md) | What catherd is: roles, rungs, ladders, Jev, the skill's sequence, surfaces |
 | [`research/catherd-mcp-contract.md`](research/catherd-mcp-contract.md) | All 21 MCP tools: inputs, outputs, error envelope, codes, `wait` single-delivery rule |

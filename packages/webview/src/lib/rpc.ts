@@ -74,4 +74,8 @@ export const viewState = {
   set<T>(state: T): void {
     vscode.setState(state);
   },
+  update<T extends Record<string, unknown>>(patch: T): void {
+    const current = (vscode.getState() as Record<string, unknown> | undefined) ?? {};
+    vscode.setState({ ...current, ...patch });
+  },
 };

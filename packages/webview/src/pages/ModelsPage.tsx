@@ -3,6 +3,7 @@ import { Badge, Button, Empty, ErrorText, inputClass, Section } from "@cathouse/
 import { useMemo, useState } from "react";
 import { request } from "../lib/rpc";
 import { t } from "../lib/strings";
+import { toast } from "../lib/toasts";
 import { errorText, usePoll } from "../lib/usePoll";
 
 export function ModelsPage() {
@@ -47,9 +48,12 @@ export function ModelsPage() {
           )
           .join(" · "),
       );
+      toast(t("models.count", { n: r.reduce((sum, b) => sum + b.models, 0) }), "ok");
       q.refresh();
     } catch (e) {
-      setMsg(errorText(e));
+      const text = errorText(e);
+      setMsg(text);
+      toast(text, "bad");
     }
   };
   const saveTreat = async () => {
@@ -57,10 +61,13 @@ export function ModelsPage() {
     try {
       await request("catalog.treatLike", treat);
       setMsg(t("models.treated", treat));
+      toast(t("models.treated", treat), "ok");
       setTreat(undefined);
       q.refresh();
     } catch (e) {
-      setMsg(errorText(e));
+      const text = errorText(e);
+      setMsg(text);
+      toast(text, "bad");
     }
   };
 
@@ -145,6 +152,7 @@ export function ModelsPage() {
                   onClick={() => !r.scored && setTreat({ rung: r.rung, like: "" })}
                   className={`rounded-sm border px-1.5 font-mono text-xs ${r.enabled ? "border-success" : "border-border text-muted-foreground"}`}
                 >
+                  {r.enabled && "✓ "}
                   {r.rung.split("#")[1]}
                   {r.treatLike && " ≈"}
                   {!r.scored && !r.treatLike && " ?"}
