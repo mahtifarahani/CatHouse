@@ -14,7 +14,9 @@ Rules: unit-testable host code must not import `vscode` (see `panel/router.ts`, 
 
 E2E env switches: `CATHOUSE_EXPECT_READY=1` (prepared machine), `CATHOUSE_EXPECT_FRESH=1` (fresh HOME), `CATHOUSE_E2E_INSTALL=1` + `CATHOUSE_E2E_GREP=Setup` (run installers on a fresh HOME; slow, downloads Bun/catherd/plugin). See `docs/architecture/setup.md`.
 
-Current tests: 54 unit (protocol, router, CSP, compat, gateway, event mapper, controller), 6 live contract, 2 e2e (activation + dashboard tab; Setup on the real machine).
+`CATHOUSE_E2E_WORKSPACE=<git repo with catherd runs>` enables `pages.e2e.ts` (runs, profiles, catalog through the real router via the hidden `cathouse._request` command).
+
+Current tests: 65 unit (protocol, router, CSP, compat, gateway, event mapper, controller), 6 live contract, 4 e2e (activation; Setup on the real machine; pages: runs, profiles/catalog).
 
 **E2E status (2026-09-28): green in VS Code 1.139 (macOS), 1 passing.**
 - The dashboard tab appears asynchronously after `executeCommand` resolves, so the test polls (`waitFor`, 5 s).

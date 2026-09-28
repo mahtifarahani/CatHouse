@@ -1,5 +1,7 @@
 # catherd 1.0.0 TUI: feature-parity checklist for CatHouse
 
+> Status 2026-09-28 (Phase 3): every item below is implemented; see `docs/architecture/webview.md` §Pages. Known differences: live per-keystroke draft validation is not possible (public-surface gap 3; errors appear on Save); the ladder column shows the role's rungs in order, not catherd's computed `candidates()` (gap 6); agent-file changes appear after save, not in the preview (gap 4).
+
 Citations are relative to the catherd repo at commit `b257da7`. TUI code: `src/entry/tui/` (23 files). Every screen as text: `docs/tui-frames.md` (generated, checked in CI).
 
 **Key fact:** every TUI action goes through one seam, the `Effects` interface (`src/entry/tui/effects.ts:90-135`), which `liveEffects()` fills by calling services directly (`effects.ts:229-270`). The package has no `exports`, only `bin`. So CatHouse can only use the CLI and the 21 MCP tools. Mirror `Effects` as CatHouse's service layer (`CatherdGateway`). Use the `commands.ts` table as the feature manifest.
@@ -8,12 +10,12 @@ Legend for the "CatHouse source" column: **MCP** = tool on the long-lived gatewa
 
 ## Chrome (every screen)
 
-- [ ] Header: version, the profile shown with "(active)" or "(this repo)", total unsaved count, mood (failed if doctor not ready; working if any run is live; else good) (`views/app.tsx:163-185`).
-- [ ] Tabs: Status, Profiles, Runs (`state.ts:12`). CatHouse: Overview, Runs, Profiles, Models, Diagnostics, plus Setup and Session.
-- [ ] Toasts (success/info/warning/error) → VS Code notifications or in-webview toasts.
-- [ ] "Kept lines", e.g. "start a new Claude Code session to use: …" (`profile-actions.ts:166-173`) → a persistent banner.
-- [ ] Polling: doctor once and on `r`; runs every 2 s (pausable); profiles every 2 s; open run every 1 s (`providers/data.tsx:65,117,119`; `views/runs.tsx:15,138`). Change detection by file mtimes (`effects.ts:145-184`).
-- [ ] Avoid the first-frame flash of "0 profiles" (a known TUI bug): show a loading state.
+- [x] Header: version, the profile shown with "(active)" or "(this repo)", total unsaved count, mood (failed if doctor not ready; working if any run is live; else good) (`views/app.tsx:163-185`).
+- [x] Tabs: Status, Profiles, Runs (`state.ts:12`). CatHouse: Overview, Runs, Profiles, Models, Diagnostics, plus Setup and Session.
+- [x] Toasts (success/info/warning/error) → VS Code notifications or in-webview toasts.
+- [x] "Kept lines", e.g. "start a new Claude Code session to use: …" (`profile-actions.ts:166-173`) → a persistent banner.
+- [x] Polling: doctor once and on `r`; runs every 2 s (pausable); profiles every 2 s; open run every 1 s (`providers/data.tsx:65,117,119`; `views/runs.tsx:15,138`). Change detection by file mtimes (`effects.ts:145-184`).
+- [x] Avoid the first-frame flash of "0 profiles" (a known TUI bug): show a loading state.
 
 ## Status tab (`views/status.tsx`; frame `docs/tui-frames.md:6-34`)
 
@@ -45,30 +47,30 @@ Top line: `PROFILE <name> (active) · N unsaved · switch · new`.
 | TIMEOUTS | idle, wall | number | prompt (cannot be cleared) | patch |
 | NOTIFY | milestone/finish/blocked `[x]` | none | toggle | patch `notify` |
 
-- [ ] Per-row validation error/warning inline, with message + fix (`profiles.tsx:339-350`). Source: MCP `profile_validate` (saved profile) and `profile_set` → `saved: false` errors (draft). Live draft validation is a GAP.
-- [ ] Help line per row type (`profiles.tsx:28-41`).
-- [ ] Filter `/` across parent path, label and value (`profile-tree.ts:401-419`).
-- [ ] Error states: profiles/profile/catalog unreadable → error + fix + retry; a failed later poll keeps the last good read with a "stale" line (`profiles.tsx:47-58,134-159`).
+- [x] Per-row validation error/warning inline, with message + fix (`profiles.tsx:339-350`). Source: MCP `profile_validate` (saved profile) and `profile_set` → `saved: false` errors (draft). Live draft validation is a GAP.
+- [x] Help line per row type (`profiles.tsx:28-41`).
+- [x] Filter `/` across parent path, label and value (`profile-tree.ts:401-419`).
+- [x] Error states: profiles/profile/catalog unreadable → error + fix + retry; a failed later poll keeps the last good read with a "stale" line (`profiles.tsx:47-58,134-159`).
 
 ### Edit flow (`state.ts`, `views/save-dialog.tsx`)
 
-- [ ] Staged draft per profile `{base, doc, treatLikes, past, future}`, 100 undo steps; nothing touches disk before Save (`state.ts:23-29,114`).
-- [ ] Dirty count = changed fields + staged treat-likes.
-- [ ] Undo/redo; a treat-like and the rung tick it brings are one step.
-- [ ] Save dialog (only from an explicit Save; Enter never saves): field diff before → after, staged treat-likes, validation errors/warnings, agent files added/removed (GAP), note "Applies to: native Claude agents in new Claude Code sessions; codex, claude-code and opencode from the next dispatch". Buttons Save / Save & make active / Cancel; any error leaves only Cancel.
-- [ ] Re-read the file before writing; if it changed on disk, ask again (TUI uses `expect`, which is a GAP; CatHouse re-reads and compares).
-- [ ] Write order: each staged treat-like (CLI `catalog treat-like`), then the patch (MCP `profile_set`). Show `newSessionNeededFor` as a banner.
-- [ ] Save & make active = save, then CLI `profile use <name> [--repo]`.
-- [ ] Edits made during a save stay staged over the new base.
+- [x] Staged draft per profile `{base, doc, treatLikes, past, future}`, 100 undo steps; nothing touches disk before Save (`state.ts:23-29,114`).
+- [x] Dirty count = changed fields + staged treat-likes.
+- [x] Undo/redo; a treat-like and the rung tick it brings are one step.
+- [x] Save dialog (only from an explicit Save; Enter never saves): field diff before → after, staged treat-likes, validation errors/warnings, agent files added/removed (GAP), note "Applies to: native Claude agents in new Claude Code sessions; codex, claude-code and opencode from the next dispatch". Buttons Save / Save & make active / Cancel; any error leaves only Cancel.
+- [x] Re-read the file before writing; if it changed on disk, ask again (TUI uses `expect`, which is a GAP; CatHouse re-reads and compares).
+- [x] Write order: each staged treat-like (CLI `catalog treat-like`), then the patch (MCP `profile_set`). Show `newSessionNeededFor` as a banner.
+- [x] Save & make active = save, then CLI `profile use <name> [--repo]`.
+- [x] Edits made during a save stay staged over the new base.
 
 ### Dialogs
 
-- [ ] Profile list (current, active, this repo, N unsaved); delete with double confirmation → CLI `profile rm` (refuses active/bound).
-- [ ] New / copy (name must match `PROFILE_NAME`; duplicates refused inline) → CLI `profile new <n> [--from]` / `profile copy`.
-- [ ] Activate confirm (global vs repo binding; warns unsaved changes aren't included; re-reads the binding first) → CLI `profile use <n> [--repo]`.
-- [ ] Revert confirm (re-reads the file; "changed on disk" warning).
-- [ ] Quit/close with unsaved changes → keep editing / discard.
-- [ ] Pickers: default rung, failover stand-in (other quota only), treat-like; number prompt.
+- [x] Profile list (current, active, this repo, N unsaved); delete with double confirmation → CLI `profile rm` (refuses active/bound).
+- [x] New / copy (name must match `PROFILE_NAME`; duplicates refused inline) → CLI `profile new <n> [--from]` / `profile copy`.
+- [x] Activate confirm (global vs repo binding; warns unsaved changes aren't included; re-reads the binding first) → CLI `profile use <n> [--repo]`.
+- [x] Revert confirm (re-reads the file; "changed on disk" warning).
+- [x] Quit/close with unsaved changes → keep editing / discard.
+- [x] Pickers: default rung, failover stand-in (other quota only), treat-like; number prompt.
 
 ## Runs tab (`views/runs.tsx`; frames `docs/tui-frames.md:276-334`)
 
