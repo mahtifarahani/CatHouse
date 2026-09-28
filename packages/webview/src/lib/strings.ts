@@ -6,7 +6,7 @@ const en = {
   "session.taskPlaceholder":
     "Describe what catherd should build. It plans, dispatches roles and reports back.",
   "session.roleGuide":
-    "You are talking to the catherd orchestrator, which chooses and dispatches roles automatically. To steer the next step, ask it to use a role such as researcher or reviewer in your task or follow-up.",
+    "You are talking to the catherd orchestrator. It chooses and dispatches roles automatically; ask for a researcher or reviewer in your task when you want to steer the approach.",
   "session.start": "Start task",
   "session.resume": "Resume saved run",
   "session.interrupt": "Interrupt",
@@ -41,6 +41,7 @@ const en = {
   "status.failed": "setup needs attention",
   "status.working": "agents working",
   "status.good": "ready",
+  "common.info": "More information",
   "common.refresh": "Refresh",
   "common.loading": "Loading…",
   "common.save": "Save",

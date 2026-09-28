@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Reduced New Chat density by moving role and permission guidance into accessible info tooltips, removing redundant chrome, and attaching Send directly to the follow-up input.
+- Combined the repository and dashboard status rows into one responsive bar and removed the duplicated catherd version.
+- Improved New Chat's visual hierarchy and spacing with a structured task composer, readable permission controls and a prominent readiness status; raised dense supporting text to a 13 px minimum and shared input height to 32 px across the dashboard.
 - docs: add a public GitHub README covering CatHouse's relationship to catherd, feature set, requirements, development install, architecture boundary, and pre-release status.
 - Fixed Profiles controls being immediately overwritten by a clean-draft synchronization loop, fixed profile switching after New/Delete when a refresh was already in flight, and replaced the unsupported `window.prompt` New Profile flow with an accessible in-webview dialog.
 - Clarified in Profiles and New Chat that catherd 1.0.0 owns a fixed eight-role vocabulary: profiles configure those roles, while chat talks to the orchestrator and can only request role involvement through the task or a follow-up.

@@ -51,6 +51,12 @@ Profiles follow-up: fixed a clean-draft effect that repeatedly queued resets and
 
 Role semantics are now explicit in the UI: catherd 1.0.0 accepts only its eight built-in roles, so Profiles configures that fixed set and cannot create a custom role. New Chat is a conversation with the catherd orchestrator rather than a role persona; a user can request researcher/reviewer/etc. in the task or a follow-up, but catherd remains responsible for routing and dispatch.
 
+New Chat readability follow-up: the idle orchestrator form is now a structured composer with a larger resizable task field, separated permission controls, a visible readiness callout and clearer heading hierarchy. Dense supporting text across the dashboard has a 13 px minimum and shared inputs have a 32 px minimum height; the scale still inherits the user's VS Code base font and all colours remain theme tokens.
+
+Dashboard chrome follow-up: repository, setup mood, current profile, dirty count and catherd version now share one responsive status bar; the duplicated version and separate repository row were removed.
+
+New Chat density follow-up: explanatory role and permission copy moved into themed, keyboard-accessible info tooltips, the redundant subtitle and outer composer card were removed, and the active-session Send button now attaches directly to its input.
+
 Post-checkpoint documentation: the repository now has a public-facing root `README.md` modelled on catherd's concise product-first structure. It explains that CatHouse brings catherd into VS Code while catherd remains the source of truth, documents the complete UI surface and trust boundary, gives a development-VSIX path without implying a public release, and states the remaining release gates.
 
 ## Exact next step (Phase 5)

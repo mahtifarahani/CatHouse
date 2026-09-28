@@ -30,6 +30,9 @@
   --font-sans: var(--vscode-font-family);
   --font-mono: var(--vscode-editor-font-family);
   --text-base: var(--vscode-font-size);
+  /* Tailwind's 12px default is too small in the narrow Activity Bar surface. */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.25rem;
 }
 
 @layer base {
@@ -39,6 +42,7 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-size: var(--text-base);
+    line-height: 1.45;
   }
 
   :focus-visible {

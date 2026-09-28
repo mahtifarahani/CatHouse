@@ -49,7 +49,7 @@ function RepoBar() {
   }, []);
   if (!ws) return null;
   return (
-    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+    <>
       {ws.folders.length > 1 ? (
         <label className="flex items-center gap-1">
           {t("app.repo")}
@@ -75,8 +75,8 @@ function RepoBar() {
         )
       )}
       {ws.folders.length === 0 && <span className="text-warning">{t("app.noFolder")}</span>}
-      <span className="ms-auto">catherd {ws.catherdVersion}</span>
-    </div>
+      <span className="order-last ms-auto">catherd {ws.catherdVersion}</span>
+    </>
   );
 }
 
@@ -104,8 +104,10 @@ function Dashboard() {
   };
   return (
     <div className="flex flex-col gap-3">
-      <RepoBar />
-      {gateOpen && <StatusLine setupReady={state?.canStart === true} />}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border border-border px-2 py-1 text-xs text-muted-foreground">
+        <RepoBar />
+        {gateOpen && <StatusLine setupReady={state?.canStart === true} />}
+      </div>
       {gateOpen && (
         <div
           ref={tabs}
@@ -164,7 +166,6 @@ function Dashboard() {
 function StatusLine({ setupReady }: { setupReady: boolean }) {
   const profiles = usePoll(() => request("profiles.get", {}), 5000, "chrome-profiles");
   const runs = usePoll(() => request("runs.list", {}), 2000, "chrome-runs");
-  const workspace = usePoll(() => request("app.workspace", {}), 0, "chrome-workspace");
   const [dirty, setDirty] = useState(0);
   useEffect(() => {
     const onDirty = (e: Event) => setDirty((e as CustomEvent<number>).detail);
@@ -174,10 +175,7 @@ function StatusLine({ setupReady }: { setupReady: boolean }) {
   const working = runs.data?.runs.some((r) => r.live > 0) ?? false;
   const mood = !setupReady ? t("status.failed") : working ? t("status.working") : t("status.good");
   return (
-    <div
-      className="flex flex-wrap items-center gap-x-3 gap-y-1 border border-border px-2 py-1 text-xs"
-      role="status"
-    >
+    <div className="contents" role="status">
       <span className={!setupReady ? "text-danger" : working ? "text-warning" : "text-success"}>
         ● {mood}
       </span>
@@ -190,7 +188,6 @@ function StatusLine({ setupReady }: { setupReady: boolean }) {
         </span>
       )}
       {dirty > 0 && <span className="text-warning">{t("profiles.unsaved", { n: dirty })}</span>}
-      <span className="ms-auto">catherd {workspace.data?.catherdVersion ?? "…"}</span>
     </div>
   );
 }

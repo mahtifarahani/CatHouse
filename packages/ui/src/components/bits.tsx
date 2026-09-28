@@ -86,4 +86,4 @@ export function Meter({ fraction, label }: { fraction: number; label: string }) 
 }
 
 export const inputClass =
-  "rounded-sm border border-input-border bg-input px-2 py-1 text-input-foreground";
+  "min-h-8 rounded-sm border border-input-border bg-input px-2 py-1 text-input-foreground";
