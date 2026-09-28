@@ -1,6 +1,6 @@
 import { Badge, Button, inputClass } from "@cathouse/ui";
-import { type KeyboardEvent, useId, useState } from "react";
-import { RpcError, request } from "../lib/rpc";
+import { type KeyboardEvent, useEffect, useId, useState } from "react";
+import { onEvent, RpcError, request } from "../lib/rpc";
 import { t } from "../lib/strings";
 import { shouldSubmitComposer } from "./composer";
 import { PromptCard } from "./PromptCard";
@@ -10,6 +10,7 @@ import { useSession } from "./useSession";
 const MODES = ["default", "acceptEdits", "plan", "auto"] as const;
 const COMPOSER_CLASS =
   "min-h-32 w-full resize-y rounded-sm border border-input-border bg-input px-3 py-2 text-base text-input-foreground leading-6";
+const loadWorkspace = () => request("app.workspace", {});
 
 function InfoTip({ text }: { text: string }) {
   const id = useId();
@@ -46,7 +47,21 @@ export function SessionPage({
   const [mode, setMode] = useState<"default" | "acceptEdits" | "plan" | "auto">("default");
   const [followUp, setFollowUp] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [workspace, setWorkspace] = useState<Awaited<ReturnType<typeof loadWorkspace>>>();
+  const [workspaceBusy, setWorkspaceBusy] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState(false);
   const active = s.phase === "starting" || s.phase === "running";
+
+  useEffect(() => {
+    let alive = true;
+    const refresh = () => void loadWorkspace().then((next) => alive && setWorkspace(next));
+    refresh();
+    const off = onEvent("app", refresh);
+    return () => {
+      alive = false;
+      off();
+    };
+  }, []);
 
   const submitOnEnter = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (
@@ -73,6 +88,18 @@ export function SessionPage({
       );
     }
   };
+
+  const changeWorkspace = async (fn: () => Promise<unknown>) => {
+    setWorkspaceBusy(true);
+    try {
+      await call(fn);
+      setWorkspace(await loadWorkspace());
+    } finally {
+      setWorkspaceBusy(false);
+    }
+  };
+
+  const ready = canStart && !!workspace?.repo;
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">
@@ -116,6 +143,66 @@ export function SessionPage({
           </p>
         )}
 
+        {!active && (
+          <section className="rounded-sm border border-border px-3 py-2">
+            <div className="mb-2 flex items-center gap-2">
+              <h3 className="font-semibold">{t("workspace.title")}</h3>
+              <InfoTip text={t("workspace.help")} />
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <label className="min-w-48 flex-1">
+                <span className="sr-only">{t("workspace.repo")}</span>
+                <select
+                  className={`${inputClass} w-full`}
+                  value={workspace?.repo ?? ""}
+                  disabled={workspaceBusy || !workspace?.folders.length}
+                  onChange={(e) => {
+                    setConfirmRemove(false);
+                    void changeWorkspace(() => request("app.setRepo", { path: e.target.value }));
+                  }}
+                >
+                  {!workspace?.folders.length && <option value="">{t("workspace.none")}</option>}
+                  {workspace?.folders.map((folder) => (
+                    <option key={folder.path} value={folder.path}>
+                      {folder.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <Button
+                variant="secondary"
+                disabled={workspaceBusy}
+                onClick={() => {
+                  setConfirmRemove(false);
+                  void changeWorkspace(() => request("app.addFolders", {}));
+                }}
+              >
+                {t("workspace.add")}
+              </Button>
+              <Button
+                variant="secondary"
+                disabled={workspaceBusy || !workspace?.repo}
+                onClick={() => {
+                  if (!confirmRemove) {
+                    setConfirmRemove(true);
+                    return;
+                  }
+                  setConfirmRemove(false);
+                  const path = workspace?.repo;
+                  if (path) void changeWorkspace(() => request("app.removeFolder", { path }));
+                }}
+              >
+                {t(confirmRemove ? "workspace.removeConfirm" : "workspace.remove")}
+              </Button>
+            </div>
+            {workspace?.repo && (
+              <p className="mt-1 break-all font-mono text-xs text-muted-foreground">
+                {workspace.repo}
+              </p>
+            )}
+          </section>
+        )}
+
         {s.prompts.map((p) => (
           <PromptCard key={p.id} prompt={p} />
         ))}
@@ -128,9 +215,13 @@ export function SessionPage({
           className="flex shrink-0 flex-col gap-3"
           onSubmit={(e) => {
             e.preventDefault();
-            if (task.trim() && canStart)
+            if (task.trim() && ready)
               void call(() =>
-                request("session.start", { task: task.trim(), permissionMode: mode }),
+                request("session.start", {
+                  task: task.trim(),
+                  repo: workspace?.repo ?? undefined,
+                  permissionMode: mode,
+                }),
               );
           }}
         >
@@ -155,12 +246,14 @@ export function SessionPage({
             </div>
           </div>
 
-          {!canStart && (
+          {!ready && (
             <p
               role="status"
               className="rounded-sm border border-warning px-3 py-2 text-warning leading-relaxed"
             >
-              {t("session.blocked", { reason: blockedReason ?? "" })}
+              {t("session.blocked", {
+                reason: workspace?.repo ? (blockedReason ?? "") : t("workspace.required"),
+              })}
             </p>
           )}
           <div className="flex flex-wrap items-center gap-2">
@@ -182,11 +275,14 @@ export function SessionPage({
             <Button
               className="min-h-9"
               variant="secondary"
-              onClick={() => void call(() => request("session.resume", {}))}
+              disabled={!ready}
+              onClick={() =>
+                void call(() => request("session.resume", { repo: workspace?.repo ?? undefined }))
+              }
             >
               {t("session.resume")}
             </Button>
-            <Button className="min-h-9" type="submit" disabled={!task.trim() || !canStart}>
+            <Button className="min-h-9" type="submit" disabled={!task.trim() || !ready}>
               {t("session.start")}
             </Button>
           </div>

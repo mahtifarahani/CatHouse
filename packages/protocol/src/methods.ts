@@ -32,6 +32,14 @@ export const methods = {
     params: z.object({ path: z.string() }),
     result: z.object({ repo: z.string() }),
   },
+  "app.addFolders": {
+    params: z.object({}),
+    result: z.object({ changed: z.boolean() }),
+  },
+  "app.removeFolder": {
+    params: z.object({ path: z.string() }),
+    result: z.object({ changed: z.boolean() }),
+  },
   "session.setMode": {
     params: z.object({ mode: z.enum(["default", "acceptEdits", "plan", "auto"]) }),
     result: z.object({}),

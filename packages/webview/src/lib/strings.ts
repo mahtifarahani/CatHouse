@@ -18,6 +18,15 @@ const en = {
   "session.turnEnded": "turn ended: {subtype} · {cost}",
   "app.repo": "Repository:",
   "app.noFolder": "Open a folder (a git repository) to run tasks and see its runs.",
+  "workspace.title": "Workspace repositories",
+  "workspace.repo": "Repository for this chat",
+  "workspace.none": "No repository selected",
+  "workspace.add": "Add folders…",
+  "workspace.remove": "Remove current",
+  "workspace.removeConfirm": "Remove from workspace?",
+  "workspace.help":
+    "Choose one or more repository folders. Removing a folder only removes it from this VS Code workspace; files stay on disk.",
+  "workspace.required": "Choose or add a repository before starting a task.",
   "runs.continue": "Continue in orchestrator",
   "runs.continueHelp":
     "Resume this repo's saved orchestrator session (or start one that resumes the latest run).",

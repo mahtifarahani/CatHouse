@@ -51,7 +51,12 @@ describe("protocol envelope", () => {
 
   it("knows its methods", () => {
     expect(isMethodName("app.ping")).toBe(true);
+    expect(isMethodName("app.addFolders")).toBe(true);
+    expect(isMethodName("app.removeFolder")).toBe(true);
     expect(isMethodName("toString")).toBe(false);
     expect(methods["app.ping"].params.safeParse({}).success).toBe(true);
+    expect(methods["app.addFolders"].params.safeParse({}).success).toBe(true);
+    expect(methods["app.removeFolder"].params.safeParse({ path: "/repo" }).success).toBe(true);
+    expect(methods["app.removeFolder"].params.safeParse({}).success).toBe(false);
   });
 });

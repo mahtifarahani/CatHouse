@@ -147,6 +147,17 @@ export function activate(context: vscode.ExtensionContext): void {
     t.sendText(command);
   };
 
+  const requireIdleSession = () => {
+    const phase = controller.snapshot().phase;
+    if (phase === "starting" || phase === "running") {
+      throw new HandlerError(
+        "E_SESSION_ACTIVE",
+        "workspace folders cannot change while an orchestrator session is running",
+        "stop the session first",
+      );
+    }
+  };
+
   const handle = createRouter<RequestContext>({
     "app.ping": (_params, ctx) => ({
       pong: true,
@@ -168,6 +179,61 @@ export function activate(context: vscode.ExtensionContext): void {
       void context.workspaceState.update(REPO_KEY, repo);
       publish("app", { type: "repo", repo });
       return { repo };
+    },
+    "app.addFolders": async () => {
+      requireIdleSession();
+      const picked = await vscode.window.showOpenDialog({
+        canSelectFiles: false,
+        canSelectFolders: true,
+        canSelectMany: true,
+        openLabel: "Add to CatHouse workspace",
+        title: "Choose repositories for CatHouse",
+      });
+      if (!picked?.length) return { changed: false };
+      const folders = vscode.workspace.workspaceFolders ?? [];
+      const existing = new Set(folders.map((folder) => folder.uri.toString()));
+      const additions = picked
+        .filter((uri) => !existing.has(uri.toString()))
+        .map((uri) => ({ uri }));
+      if (!additions.length) return { changed: false };
+      const changed = vscode.workspace.updateWorkspaceFolders(folders.length, 0, ...additions);
+      if (!changed) {
+        throw new HandlerError(
+          "E_WORKSPACE_UPDATE",
+          "VS Code refused to add the selected folders",
+          "try adding them with File → Add Folder to Workspace",
+        );
+      }
+      selectedRepo = additions[0]?.uri.fsPath;
+      await context.workspaceState.update(REPO_KEY, selectedRepo);
+      publish("app", { type: "workspace" });
+      return { changed: true };
+    },
+    "app.removeFolder": async ({ path }) => {
+      requireIdleSession();
+      const folders = vscode.workspace.workspaceFolders ?? [];
+      const index = folders.findIndex((folder) => folder.uri.fsPath === path);
+      if (index < 0) {
+        throw new HandlerError("E_NO_WORKSPACE", "that folder is no longer in this workspace");
+      }
+      const changed = vscode.workspace.updateWorkspaceFolders(index, 1);
+      if (!changed) {
+        throw new HandlerError(
+          "E_WORKSPACE_UPDATE",
+          "VS Code refused to remove the selected folder",
+          "try removing it from the Explorer workspace menu",
+        );
+      }
+      if (selectedRepo === path || !folders.some((folder) => folder.uri.fsPath === selectedRepo)) {
+        selectedRepo = folders.find((_, folderIndex) => folderIndex !== index)?.uri.fsPath;
+        await context.workspaceState.update(REPO_KEY, selectedRepo);
+      }
+      if (gateway?.repo === path) {
+        await gateway.dispose();
+        gateway = undefined;
+      }
+      publish("app", { type: "workspace" });
+      return { changed: true };
     },
     "session.setMode": async ({ mode }) => {
       await controller.setPermissionMode(mode);
@@ -280,6 +346,18 @@ export function activate(context: vscode.ExtensionContext): void {
     { dispose: () => controller.dispose() },
     { dispose: () => void gateway?.dispose() },
     vscode.window.registerWebviewViewProvider(SidebarProvider.viewId, sidebar),
+    vscode.workspace.onDidChangeWorkspaceFolders(() => {
+      const folders = vscode.workspace.workspaceFolders ?? [];
+      if (!folders.some((folder) => folder.uri.fsPath === selectedRepo)) {
+        selectedRepo = folders[0]?.uri.fsPath;
+        void context.workspaceState.update(REPO_KEY, selectedRepo);
+      }
+      if (gateway && !folders.some((folder) => folder.uri.fsPath === gateway?.repo)) {
+        void gateway.dispose();
+        gateway = undefined;
+      }
+      publish("app", { type: "workspace" });
+    }),
     vscode.commands.registerCommand("cathouse.checkSetup", () => setup.check({ readiness: true })),
     // Hidden (not in package.json): e2e tests call the webview protocol through the same router.
     vscode.commands.registerCommand("cathouse._request", (method: string, params: unknown) =>

@@ -44,14 +44,14 @@ const loadWs = () => request("app.workspace", {});
 function ViewChrome({ gateOpen, setupReady }: { gateOpen: boolean; setupReady: boolean }) {
   const [ws, setWs] = useState<Awaited<ReturnType<typeof loadWs>>>();
   const profiles = usePoll(
-    () => (gateOpen ? request("profiles.get", {}) : Promise.resolve(undefined)),
+    () => (gateOpen && ws?.repo ? request("profiles.get", {}) : Promise.resolve(undefined)),
     5000,
-    `chrome-profiles-${gateOpen}`,
+    `chrome-profiles-${gateOpen}-${ws?.repo ?? "none"}`,
   );
   const runs = usePoll(
-    () => (gateOpen ? request("runs.list", {}) : Promise.resolve(undefined)),
+    () => (gateOpen && ws?.repo ? request("runs.list", {}) : Promise.resolve(undefined)),
     2000,
-    `chrome-runs-${gateOpen}`,
+    `chrome-runs-${gateOpen}-${ws?.repo ?? "none"}`,
   );
   const [dirty, setDirty] = useState(0);
   useEffect(() => {

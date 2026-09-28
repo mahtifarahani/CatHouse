@@ -19,6 +19,18 @@ Every method is one entry in `methods` with zod `params` and `result` schemas. T
 | Method | Params | Result | Since |
 |---|---|---|---|
 | `app.ping` | `{}` | `{pong: true, extensionVersion, protocol: 1, view: "sidebar"}` | Phase 0 |
+| `app.workspace` | `{}` | `{folders: {path,name}[], repo, catherdVersion}` | Phase 4 |
+| `app.setRepo` | `{path}` | `{repo}` | Phase 4 |
+| `app.addFolders` | `{}` | `{changed}` | Phase 5 follow-up |
+| `app.removeFolder` | `{path}` | `{changed}` | Phase 5 follow-up |
+
+`app.addFolders` opens VS Code's native folder picker with multi-selection and adds the chosen
+folders through `workspace.updateWorkspaceFolders`; the first newly added folder becomes the
+selected repo. `app.removeFolder` removes a folder from the VS Code workspace, never from disk.
+Both mutation methods refuse to run while an orchestrator session is starting or running. VS Code
+may restart the extension host when the first workspace folder changes or when an empty/single-root
+workspace becomes multi-root; the selected repo is persisted in `workspaceState` for the next
+session.
 
 **To add a method:** (1) add it to `methods`; (2) add its handler in `packages/extension/src/extension.ts`. `Handlers<Ctx>` is exhaustive, so typecheck fails until the handler exists. (3) Call it from the webview with `request("x.y", params)`. (4) Add a router test if it has error paths. (5) Add a row to this table.
 

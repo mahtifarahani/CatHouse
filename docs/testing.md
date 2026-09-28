@@ -16,7 +16,7 @@ E2E env switches: `CATHOUSE_EXPECT_READY=1` (prepared machine), `CATHOUSE_EXPECT
 
 `CATHOUSE_E2E_WORKSPACE=<git repo with catherd runs>` enables `pages.e2e.ts` (runs, profiles, catalog through the real router via the hidden `cathouse._request` command).
 
-Current tests: 71 unit (protocol, router, CSP, compat, gateway including profile-copy command, event mapper, controller, setup readiness persistence, profile draft/rebase including role checkbox staging), 7 live contract, 5 e2e scenarios (Activity Bar activation; Setup on the real machine; pages: runs, workspace/repo selection, profiles/catalog).
+Current tests: 76 unit (protocol including workspace-mutation methods, router, CSP, compat, gateway including profile-copy command, event mapper, controller, setup readiness persistence, profile draft/rebase including role checkbox staging), 7 live contract, 5 e2e scenarios (Activity Bar activation; Setup on the real machine; pages: runs, workspace/repo selection, profiles/catalog). Adding/removing folders uses VS Code's native modal picker and changes the real workspace, so that mutation path is a manual VS Code check rather than an unattended e2e action.
 
 **E2E status (2026-09-28): green in VS Code 1.139 (macOS).** The default command has 2 passing and 3 pending because page tests require `CATHOUSE_E2E_WORKSPACE`; the prepared-workspace run has all 5 scenarios.
 - Activation verifies that the contributed `cathouse.sidebar.focus` command opens the one full Activity Bar view and that the removed `cathouse.openDashboard` command is absent.
@@ -31,5 +31,7 @@ Current tests: 71 unit (protocol, router, CSP, compat, gateway including profile
 | E2E | `@vscode/test-electron` | fresh install (temp HOME) shows only Setup; old Bun / stale plugin / missing CLI / failed install each show a specific message and action; the full Activity Bar view opens directly | depends on scenario |
 | Manual E2E | human + checklist | a 3-lane task on a scratch repo from the UI; live roles; answer a question and a permission card; reload mid-run → Continue the same run (verify no duplicate with `catherd runs list --json`); cancel a role; edit a profile, treat-like, refresh models, see a doctor failure | real accounts |
 | Visual | manual screenshots | full Activity Bar view in Light, Dark, High Contrast | no |
+
+Workspace-management manual check: while New Chat is idle, add two repository folders in one picker operation, confirm the first new folder is selected, switch between them, and remove the selected folder after the second-click confirmation. Confirm the folder disappears from the VS Code workspace but remains on disk, and confirm these controls are absent while a session is starting/running. VS Code may restart the extension host when the first folder changes or when crossing empty/single-root/multi-root workspace modes; the selected repo must be restored after that restart.
 
 Fixtures are real catherd output, redacted. When catherd's version changes, re-record them under a new version folder and add an adapter entry to `compat.json`.

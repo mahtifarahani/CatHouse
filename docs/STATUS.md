@@ -75,6 +75,8 @@ Composer keyboard/layout follow-up: Enter now submits and Shift+Enter inserts a 
 
 Post-checkpoint documentation: the repository now has a public-facing root `README.md` modelled on catherd's concise product-first structure. It explains that CatHouse brings catherd into VS Code while catherd remains the source of truth, documents the complete UI surface and trust boundary, gives a development-VSIX path without implying a public release, and states the remaining release gates.
 
+Workspace-management follow-up: New Chat now exposes the repository choice before a session starts. The user can add one or more folders through VS Code's native picker, select the repo for the chat, and remove the current folder from the workspace with a second-click confirmation; removal never deletes disk files. Workspace mutations are blocked during live sessions, and Start/Resume pass the selected repo explicitly. Verified with lint, 76 unit tests, typecheck, production build and default e2e (2 passed, 3 workspace-dependent pending); native picker/remove execution remains in the manual VS Code check because the automated path cannot operate a modal folder picker safely.
+
 ## Exact next step (Phase 5)
 
 1. Owner chooses the publisher id, SPDX license, and whether to publish as `0.1.0`; update the manifest and generate the license file.
