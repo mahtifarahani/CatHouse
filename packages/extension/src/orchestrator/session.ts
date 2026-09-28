@@ -4,34 +4,14 @@ import type {
   Query,
   SDKUserMessage,
 } from "@anthropic-ai/claude-agent-sdk";
+import type { PromptAnswer, PromptRequest } from "@cathouse/protocol";
 import { CATHERD_TOOL_PREFIX, createEventMapper, type SessionEvent } from "./events";
+
+export type { PromptAnswer, PromptRequest };
 
 // One Claude Agent SDK session that runs the catherd skill for one repo (plan §OrchestratorSession).
 // The SDK is ESM-only and resolves its platform binary relative to its own package, so it is kept
 // external to the esbuild bundle and loaded with a dynamic import.
-
-export type PromptRequest =
-  | {
-      kind: "question";
-      questions: {
-        question: string;
-        header: string;
-        multiSelect: boolean;
-        options: { label: string; description: string; preview?: string }[];
-      }[];
-    }
-  | {
-      kind: "permission";
-      toolName: string;
-      input: Record<string, unknown>;
-      title?: string;
-      decisionReason?: string;
-      canAlwaysAllow: boolean;
-    };
-
-export type PromptAnswer =
-  | { kind: "question"; answers: Record<string, string | string[]>; response?: string }
-  | { kind: "permission"; decision: "allow" | "always" | "deny"; message?: string };
 
 export interface SessionOptions {
   repo: string;

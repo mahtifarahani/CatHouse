@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "webview-preview",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@cathouse/webview", "dev"],
+      "port": 5317
+    }
+  ]
+}

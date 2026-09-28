@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { PROTOCOL_VERSION } from "./envelope";
+import { PromptAnswerSchema, SessionStateSchema } from "./session";
 
 /**
  * Every request the webview can make, with its params and result schemas.
@@ -18,6 +19,38 @@ export const methods = {
   "app.openDashboard": {
     params: z.object({}),
     result: z.object({ opened: z.literal(true) }),
+  },
+  "catherd.status": {
+    params: z.object({}),
+    result: z.object({
+      version: z.string(),
+      runs: z.array(
+        z.object({
+          id: z.string(),
+          title: z.string(),
+          repo: z.string(),
+          live: z.number(),
+          roleRuns: z.number(),
+          stateTail: z.array(z.string()),
+        }),
+      ),
+    }),
+  },
+  "session.state": { params: z.object({}), result: SessionStateSchema },
+  "session.start": {
+    params: z.object({ task: z.string().min(1), repo: z.string().optional() }),
+    result: SessionStateSchema,
+  },
+  "session.resume": {
+    params: z.object({ repo: z.string().optional() }),
+    result: SessionStateSchema,
+  },
+  "session.send": { params: z.object({ text: z.string().min(1) }), result: z.object({}) },
+  "session.interrupt": { params: z.object({}), result: z.object({}) },
+  "session.stop": { params: z.object({}), result: SessionStateSchema },
+  "session.answer": {
+    params: z.object({ id: z.string(), answer: PromptAnswerSchema }),
+    result: z.object({ accepted: z.boolean() }),
   },
 } as const;
 

@@ -65,6 +65,17 @@ describe("event mapper", () => {
     expect(ev.some((e) => e.kind === "run_started")).toBe(false);
   });
 
+  it("maps catherd wait heartbeats to the real tool call", () => {
+    expect(
+      createEventMapper()({
+        type: "tool_progress",
+        tool_use_id: "toolu_1-heartbeat-0",
+        parent_tool_use_id: "toolu_1",
+        elapsed_time_seconds: 30,
+      }),
+    ).toEqual([{ kind: "tool_progress", toolUseId: "toolu_1", elapsedSecs: 30 }]);
+  });
+
   it("maps task messages and results", () => {
     const map = createEventMapper();
     expect(

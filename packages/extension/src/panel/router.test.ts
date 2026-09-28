@@ -1,11 +1,22 @@
+import { methods } from "@cathouse/protocol";
 import { describe, expect, it } from "vitest";
-import { createRouter, HandlerError } from "./router";
+import { createRouter, HandlerError, type Handlers } from "./router";
 
 const ctx = { view: "sidebar" as const };
 const ping = { v: 1, id: "a", kind: "request", method: "app.ping", params: {} };
 
-function router(overrides: Partial<Parameters<typeof createRouter<typeof ctx>>[0]> = {}) {
+const unused = Object.fromEntries(
+  Object.keys(methods).map((k) => [
+    k,
+    () => {
+      throw new Error(`${k} is not used in this test`);
+    },
+  ]),
+) as unknown as Handlers<typeof ctx>;
+
+function router(overrides: Partial<Handlers<typeof ctx>> = {}) {
   return createRouter<typeof ctx>({
+    ...unused,
     "app.ping": (_p, c) => ({ pong: true, extensionVersion: "1.2.3", protocol: 1, view: c.view }),
     "app.openDashboard": () => ({ opened: true }),
     ...overrides,

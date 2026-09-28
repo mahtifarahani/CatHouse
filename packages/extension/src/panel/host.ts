@@ -6,12 +6,26 @@ export interface MessageSink {
   onRequest(raw: unknown, view: WebviewView, webview: vscode.Webview): Promise<void>;
 }
 
+/** Every live webview, so host events reach the sidebar and the dashboard alike. */
+export class Broadcaster {
+  private readonly webviews = new Set<vscode.Webview>();
+
+  add(webview: vscode.Webview): vscode.Disposable {
+    this.webviews.add(webview);
+    return new vscode.Disposable(() => this.webviews.delete(webview));
+  }
+
+  post(message: unknown): void {
+    for (const w of this.webviews) void w.postMessage(message);
+  }
+}
+
 /** Points a webview at the Vite build and wires its messages to the router. */
 export function attachWebview(
   webview: vscode.Webview,
   extensionUri: vscode.Uri,
   view: WebviewView,
-  sink: MessageSink,
+  sink: MessageSink & { broadcaster: Broadcaster },
 ): vscode.Disposable {
   const root = vscode.Uri.joinPath(extensionUri, "dist", "webview");
   webview.options = { enableScripts: true, localResourceRoots: [root] };
@@ -23,5 +37,8 @@ export function attachWebview(
     view,
     title: "CatHouse",
   });
-  return webview.onDidReceiveMessage((raw) => sink.onRequest(raw, view, webview));
+  return vscode.Disposable.from(
+    sink.broadcaster.add(webview),
+    webview.onDidReceiveMessage((raw) => sink.onRequest(raw, view, webview)),
+  );
 }

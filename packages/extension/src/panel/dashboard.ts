@@ -1,11 +1,13 @@
 import * as vscode from "vscode";
-import { attachWebview, type MessageSink } from "./host";
+import { attachWebview, type Broadcaster, type MessageSink } from "./host";
+
+type Sink = MessageSink & { broadcaster: Broadcaster };
 
 /** The full dashboard; one instance per window, revealed if already open. */
 export class DashboardPanel {
   private static current: DashboardPanel | undefined;
 
-  static show(extensionUri: vscode.Uri, sink: MessageSink): void {
+  static show(extensionUri: vscode.Uri, sink: Sink): void {
     if (DashboardPanel.current) {
       DashboardPanel.current.panel.reveal();
       return;
@@ -21,7 +23,7 @@ export class DashboardPanel {
   private constructor(
     private readonly panel: vscode.WebviewPanel,
     extensionUri: vscode.Uri,
-    sink: MessageSink,
+    sink: Sink,
   ) {
     panel.iconPath = vscode.Uri.joinPath(extensionUri, "media", "cathouse.svg");
     const sub = attachWebview(panel.webview, extensionUri, "dashboard", sink);

@@ -6,7 +6,8 @@
   "scripts": {
     "build": "vite build",
     "watch": "vite build --watch",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "dev": "vite --port 5317 --strictPort"
   },
   "dependencies": {
     "@cathouse/protocol": "workspace:*",

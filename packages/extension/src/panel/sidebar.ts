@@ -1,12 +1,14 @@
 import type * as vscode from "vscode";
-import { attachWebview, type MessageSink } from "./host";
+import { attachWebview, type Broadcaster, type MessageSink } from "./host";
+
+type Sink = MessageSink & { broadcaster: Broadcaster };
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   static readonly viewId = "cathouse.sidebar";
 
   constructor(
     private readonly extensionUri: vscode.Uri,
-    private readonly sink: MessageSink,
+    private readonly sink: Sink,
   ) {}
 
   resolveWebviewView(view: vscode.WebviewView): void {

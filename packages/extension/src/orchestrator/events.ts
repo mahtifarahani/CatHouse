@@ -1,55 +1,10 @@
-// Maps Agent SDK messages to CatHouse session events. Pure (no SDK import at runtime) so it is
-// unit-testable; the SDK message types are structural here on purpose.
+// Maps Agent SDK messages to CatHouse session events (protocol SessionEvent). Pure (no SDK import
+// at runtime) so it is unit-testable; the SDK message types are structural here on purpose.
+import type { SessionEvent } from "@cathouse/protocol";
+
+export type { SessionEvent };
 
 export const CATHERD_TOOL_PREFIX = "mcp__plugin_catherd_catherd__";
-
-export type SessionEvent =
-  | {
-      kind: "init";
-      sessionId: string;
-      claudeCodeVersion: string;
-      catherdPlugin: { name: string; path: string; version?: string } | undefined;
-      catherdMcpStatus: string | undefined;
-      pluginErrors: { plugin: string; type?: string; message?: string }[];
-      agents: string[];
-      permissionMode: string;
-    }
-  | { kind: "text"; text: string; parentToolUseId: string | null }
-  | { kind: "thinking"; parentToolUseId: string | null }
-  | {
-      kind: "tool_use";
-      id: string;
-      name: string;
-      input: unknown;
-      parentToolUseId: string | null;
-    }
-  | {
-      kind: "tool_result";
-      toolUseId: string;
-      isError: boolean;
-      text: string;
-      parentToolUseId: string | null;
-    }
-  | { kind: "run_started"; runId: string; dir: string }
-  | {
-      kind: "task";
-      phase: "started" | "progress" | "updated" | "notification";
-      taskId: string;
-      description?: string;
-      subagentType?: string;
-      status?: string;
-      durationMs?: number;
-      lastTool?: string;
-    }
-  | { kind: "status"; subtype: string; detail?: string }
-  | {
-      kind: "result";
-      subtype: string;
-      sessionId: string;
-      isError: boolean;
-      costUsd?: number;
-      text?: string;
-    };
 
 type Block = { type: string; [k: string]: unknown };
 type Msg = { type: string; subtype?: string; [k: string]: unknown };
@@ -155,6 +110,16 @@ export function createEventMapper() {
         }
         return out;
       }
+      case "tool_progress":
+        // catherd's 30 s progress ticks during a long `wait` arrive as heartbeats whose
+        // parent_tool_use_id is the real tool call (docs/spikes/phase1.md finding 1).
+        return [
+          {
+            kind: "tool_progress",
+            toolUseId: String(m.parent_tool_use_id ?? m.tool_use_id),
+            elapsedSecs: Number(m.elapsed_time_seconds ?? 0),
+          },
+        ];
       case "result":
         return [
           {
