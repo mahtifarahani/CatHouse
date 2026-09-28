@@ -42,7 +42,7 @@ docs/               knowledge base (this is where you write reports)
 
 ## Commands
 
-`pnpm install` · `pnpm build` · `pnpm typecheck` · `pnpm lint` · `pnpm test` · `pnpm test:e2e` (needs VS Code installed) · `pnpm package`. F5 → "Run CatHouse". Details: `docs/runbook.md`, `docs/testing.md`. Keep them in sync.
+`pnpm install` · `pnpm build` · `pnpm typecheck` · `pnpm lint` · `pnpm test` · `pnpm test:e2e` (runs in the installed VS Code; Cursor can't host it) · `pnpm package`. F5 → "Run CatHouse". Details: `docs/runbook.md`, `docs/testing.md`. Keep them in sync.
 
 ## Machine prerequisites to run CatHouse against real catherd
 

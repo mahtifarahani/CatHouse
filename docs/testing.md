@@ -11,10 +11,10 @@ Rules: unit-testable host code must not import `vscode` (see `panel/router.ts`, 
 
 Current tests: protocol envelope (4), router error paths (7), webview CSP/HTML (2), e2e activation + command + dashboard tab (1).
 
-**E2E status (2026-09-28): not yet green; needs VS Code installed.**
-- On the dev machine only Cursor 3.21.18 (VS Code 1.128 base) is installed. In Cursor the test host logs `Loading development extension at …/packages/extension`, yet `vscode.extensions.all` never contains it: the extension-path mappings are empty, so `cathouse.cathouse` is "not installed". This is not the trust setting (tested with `untrustedWorkspaces.supported: true`: same result). Cursor logs "Extension isolation is disabled (forced disabled in glass mode)"; its agent-first "glass" mode is the suspected cause.
-- Downloading VS Code through `@vscode/test-electron` (~300 MB) was abandoned on the owner's request. Install VS Code instead and the config picks it up automatically.
-- Manual F5 in Cursor (normal, non-test window) has not been tried yet.
+**E2E status (2026-09-28): green in VS Code 1.139 (macOS), 1 passing.**
+- The dashboard tab appears asynchronously after `executeCommand` resolves, so the test polls (`waitFor`, 5 s).
+- **Cursor cannot run the e2e tests:** Cursor 3.21.18 (VS Code 1.128 base) logs `Loading development extension …` in its test host but never registers the extension (`vscode.extensions.all` lacks it; extension-path mappings are empty). Workspace trust is not the cause. Its "glass mode" is suspected. The config therefore prefers VS Code.
+- Nothing is downloaded: `@vscode/test-electron`'s ~300 MB download was dropped on the owner's request.
 
 
 | Layer | Tool | What | Needs network / catherd |
