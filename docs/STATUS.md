@@ -77,6 +77,8 @@ Post-checkpoint documentation: the repository now has a public-facing root `READ
 
 Workspace-management follow-up: New Chat now exposes the repository choice before a session starts. The user can add one or more folders through VS Code's native picker, select the repo for the chat, and remove the current folder from the workspace with a second-click confirmation; removal never deletes disk files. Workspace mutations are blocked during live sessions, and Start/Resume pass the selected repo explicitly. Verified with lint, 76 unit tests, typecheck, production build and default e2e (2 passed, 3 workspace-dependent pending); native picker/remove execution remains in the manual VS Code check because the automated path cannot operate a modal folder picker safely.
 
+Prompt-placement follow-up: permission and question cards now stay in a fixed tray immediately above the New Chat input instead of scrolling away with the transcript. The tray is capped at 40% of the view height and scrolls internally when several requests are pending, so the composer remains visible and anchored. Verified with lint, 76 unit tests, typecheck and production build.
+
 ## Exact next step (Phase 5)
 
 1. Owner chooses the publisher id, SPDX license, and whether to publish as `0.1.0`; update the manifest and generate the license file.

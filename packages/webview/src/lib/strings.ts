@@ -13,6 +13,7 @@ const en = {
   "session.stop": "Stop session",
   "session.followUp": "Message the orchestrator…",
   "session.send": "Send",
+  "session.pendingPrompts": "Pending requests from the orchestrator",
   "session.transcript": "Session transcript",
   "session.runStarted": "catherd run {run} started",
   "session.turnEnded": "turn ended: {subtype} · {cost}",

@@ -53,7 +53,7 @@ Methods: `session.state`, `session.start {task, repo?}`, `session.resume {repo?}
 
 ## Webview
 
-`packages/webview/src/session/`: `useSession` (snapshot + live events), `toTranscript` (folds tool_use + result + progress), `Transcript`, `PromptCard` (question with options, multi-select and "Other"; permission with Allow once / Always / Deny + note), `SessionPage` (task form, Resume, Interrupt/Stop, follow-up). It is the Activity Bar view's default **New Chat** tab.
+`packages/webview/src/session/`: `useSession` (snapshot + live events), `toTranscript` (folds tool_use + result + progress), `Transcript`, `PromptCard` (question with options, multi-select and "Other"; permission with Allow once / Always / Deny + note), `SessionPage` (task form, Resume, Interrupt/Stop, follow-up). Pending permission/question cards live in a fixed, height-capped prompt tray immediately above the composer; the transcript scrolls behind neither the tray nor the input, and multiple prompts scroll inside the tray. It is the Activity Bar view's default **New Chat** tab.
 
 
 ## Phase 4 additions

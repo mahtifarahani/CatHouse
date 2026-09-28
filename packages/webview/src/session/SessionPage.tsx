@@ -203,12 +203,19 @@ export function SessionPage({
           </section>
         )}
 
-        {s.prompts.map((p) => (
-          <PromptCard key={p.id} prompt={p} />
-        ))}
-
         <Transcript events={s.events} />
       </div>
+
+      {s.prompts.length > 0 && (
+        <section
+          className="flex max-h-[40vh] shrink-0 flex-col gap-2 overflow-y-auto overscroll-contain"
+          aria-label={t("session.pendingPrompts")}
+        >
+          {s.prompts.map((p) => (
+            <PromptCard key={p.id} prompt={p} />
+          ))}
+        </section>
+      )}
 
       {!active && (
         <form
