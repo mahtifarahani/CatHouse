@@ -55,7 +55,6 @@ Methods: `session.state`, `session.start {task, repo?}`, `session.resume {repo?}
 
 `packages/webview/src/session/`: `useSession` (snapshot + live events), `toTranscript` (folds tool_use + result + progress), `Transcript`, `PromptCard` (question with options, multi-select and "Other"; permission with Allow once / Always / Deny + note), `SessionPage` (task form, Resume, Interrupt/Stop, follow-up). The sidebar shows the phase, run id and the count of pending prompts.
 
-**Browser preview** (no VS Code needed): `pnpm --filter @cathouse/webview dev` (or `.claude/launch.json` → `webview-preview`) serves `index.html` with `src/dev/mock-vscode.ts` (canned session with a question and a permission card) and `src/dev/theme.css` (Dark Modern variables). Verified on 2026-09-28: both cards answer and clear.
 
 ## Tests
 

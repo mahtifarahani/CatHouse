@@ -18,7 +18,7 @@ env -u ANTHROPIC_BASE_URL node dist-spike/spike.mjs --repo <scratch repo> --prom
 | b | catherd's native subagents register in an SDK session | ✅ | init `agents` has `catherd-default-architect-claude-opus-5-5-high` and `catherd-default-verifier-claude-opus-5-5-low` (symlinks in `~/.claude/agents`, loaded via `settingSources: ["user", …]`). |
 | a | A catherd `wait` longer than 2 min survives | ✅ | `run_start` → `dispatch` (worker `codex:gpt-6-luna#high`, brief "sleep 150, then append a line") → one `wait` call that **blocked 178 s in the foreground** and returned the record (`status: ok`, `replyStatus: complete`, `secs: 180`). No backgrounding: no `background_tasks_changed` or `task_*` messages. While it blocked, the SDK emitted **5 `tool_progress` messages** (catherd's 30 s progress ticks), which the UI can show. `MCP_TOOL_TIMEOUT` was set to 4 h (`MCP_TOOL_TIMEOUT_MS`). The worker really edited `README.md`. Cost $0.16. |
 | d | Resume after a restart continues the same run with no duplicate | ✅ | New process with `resume: 0ca9f70a-…`: without calling `run_start`, the session named run `20260928-101130-spike-long-wait` from its history, called `status` for it (0 live, 1 role run). `catherd runs list --json` still shows exactly one run. Cost $0.20. |
-| c | `canUseTool` + AskUserQuestion answered from the webview | ⏳ | Needs the panel wiring (next step). The callback path itself is exercised by the harness (auto-answers), but no question or permission prompt fired in these short spikes. |
+| c | `canUseTool` + AskUserQuestion answered from the webview | ✅ (owner-reported) | 2026-09-28: the owner ran a task from the dashboard in VS Code (dev host on the scratch repo) and reported it worked ("aali bood"). The transcript was not inspected by the agent; re-verify details (question card, permission card, reload → Resume) in the Phase 4 checklist. |
 | runId | CatHouse captures the run id | ✅ | The event mapper turned the `run_start` tool_result `{run, dir}` into `run_started` (`packages/extension/src/orchestrator/events.ts`). |
 
 ## Findings that change the design
@@ -33,4 +33,4 @@ env -u ANTHROPIC_BASE_URL node dist-spike/spike.mjs --repo <scratch repo> --prom
 
 ## Next
 
-Spike (c) through the panel: protocol methods `session.start/send/answer/interrupt`, session events, a minimal Session view with prompt cards. Then write `docs/architecture/orchestrator.md` and `docs/architecture/gateway.md`.
+Phase 2 (mandatory Setup).

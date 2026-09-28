@@ -24,6 +24,7 @@ catherd stays the source of truth. CatHouse never re-implements orchestration an
 5. **Installers run only after a user click.** Detectors have no side effects. `catherd doctor` has side effects, so it never runs on a timer.
 6. **Secrets never reach logs.** This covers the Jev key, tokens and env values.
 7. Commit messages: conventional commits.
+8. **Deliver only the VS Code extension.** No websites, standalone web apps or browser previews. (A dev-only browser preview of the webview was deleted on the owner's request on 2026-09-28.) Test tools that exercise the extension's own code (unit/contract/e2e tests, `packages/extension/scripts/spike.ts`) are fine.
 
 ## Stack (ADR 0003)
 

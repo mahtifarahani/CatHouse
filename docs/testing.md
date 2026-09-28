@@ -3,7 +3,6 @@
 Status: unit, live-contract (opt-in) and e2e layers exist.
 
 - `CATHOUSE_CONTRACT=1 pnpm test` runs `packages/extension/src/gateway/contract.test.ts` against the real catherd on the machine; `CATHOUSE_RECORD=1` also refreshes `packages/compat/fixtures/1.0.0/`.
-- `pnpm --filter @cathouse/webview dev` serves a browser preview of the webview with a mocked VS Code API (`packages/webview/src/dev/`).
 - The spike harness (`packages/extension/scripts/spike.ts`, `node build.mjs --spike`) drives a real orchestrator session outside VS Code; see `docs/spikes/phase1.md`.
 
 | Command | Runs |
