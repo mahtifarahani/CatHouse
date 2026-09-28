@@ -4,7 +4,7 @@ Last updated: 2026-09-28. Update this file at the end of every section.
 
 ## Current phase
 
-**Phase 4 (run control): done** (owner re-check of the live prompt flow pending). Next: **Phase 5 (release prep: platform VSIX with the SDK binary, remote, a11y, themes)**.
+**Phase 5 (release prep): in progress.** Platform VSIX and the extension README are done. Waiting on the owner's visual check of all tabs; then remote, a11y, the open parity items, and version/publisher/license.
 
 ## Checklist
 
@@ -46,7 +46,7 @@ Repo picker, permission modes, prompt badge + notification, cancel note, Continu
 1. ~~Platform VSIX~~ **done** (ADR 0008 §Implementation): `pnpm package` / `pnpm package:all`; darwin-arm64 verified installed; linux-x64 built, not run.
 2. Remote (SSH / Dev Containers): `extensionKind: workspace` is set; test on a remote if available, otherwise document as untested.
 3. Accessibility pass (keyboard-only walk, focus order, ARIA on tabs and dialogs) and a High Contrast check; the owner does the visual pass.
-4. README for the Marketplace-style listing (installing the VSIX, requirements, what Setup does), CHANGELOG, version 0.1.0.
+4. ~~Extension README~~ done (`packages/extension/README.md`). Still owner decisions: publisher id, license, version 0.1.0.
 
 ## Environment facts (planning machine, 2026-09-28)
 
