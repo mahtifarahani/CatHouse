@@ -19,6 +19,10 @@ if (!editor) {
 export default defineConfig({
   files: "out-test/**/*.e2e.js",
   useInstallation: { fromPath: editor },
+  // CATHOUSE_E2E_EXT_PATH runs the tests against an installed VSIX folder instead of this checkout.
+  ...(process.env.CATHOUSE_E2E_EXT_PATH
+    ? { extensionDevelopmentPath: process.env.CATHOUSE_E2E_EXT_PATH }
+    : {}),
   // CATHOUSE_E2E_WORKSPACE opens a folder (a git repo with catherd runs) for the pages test.
   ...(process.env.CATHOUSE_E2E_WORKSPACE
     ? { workspaceFolder: process.env.CATHOUSE_E2E_WORKSPACE }

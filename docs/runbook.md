@@ -63,15 +63,16 @@ pnpm build
 | `pnpm test` | vitest unit tests (`packages/*/src/**/*.test.ts`) |
 | `pnpm test:e2e` | builds, then runs `packages/extension/src/test/e2e/*.e2e.ts` inside a downloaded VS Code (`@vscode/test-cli`, cache in `packages/extension/.vscode-test/`, ~300 MB on first run) |
 | `pnpm watch:webview` / `pnpm watch:extension` | rebuild on change (run both, then reload the dev host window) |
-| `pnpm package` | build + `vsce package` → `dist/cathouse-<version>.vsix` |
+| `pnpm package` | build + platform VSIX for this machine → `dist/cathouse-<target>-<version>.vsix` (~96–105 MB: includes the Agent SDK's Claude binary; ADR 0008) |
+| `pnpm package:all` | VSIX for darwin-arm64, darwin-x64, linux-x64, linux-arm64 (other targets' binaries fetched with `npm pack`) |
 
 **Run in a dev host:** open the repo in VS Code (or Cursor), press F5 and pick **Run CatHouse** (`.vscode/launch.json`; its preLaunchTask runs `pnpm build`). The activity bar shows the CatHouse icon. Its sidebar has "Open dashboard" and "Check connection" (an `app.ping` round-trip).
 
-**Install the VSIX:** `code --install-extension dist/cathouse-0.0.1.vsix` (or Extensions → … → Install from VSIX).
+**Install the VSIX:** `code --install-extension dist/cathouse-<target>-<version>.vsix` (or Extensions → … → Install from VSIX). To test without touching your real extensions: `code --extensions-dir <tmp> --install-extension …`, then `CATHOUSE_E2E_EXT_PATH=<tmp>/cathouse.cathouse-<version> npx vscode-test` in `packages/extension`.
 
 **Packaging notes:**
-- `vsce package --no-dependencies`: everything is bundled by esbuild/Vite, so no `node_modules` ship. This changes in Phase 1/2, when the Agent SDK's platform binary must ship and packaging moves to `--target <platform>` (ADR 0008).
-- `.vscodeignore` lists **explicit includes**. vsce applies negations after ignores, so a trailing `**/*.map` exclude does not work.
+- Packaging stages a clean folder (`packages/extension/.pkg/<target>/`) instead of packing the source folder, so there is no `.vscodeignore` in the source tree; the staged one only drops `*.map` and `*.d.ts`.
+- Everything except the Agent SDK is bundled by esbuild/Vite; the SDK ships as files in `node_modules` (ADR 0008).
 - Publisher `cathouse` and license `UNLICENSED` are placeholders (`--skip-license`, `--allow-missing-repository`) until the owner picks real values.
 
 ## 4. Common problems

@@ -61,7 +61,7 @@
     "build": "node build.mjs",
     "watch": "node build.mjs --watch",
     "typecheck": "tsc -p tsconfig.json",
-    "package": "mkdir -p ../../dist && vsce package --no-dependencies --skip-license --allow-missing-repository --out ../../dist/",
+    "package": "node scripts/package.mjs",
     "test:e2e": "node build.mjs --e2e && vscode-test"
   },
   "dependencies": {

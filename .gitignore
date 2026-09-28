@@ -6,3 +6,4 @@ dist/
 .DS_Store
 out-test/
 dist-spike/
+.pkg/

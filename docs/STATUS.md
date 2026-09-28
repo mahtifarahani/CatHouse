@@ -43,7 +43,7 @@ Repo picker, permission modes, prompt badge + notification, cancel note, Continu
 
 ## Exact next step (Phase 5)
 
-1. **Platform VSIX (ADR 0008):** ship `node_modules/@anthropic-ai/claude-agent-sdk` + its platform package (+ the SDK's runtime deps) inside the VSIX. `vsce package --no-dependencies` can't do this, so stage a `dist-pkg/` folder (manifest + dist + a pruned `node_modules` with only the SDK for one target) and package that with `--target <platform>`. Verify by installing the VSIX into VS Code with `--install-extension` and running the Setup e2e against the installed copy (bundled Claude resolves).
+1. ~~Platform VSIX~~ **done** (ADR 0008 §Implementation): `pnpm package` / `pnpm package:all`; darwin-arm64 verified installed; linux-x64 built, not run.
 2. Remote (SSH / Dev Containers): `extensionKind: workspace` is set; test on a remote if available, otherwise document as untested.
 3. Accessibility pass (keyboard-only walk, focus order, ARIA on tabs and dialogs) and a High Contrast check; the owner does the visual pass.
 4. README for the Marketplace-style listing (installing the VSIX, requirements, what Setup does), CHANGELOG, version 0.1.0.
