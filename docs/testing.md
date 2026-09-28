@@ -12,7 +12,9 @@ Status: unit, live-contract (opt-in) and e2e layers exist.
 
 Rules: unit-testable host code must not import `vscode` (see `panel/router.ts`, `panel/webview-html.ts`). Files named `*.test.ts` are vitest; files named `*.e2e.ts` run inside VS Code.
 
-Current tests: 44 unit (protocol, router, CSP, compat, gateway, event mapper, controller), 6 live contract, 1 e2e (activation + command + dashboard tab).
+E2E env switches: `CATHOUSE_EXPECT_READY=1` (prepared machine), `CATHOUSE_EXPECT_FRESH=1` (fresh HOME), `CATHOUSE_E2E_INSTALL=1` + `CATHOUSE_E2E_GREP=Setup` (run installers on a fresh HOME; slow, downloads Bun/catherd/plugin). See `docs/architecture/setup.md`.
+
+Current tests: 54 unit (protocol, router, CSP, compat, gateway, event mapper, controller), 6 live contract, 2 e2e (activation + dashboard tab; Setup on the real machine).
 
 **E2E status (2026-09-28): green in VS Code 1.139 (macOS), 1 passing.**
 - The dashboard tab appears asynchronously after `executeCommand` resolves, so the test polls (`waitFor`, 5 s).

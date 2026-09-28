@@ -34,5 +34,5 @@
 | [`architecture/webview.md`](architecture/webview.md) | Sidebar/dashboard surfaces, CSP, theming via `--vscode-*`, strings |
 | [`architecture/gateway.md`](architecture/gateway.md) | CLI/MCP gateway, env, allowlist, schemas, CatHouse error codes, contract tests |
 | [`architecture/orchestrator.md`](architecture/orchestrator.md) | Agent SDK session, controller, prompts, start/resume |
-| `architecture/setup.md` | Written in Phase 2 |
+| [`architecture/setup.md`](architecture/setup.md) | Setup gate: detectors, evaluator, installers, UI, e2e evidence |
 | [`spikes/phase1.md`](spikes/phase1.md) | Phase 1 spike results and the design findings they produced |
