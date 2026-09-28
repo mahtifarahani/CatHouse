@@ -1,5 +1,8 @@
 import { z } from "zod";
+import { CatalogResultSchema } from "./catalog";
 import { PROTOCOL_VERSION } from "./envelope";
+import { ProfileDocSchema, ProfileSaveResultSchema, ProfilesStateSchema } from "./profiles";
+import { RoleDebugSchema, RoleReplySchema, RunDetailSchema, RunListItemSchema } from "./runs";
 import { PromptAnswerSchema, SessionStateSchema } from "./session";
 import { SetupActionIdSchema, SetupStateSchema } from "./setup";
 
@@ -36,6 +39,76 @@ export const methods = {
         }),
       ),
     }),
+  },
+  "runs.list": {
+    params: z.object({}),
+    result: z.object({ runs: z.array(RunListItemSchema), corrupt: z.number() }),
+  },
+  "runs.get": { params: z.object({ id: z.string() }), result: RunDetailSchema },
+  "runs.reply": { params: z.object({ id: z.string(), name: z.string() }), result: RoleReplySchema },
+  "runs.debug": {
+    params: z.object({ id: z.string(), name: z.string() }),
+    result: z.array(RoleDebugSchema),
+  },
+  "runs.cancelRole": {
+    params: z.object({ id: z.string(), name: z.string() }),
+    result: z.object({ status: z.string(), hints: z.array(z.string()) }),
+  },
+  "profiles.get": {
+    params: z.object({ name: z.string().optional() }),
+    result: ProfilesStateSchema,
+  },
+  "profiles.save": {
+    params: z.object({
+      name: z.string(),
+      base: ProfileDocSchema,
+      draft: ProfileDocSchema,
+      treatLikes: z.array(z.object({ rung: z.string(), like: z.string() })).default([]),
+      activate: z.enum(["no", "global", "repo"]).default("no"),
+    }),
+    result: ProfileSaveResultSchema,
+  },
+  "profiles.activate": {
+    params: z.object({ name: z.string(), scope: z.enum(["global", "repo"]) }),
+    result: z.object({ ok: z.literal(true) }),
+  },
+  "profiles.unbindRepo": { params: z.object({}), result: z.object({ ok: z.literal(true) }) },
+  "profiles.create": {
+    params: z.object({ name: z.string(), from: z.string().optional() }),
+    result: z.object({ ok: z.literal(true) }),
+  },
+  "profiles.remove": {
+    params: z.object({ name: z.string() }),
+    result: z.object({ ok: z.literal(true) }),
+  },
+  "catalog.query": {
+    params: z.object({
+      role: z.string().optional(),
+      backend: z.string().optional(),
+      text: z.string().optional(),
+      scoredOnly: z.boolean().default(false),
+    }),
+    result: CatalogResultSchema,
+  },
+  "catalog.refresh": {
+    params: z.object({}),
+    result: z.array(
+      z.object({
+        backend: z.string(),
+        models: z.number(),
+        error: z.string().optional(),
+        fix: z.string().optional(),
+      }),
+    ),
+  },
+  "catalog.treatLike": {
+    params: z.object({ rung: z.string(), like: z.string() }),
+    result: z.object({ ok: z.literal(true) }),
+  },
+  "diagnostics.openLogs": { params: z.object({}), result: z.object({ ok: z.literal(true) }) },
+  "diagnostics.lock": {
+    params: z.object({ command: z.string().min(1), slots: z.number().int().positive().optional() }),
+    result: z.object({ ok: z.literal(true) }),
   },
   "setup.state": { params: z.object({}), result: SetupStateSchema },
   "setup.check": {

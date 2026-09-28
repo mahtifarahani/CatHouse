@@ -212,6 +212,18 @@ export class SessionController {
     this.session.send(text);
   }
 
+  /**
+   * A role was cancelled from the dashboard. catherd's cancel hands the record to CatHouse, so the
+   * orchestrator's wait will never return it: tell the live session (ADR 0005).
+   */
+  noteRoleCancelled(runId: string, name: string, status: string): boolean {
+    if (!this.session || this.state.runId !== runId) return false;
+    const text = `CatHouse: the user cancelled role ${name} from the dashboard (record status: ${status}). Its record will not come back from wait; decide the next step.`;
+    this.push({ kind: "user", text });
+    this.session.send(text);
+    return true;
+  }
+
   async interrupt(): Promise<void> {
     await this.session?.interrupt();
   }

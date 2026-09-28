@@ -4,7 +4,9 @@ import { type EventTopic, PROTOCOL_VERSION, type SetupActionId } from "@cathouse
 import * as vscode from "vscode";
 import { CatherdCli } from "./gateway/cli";
 import { processEnv } from "./gateway/env";
+import { CatherdMcp } from "./gateway/mcp-client";
 import { runProcess } from "./gateway/process";
+import { CatherdGateway } from "./gateway/service";
 import { type SavedLink, SessionController } from "./orchestrator/controller";
 import { findCatherdPlugin } from "./orchestrator/plugin";
 import { OrchestratorSession } from "./orchestrator/session";
@@ -14,6 +16,7 @@ import { createRouter, HandlerError } from "./panel/router";
 import { SidebarProvider } from "./panel/sidebar";
 import type { WebviewView } from "./panel/webview-html";
 import { bundledClaudePath } from "./setup/binary";
+import { catherdDataDir } from "./setup/detect";
 import { SetupService } from "./setup/service";
 
 interface RequestContext {
@@ -96,6 +99,26 @@ export function activate(context: vscode.ExtensionContext): void {
     }
   };
 
+  // One gateway per repo (ADR 0006); Phase 3 uses the first workspace folder.
+  let gateway: CatherdGateway | undefined;
+  const gw = (): CatherdGateway => {
+    const repo = repoFor();
+    if (gateway?.repo !== repo) {
+      void gateway?.dispose();
+      gateway = new CatherdGateway(
+        repo,
+        new CatherdCli({ cwd: repo, env }),
+        new CatherdMcp({ repo, env, onStderr: (l) => output.debug(l.trimEnd()) }),
+      );
+    }
+    return gateway;
+  };
+  const terminal = (name: string, command: string) => {
+    const t = vscode.window.createTerminal({ name, cwd: repoFor() });
+    t.show();
+    t.sendText(command);
+  };
+
   const openDashboard = () => DashboardPanel.show(context.extensionUri, sink);
 
   const handle = createRouter<RequestContext>({
@@ -123,6 +146,56 @@ export function activate(context: vscode.ExtensionContext): void {
           stateTail: r.stateTail,
         })),
       };
+    },
+    "runs.list": () => gw().runsList(),
+    "runs.get": ({ id }) => gw().runGet(id),
+    "runs.reply": ({ id, name }) => gw().roleReply(id, name),
+    "runs.debug": ({ id, name }) => gw().roleDebug(id, name),
+    "runs.cancelRole": async ({ id, name }) => {
+      const r = await gw().cancelRole(id, name);
+      controller.noteRoleCancelled(id, name, r.status);
+      return r;
+    },
+    "profiles.get": ({ name }) => gw().profiles(name),
+    "profiles.save": (p) => gw().profileSave(p),
+    "profiles.activate": async ({ name, scope }) => {
+      await gw().activate(name, scope);
+      return { ok: true };
+    },
+    "profiles.unbindRepo": async () => {
+      await gw().unbindRepo();
+      return { ok: true };
+    },
+    "profiles.create": async ({ name, from }) => {
+      await gw().createProfile(name, from);
+      return { ok: true };
+    },
+    "profiles.remove": async ({ name }) => {
+      await gw().removeProfile(name);
+      return { ok: true };
+    },
+    "catalog.query": (q) => gw().catalog(q),
+    "catalog.refresh": async () =>
+      (await gw().catalogRefresh()).map((r) => ({
+        backend: r.backend,
+        models: r.models,
+        ...(r.error ? { error: r.error } : {}),
+        ...(r.fix ? { fix: r.fix } : {}),
+      })),
+    "catalog.treatLike": async ({ rung, like }) => {
+      await gw().treatLike(rung, like);
+      return { ok: true };
+    },
+    "diagnostics.openLogs": async () => {
+      await vscode.env.openExternal(vscode.Uri.file(`${catherdDataDir()}/logs`));
+      return { ok: true };
+    },
+    "diagnostics.lock": ({ command, slots }) => {
+      terminal(
+        "catherd lock",
+        `bunx catherd-cli@${PINNED.catherd} lock${slots ? ` --slots ${slots}` : ""} -- ${command}`,
+      );
+      return { ok: true };
     },
     "setup.state": () => setup.state(),
     "setup.check": ({ readiness }) => setup.check({ readiness }),
@@ -164,6 +237,7 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     output,
     { dispose: () => controller.dispose() },
+    { dispose: () => void gateway?.dispose() },
     vscode.window.registerWebviewViewProvider(
       SidebarProvider.viewId,
       new SidebarProvider(context.extensionUri, sink),

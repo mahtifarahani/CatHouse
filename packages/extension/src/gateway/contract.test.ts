@@ -69,6 +69,27 @@ describe.skipIf(!live)("catherd 1.0.0 live contract", () => {
     });
   }, 120_000);
 
+  it("gateway reads a real run (runs list, detail, reply, routes via read_run_file)", async () => {
+    const spikeRepo = process.env.CATHOUSE_CONTRACT_RUN_REPO;
+    if (!spikeRepo) return;
+    const { CatherdGateway } = await import("./service");
+    const g = new CatherdGateway(
+      spikeRepo,
+      new CatherdCli({ cwd: spikeRepo, env }),
+      new CatherdMcp({ repo: spikeRepo, env }),
+    );
+    const list = await g.runsList();
+    expect(list.runs.length).toBeGreaterThan(0);
+    const id = list.runs[0]?.id as string;
+    const detail = await g.runGet(id);
+    expect(detail.stateMd).toContain("#");
+    expect(detail.records.length).toBeGreaterThan(0);
+    const reply = await g.roleReply(id, detail.records[0]?.name as string);
+    expect(reply.state).toBe("finished");
+    record("gw-run-detail.json", detail);
+    await g.dispose();
+  }, 180_000);
+
   it("forbidden tools never reach the server", async () => {
     await expect(mcp.call("wait" as AllowedTool, { run: "x" })).rejects.toMatchObject({
       code: "E_TOOL_FORBIDDEN",

@@ -49,6 +49,12 @@ export function catherdConfigDir(vars: Record<string, string | undefined> = proc
   return join(vars.XDG_CONFIG_HOME || join(homedir(), ".config"), "catherd");
 }
 
+/** catherd's data dir (runs, logs), resolved like src/infra/paths.ts upstream. */
+export function catherdDataDir(vars: Record<string, string | undefined> = process.env): string {
+  if (vars.CATHERD_HOME) return join(vars.CATHERD_HOME, "data");
+  return join(vars.XDG_DATA_HOME || join(homedir(), ".local", "share"), "catherd");
+}
+
 async function hasActiveConfig(dir: string): Promise<boolean> {
   try {
     const cfg = JSON.parse(await readFile(join(dir, "config.json"), "utf8")) as {
