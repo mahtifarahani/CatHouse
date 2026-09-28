@@ -33,6 +33,6 @@
 | [`architecture/protocol.md`](architecture/protocol.md) | Webview⇄host protocol v1, methods table, router error cases, how to add a method |
 | [`architecture/webview.md`](architecture/webview.md) | Sidebar/dashboard surfaces, CSP, theming via `--vscode-*`, strings |
 | [`architecture/gateway.md`](architecture/gateway.md) | CLI/MCP gateway, env, allowlist, schemas, CatHouse error codes, contract tests |
-| [`architecture/orchestrator.md`](architecture/orchestrator.md) | Agent SDK session, controller, prompts, start/resume, browser preview |
+| [`architecture/orchestrator.md`](architecture/orchestrator.md) | Agent SDK session, controller, prompts, start/resume |
 | `architecture/setup.md` | Written in Phase 2 |
 | [`spikes/phase1.md`](spikes/phase1.md) | Phase 1 spike results and the design findings they produced |
