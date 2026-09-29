@@ -52,7 +52,21 @@ export function renderReleaseNotes(version, changelogBody) {
   ).join("\n");
   return `CatHouse ${version} for VS Code and Cursor.
 
-## Download
+## Install
+
+VS Code: [install from the VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=cathouse.cathouse), search for \`CatHouse\` in Extensions, or run:
+
+\`\`\`bash
+code --install-extension cathouse.cathouse
+\`\`\`
+
+Cursor: [install from Open VSX](https://open-vsx.org/extension/cathouse/cathouse), search for \`CatHouse\` in Extensions, or run:
+
+\`\`\`bash
+cursor --install-extension cathouse.cathouse
+\`\`\`
+
+## Manual or offline download
 
 | Machine | Asset |
 |---|---|
@@ -64,34 +78,12 @@ ${rows}
 sha256sum -c SHA256SUMS
 \`\`\`
 
-On macOS, \`shasum -a 256 -c SHA256SUMS\` checks the same file.
-
-## Install in VS Code
-
-1. Download the VSIX for your machine.
-2. Open Extensions (\`Cmd+Shift+X\` on macOS, \`Ctrl+Shift+X\` on Linux).
-3. Open the Extensions view menu (…) and choose **Install from VSIX...**.
-4. Select the file and reload the window if asked.
+On macOS, \`shasum -a 256 -c SHA256SUMS\` checks the same file. Download the VSIX for your machine, then choose **Extensions → … → Install from VSIX...** in VS Code or Cursor. You can also run:
 
 \`\`\`bash
 code --install-extension ./cathouse-darwin-arm64-${version}.vsix
-\`\`\`
-
-## Install in Cursor
-
-Cursor installs the same VSIX.
-
-1. Open Extensions.
-2. Open the Extensions view menu (…) and choose **Install from VSIX...**. The Command Palette command is **Extensions: Install from VSIX...**.
-3. Select the file and reload if asked.
-
-After **Shell Command: Install 'cursor' command in PATH**:
-
-\`\`\`bash
 cursor --install-extension ./cathouse-darwin-arm64-${version}.vsix
 \`\`\`
-
-A newer VSIX replaces the installed CatHouse (\`cathouse.cathouse\`).
 
 ## After install
 

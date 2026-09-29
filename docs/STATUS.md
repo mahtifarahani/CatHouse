@@ -4,7 +4,7 @@ Last updated: 2026-09-29. Update this file at the end of every section.
 
 ## Current phase
 
-**Phase 5 (release prep): GitHub `v0.1.0` published; Marketplace and native gates remain.** The public Release contains four platform VSIX files plus `SHA256SUMS`. A remote runtime was not available. Marketplace publisher/license decisions, a download-path smoke test, and native execution of non-arm64 artifacts remain.
+**Phase 5 (release prep): `0.1.0` is published on the VS Code Marketplace, Open VSX, and GitHub Releases; license and native gates remain.** GitHub contains four platform VSIX files plus `SHA256SUMS`. A remote runtime was not available. Store-install smoke tests, the final SPDX license, and native execution of non-arm64 artifacts remain.
 
 ## Checklist
 
@@ -94,11 +94,11 @@ Prompt-placement follow-up: permission and question cards now stay in a fixed tr
 
 ## Exact next step (Phase 5)
 
-1. Owner chooses the Marketplace publisher id and SPDX license; update the manifest and generate the license file. GitHub release version `0.1.0` is selected independently.
+1. Owner chooses the final SPDX license, updates the manifest, and adds the license file. The published extension id is `cathouse.cathouse` and release version `0.1.0`.
 2. On an available SSH host or Dev Container, install the linux-x64 VSIX on the remote extension host and run Setup plus one short task. Docker is installed on this Mac but its daemon was not running; no SSH/Dev Container target was available, so remote remains explicitly untested.
 3. Execute the darwin-x64 and Linux VSIX artifacts on native target machines. They are build-verified only.
 4. After these gates, set Phase 5 to done and start the owner's bug/improvement backlog.
-5. GitHub Release `v0.1.0` is published with the four platform VSIX files and `SHA256SUMS`. Smoke-test the downloaded darwin-arm64 asset in VS Code and Cursor; future releases follow `docs/release/github.md`.
+5. Smoke-test the VS Code Marketplace install in VS Code and the Open VSX install in Cursor. GitHub Release `v0.1.0` remains the manual/offline fallback with four platform VSIX files and `SHA256SUMS`; future releases follow `docs/release/github.md`.
 6. catherd 1.2 follow-up: check the new Runs (session, parked questions, verifier), Profiles (stand-in note, Add (let catherd infer)) and "catherd reported back" transcript bits in the Extension Development Host, then pick from the 1.1/1.2 parity backlog in `docs/research/catherd-tui-parity.md`.
 
 ## Environment facts (planning machine, updated 2026-09-29)
@@ -146,3 +146,5 @@ GitHub download follow-up: platform VSIX files are published as GitHub Release a
 GitHub `0.1.0` release preparation: manifest and changelog were set to `0.1.0`; the incorrect documented `pnpm release:notes -- --tag ...` invocation was corrected to `pnpm release:notes --tag ...`. Verification passed: release-notes tests 4/4, typecheck, unit tests 95 passed (7 opt-in/live skipped), production build, and local darwin-arm64 VSIX packaging (95.94 MB).
 
 GitHub `v0.1.0` publication: commit `f5c8615` and annotated tag `v0.1.0` were pushed. GitHub Actions run `36545374544` completed successfully, including four-platform packaging, checksums, and Release creation. The API confirmed a public, non-draft, non-prerelease Release containing `cathouse-darwin-arm64-0.1.0.vsix`, `cathouse-darwin-x64-0.1.0.vsix`, `cathouse-linux-arm64-0.1.0.vsix`, `cathouse-linux-x64-0.1.0.vsix`, and `SHA256SUMS`, all uploaded successfully. The released download path has not yet been installed back into VS Code or Cursor.
+
+Store distribution follow-up: `cathouse.cathouse` is now published for VS Code at `https://marketplace.visualstudio.com/items?itemName=cathouse.cathouse` and for Cursor at `https://open-vsx.org/extension/cathouse/cathouse`. The root README, extension README, release report, runbook, generated GitHub release notes, and status now use those stores as the primary install paths; GitHub VSIX files are documented as the manual/offline fallback. Store installation has not yet been smoke-tested locally.

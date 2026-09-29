@@ -4,6 +4,8 @@ GitHub Release notes are the version sections below. Keep unfinished work under 
 
 ## Unreleased
 
+- Docs: make VS Code Marketplace the primary VS Code install path and Open VSX the primary Cursor install path; keep GitHub VSIX files as the manual/offline fallback.
+
 ## [0.1.0] - 2026-09-29
 
 - Improved the Profiles role-card disclosure from a tiny triangle into a 32 px bordered `Rungs (n)` button with a standard chevron, clear Show/Hide model-ladder labels, and a tooltip.

@@ -34,7 +34,7 @@ test("refuses a tag that does not match the extension version", () => {
   );
 });
 
-test("names every platform VSIX and both editors", () => {
+test("names every platform VSIX and both editor stores", () => {
   const notes = buildReleaseNotes({
     tag: "v0.1.0",
     changelog,
@@ -44,8 +44,10 @@ test("names every platform VSIX and both editors", () => {
   expect(notes).toContain("cathouse-darwin-x64-0.1.0.vsix");
   expect(notes).toContain("cathouse-linux-x64-0.1.0.vsix");
   expect(notes).toContain("cathouse-linux-arm64-0.1.0.vsix");
-  expect(notes).toContain("Install in VS Code");
-  expect(notes).toContain("Install in Cursor");
+  expect(notes).toContain("marketplace.visualstudio.com/items?itemName=cathouse.cathouse");
+  expect(notes).toContain("open-vsx.org/extension/cathouse/cathouse");
+  expect(notes).toContain("code --install-extension cathouse.cathouse");
+  expect(notes).toContain("cursor --install-extension cathouse.cathouse");
   expect(notes).toContain("- first public download");
   expect(notes).not.toContain("release candidate");
 });

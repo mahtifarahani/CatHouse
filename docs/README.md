@@ -9,7 +9,7 @@
 | [`runbook.md`](runbook.md) | Setting up a dev machine from zero, running against real catherd, building VSIX, common problems |
 | [`testing.md`](testing.md) | Test layers and how to run them |
 | [`release/phase5.md`](release/phase5.md) | Release-prep implementation, accessibility/theme evidence, verification and remaining external gates |
-| [`release/github.md`](release/github.md) | GitHub Release downloads: version tags, changelog notes, VSIX assets, VS Code and Cursor install |
+| [`release/github.md`](release/github.md) | Distribution: VS Code Marketplace, Open VSX for Cursor, GitHub Release artifacts, version tags and changelog notes |
 | **research/** | The catherd docs below describe the **1.0.0 baseline**; CatHouse pins **1.2.0**, and the upgrade doc lists every change that matters |
 | [`research/catherd-1.2-upgrade.md`](research/catherd-1.2-upgrade.md) | **catherd 1.0.0 → 1.2.0 for CatHouse:** push instead of `wait`, read/ownership rules, new tools and JSON fields, install changes, parity backlog |
 | [`research/catherd-overview.md`](research/catherd-overview.md) | What catherd is: roles, rungs, ladders, Jev, the skill's sequence, surfaces |

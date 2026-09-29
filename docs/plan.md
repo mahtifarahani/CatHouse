@@ -28,7 +28,7 @@
 
 ## تصمیم‌های تثبیت‌شده
 
-- macOS + Linux، عرضه به‌صورت VSIX؛ Windows و Marketplace بعد از v1.
+- macOS + Linux با buildهای جداگانه؛ نصب عادی از VS Code Marketplace و Open VSX و نصب دستی/آفلاین از VSIXهای GitHub Releases. Windows هنوز پشتیبانی نمی‌شود. (Marketplace/Open VSX در نسخهٔ `0.1.0` زودتر از برنامهٔ اولیهٔ «بعد از v1» منتشر شدند.)
 - Monorepo با **pnpm workspaces**؛ extension host با esbuild، webview با Vite + React 19 + shadcn/ui + Tailwind v4؛ بستهٔ `ui` مشترک.
 - رنگ‌ها فقط از متغیرهای `--vscode-*` (روشن/تیره/high-contrast).
 - UI انگلیسی، i18n-ready با `@vscode/l10n` (webview) و `package.nls.json` (manifest).

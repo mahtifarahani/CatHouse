@@ -10,7 +10,7 @@
 
 catherd still does the real work: Claude plans and verifies, Codex, opencode, or headless Claude Code workers write the code, and Jev can choose the model and effort for each job. CatHouse gives that workflow a home inside the editor—without reimplementing the orchestrator or taking ownership of its data.
 
-> Downloads are platform VSIX files on [GitHub Releases](https://github.com/mahtifarahani/CatHouse/releases). The macOS arm64 build is verified; the other targets are build-verified. The VS Code Marketplace is not set up yet. See [Project status](#project-status).
+> Install CatHouse from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=cathouse.cathouse) or, in Cursor, from [Open VSX](https://open-vsx.org/extension/cathouse/cathouse). Platform VSIX files remain available on [GitHub Releases](https://github.com/mahtifarahani/CatHouse/releases) for manual or offline installation.
 
 ## What CatHouse adds
 
@@ -54,13 +54,33 @@ VS Code extension host
   - [opencode](https://opencode.ai/) v2.0.16 or newer
   - Claude Code CLI 2.1.282 or newer for `claude-code:` rungs
 
-CatHouse ships its orchestration-time Claude Code runtime inside each platform-specific VSIX. A standalone `claude` installation is needed only when the active catherd profile uses `claude-code:` workers.
+CatHouse ships its orchestration-time Claude Code runtime inside each platform-specific extension build. A standalone `claude` installation is needed only when the active catherd profile uses `claude-code:` workers.
 
 Bun, catherd, and the catherd Claude plugin are mandatory, but you do not need to prepare them manually: CatHouse's Setup page detects what is missing and offers each installation step explicitly.
 
 ## Install
 
-Each version is a [GitHub Release](https://github.com/mahtifarahani/CatHouse/releases). Download the VSIX that matches your machine. `<version>` is the release number, for example `0.1.0`.
+### VS Code
+
+Install [CatHouse from the VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=cathouse.cathouse), or search for `CatHouse` in Extensions (`Cmd+Shift+X` on macOS, `Ctrl+Shift+X` on Linux).
+
+```bash
+code --install-extension cathouse.cathouse
+```
+
+### Cursor
+
+Install [CatHouse from Open VSX](https://open-vsx.org/extension/cathouse/cathouse), or search for `CatHouse` in Cursor's Extensions view.
+
+If the `cursor` command is on your PATH (Command Palette → **Shell Command: Install 'cursor' command in PATH**):
+
+```bash
+cursor --install-extension cathouse.cathouse
+```
+
+### Manual or offline install
+
+GitHub Releases also provides a platform-specific VSIX and `SHA256SUMS`. Download the file that matches your machine; `<version>` is the release number, for example `0.1.0`.
 
 | Machine | File |
 |---|---|
@@ -69,39 +89,16 @@ Each version is a [GitHub Release](https://github.com/mahtifarahani/CatHouse/rel
 | Linux x64 | `cathouse-linux-x64-<version>.vsix` |
 | Linux ARM64 | `cathouse-linux-arm64-<version>.vsix` |
 
-The same file installs in VS Code and in Cursor. Windows builds are not published.
-
-Each release also includes `SHA256SUMS`. After downloading the VSIX and that file into one folder:
+Check the download, then use **Extensions → … → Install from VSIX...** in either editor:
 
 ```bash
-shasum -a 256 -c SHA256SUMS
-```
-
-On Linux, `sha256sum -c SHA256SUMS` checks the same list.
-
-### VS Code
-
-1. Open Extensions (`Cmd+Shift+X` on macOS, `Ctrl+Shift+X` on Linux).
-2. Open the Extensions view menu (…) and choose **Install from VSIX...**.
-3. Select the downloaded file. Reload the window if VS Code asks.
-
-```bash
+shasum -a 256 -c SHA256SUMS # macOS
+sha256sum -c SHA256SUMS     # Linux
 code --install-extension ~/Downloads/cathouse-darwin-arm64-<version>.vsix
-```
-
-### Cursor
-
-1. Open Extensions.
-2. Open the Extensions view menu (…) and choose **Install from VSIX...**. The Command Palette command is **Extensions: Install from VSIX...**.
-3. Select the downloaded file. Reload the window if Cursor asks.
-
-If the `cursor` command is on your PATH (Command Palette → **Shell Command: Install 'cursor' command in PATH**):
-
-```bash
 cursor --install-extension ~/Downloads/cathouse-darwin-arm64-<version>.vsix
 ```
 
-Installing a newer VSIX replaces the previous CatHouse. The extension id is `cathouse.cathouse`.
+Windows builds are not published. The extension id is `cathouse.cathouse`.
 
 ### First run
 
@@ -111,8 +108,6 @@ Installing a newer VSIX replaces the previous CatHouse. The extension id is `cat
 4. Open **Chat**, describe the task, and select **Start task**.
 
 CatHouse does not run installers in the background. Setup checks are side-effect-free, and every installation or upgrade starts only from a user action. `catherd doctor`, which can refresh catherd state, runs only when requested or after an explicit setup action.
-
-A release exists after a version tag is pushed. Until the first tag, build a VSIX from source with the commands in [Development](#development).
 
 ## Versioning
 
@@ -152,11 +147,11 @@ Press `F5` in VS Code and choose **Run CatHouse** to launch an Extension Develop
 
 The feature set is code-complete on macOS and includes the Setup flow, dashboards, in-editor run control, session recovery, accessibility work, and per-platform VSIX packaging.
 
-GitHub Releases are the download channel. The workflow that builds and attaches the VSIX files is in the repository; the first public release is `0.1.0`.
+CatHouse is published on the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=cathouse.cathouse) and [Open VSX](https://open-vsx.org/extension/cathouse/cathouse). GitHub Releases continue to carry the platform VSIX artifacts and checksums for manual installation; the first public release is `0.1.0`.
 
-Before Marketplace publishing, the project still needs:
+Remaining release validation includes:
 
-- the final publisher ID and SPDX license;
+- replacing the current `UNLICENSED` manifest value with the final SPDX license;
 - one end-to-end run on a remote Linux extension host;
 - native execution checks for the macOS x64 and Linux artifacts.
 

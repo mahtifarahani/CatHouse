@@ -103,9 +103,9 @@ pnpm build
 | `bunx` seems hung on first run | resolving ~108 packages | wait ~30 s |
 | release workflow fails before packaging | tag, `packages/extension/package.json` `version`, or `docs/CHANGELOG.md` heading disagree | set all three to the same `X.Y.Z` and push a new tag; tags are immutable |
 
-## 6. GitHub Release
+## 6. Distribution and GitHub Release
 
-Users download VSIX files from GitHub Releases, not from `dist/` in git (`dist/` is gitignored, and a Linux VSIX is over GitHub's 100 MB file limit). The workflow is `.github/workflows/release.yml`. Full rules, traps, and the install text: `docs/release/github.md`.
+Normal user installation is [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=cathouse.cathouse) for VS Code and [Open VSX](https://open-vsx.org/extension/cathouse/cathouse) for Cursor. GitHub Releases remain the manual/offline source for platform VSIX files; artifacts never come from `dist/` in git (`dist/` is gitignored, and a Linux VSIX is over GitHub's 100 MB file limit). The GitHub artifact workflow is `.github/workflows/release.yml`. Full rules, traps, and install text: `docs/release/github.md`.
 
 ```bash
 # version in packages/extension/package.json is already X.Y.Z

@@ -1,6 +1,6 @@
-# GitHub Release downloads
+# Distribution and GitHub Release artifacts
 
-Status: [`v0.1.0`](https://github.com/mahtifarahani/CatHouse/releases/tag/v0.1.0) published successfully on 2026-09-29. The Release contains all four platform VSIX files and `SHA256SUMS`. Marketplace publisher `cathouse` and license `UNLICENSED` remain placeholders and do not block GitHub Release downloads.
+Status: CatHouse `0.1.0` is available from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=cathouse.cathouse) and [Open VSX](https://open-vsx.org/extension/cathouse/cathouse). [`v0.1.0`](https://github.com/mahtifarahani/CatHouse/releases/tag/v0.1.0) also contains all four platform VSIX files and `SHA256SUMS` for manual or offline installation. The publisher id is `cathouse`; the manifest license remains `UNLICENSED` pending a final SPDX choice.
 
 ## What this publishes
 
@@ -25,27 +25,27 @@ Semantic versioning. Three places must name the same version:
 2. A changelog heading `## [X.Y.Z] - YYYY-MM-DD` in `docs/CHANGELOG.md`. Notes stay under `## Unreleased` until the release commit. The extractor accepts only an exact heading (`scripts/release-notes.mjs:12`, `scripts/release-notes.mjs:28-46`), so `## [0.1.0-rc.1]` is not treated as `0.1.0`.
 3. An annotated or lightweight Git tag `vX.Y.Z`. `v0.1.0-rc.1` is valid. The workflow treats any tag containing `-` as a GitHub pre-release (`.github/workflows/release.yml:59-61`).
 
-`scripts/release-notes.mjs:129-136` refuses the tag when it disagrees with the manifest, and refuses a missing or empty changelog section. That check runs before `pnpm package:all` (`.github/workflows/release.yml:26-27`).
+`scripts/release-notes.mjs:121-128` refuses the tag when it disagrees with the manifest, and refuses a missing or empty changelog section. That check runs before `pnpm package:all` (`.github/workflows/release.yml:26-27`).
 
-The extension id users install is `cathouse.cathouse` (publisher `cathouse`, name `cathouse`). A newer VSIX replaces the previous install. Marketplace publishing is a separate, still-open gate (`docs/release/phase5.md`).
+The extension id is `cathouse.cathouse` (publisher `cathouse`, name `cathouse`). The same identity is published through the VS Code Marketplace and Open VSX; a newer store version or VSIX replaces the previous install.
 
 ## Install
 
-The public steps live in the root `README.md` (Install, Versioning) and are repeated inside the VSIX at `packages/extension/README.md`. The generated release body (`scripts/release-notes.mjs:49-106`) says the same thing so the Releases page is enough on its own.
+The public steps live in the root `README.md` (Install, Versioning) and are repeated inside the extension at `packages/extension/README.md`. The generated GitHub release body (`scripts/release-notes.mjs`) presents the stores first and the attached VSIX files as the manual/offline fallback.
 
-VS Code: Extensions (`Cmd+Shift+X` / `Ctrl+Shift+X`) → view menu (…) → **Install from VSIX...**. Or:
-
-```bash
-code --install-extension ~/Downloads/cathouse-darwin-arm64-<version>.vsix
-```
-
-Cursor uses that same file. Extensions → view menu (…) → **Install from VSIX...**, or Command Palette → **Extensions: Install from VSIX...**. After Command Palette → **Shell Command: Install 'cursor' command in PATH**:
+VS Code: install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=cathouse.cathouse), search for `CatHouse` in Extensions, or run:
 
 ```bash
-cursor --install-extension ~/Downloads/cathouse-darwin-arm64-<version>.vsix
+code --install-extension cathouse.cathouse
 ```
 
-Checksums, from the folder that contains the VSIX and `SHA256SUMS`:
+Cursor: install from [Open VSX](https://open-vsx.org/extension/cathouse/cathouse), search for `CatHouse` in Extensions, or, after **Shell Command: Install 'cursor' command in PATH**, run:
+
+```bash
+cursor --install-extension cathouse.cathouse
+```
+
+For a manual or offline install, download the matching VSIX and `SHA256SUMS` from GitHub Releases, verify them, then use **Extensions → … → Install from VSIX...** in either editor:
 
 ```bash
 shasum -a 256 -c SHA256SUMS
@@ -93,10 +93,10 @@ Release preparation for `0.1.0` passed the release-notes tests (4), full unit su
 
 ## Remaining work
 
-1. Install the released darwin-arm64 VSIX in VS Code and Cursor as a download-path smoke test.
-2. Choose the Marketplace publisher id and an SPDX license before Marketplace publishing.
+1. Smoke-test installation from the VS Code Marketplace in VS Code and from Open VSX in Cursor.
+2. Choose the final SPDX license; the publisher id is now fixed as `cathouse`.
 3. Remote and native execution of the non-arm64 artifacts stay open (`docs/release/phase5.md`).
 
 ## Next step
 
-Smoke-test the downloaded darwin-arm64 asset in VS Code and Cursor, then continue the independent Marketplace identity work.
+Smoke-test both store install paths, then continue the independent license and native-runtime work.

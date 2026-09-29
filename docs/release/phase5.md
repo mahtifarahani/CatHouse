@@ -1,6 +1,6 @@
 # Phase 5 release-preparation report
 
-Status: code-complete on macOS as of 2026-09-28; release identity and remote runtime verification remain owner/external decisions.
+Status: code-complete on macOS as of 2026-09-28; distribution is live on the VS Code Marketplace and Open VSX, while the final license and remote/native runtime verification remain owner/external decisions.
 
 ## Delivered
 
@@ -40,8 +40,8 @@ Results: 68 unit tests passed (7 opt-in/live tests skipped); default e2e run 2 p
 
 ## Remaining release gates
 
-1. Owner selects the Marketplace publisher id and SPDX license; current manifest placeholders remain `cathouse` and `UNLICENSED`. The first GitHub release version was selected as `0.1.0`.
+1. Owner selects the final SPDX license; the published Marketplace/Open VSX identity is `cathouse.cathouse`, while the manifest still says `UNLICENSED`. The first GitHub release version is `0.1.0`.
 2. Run the linux-x64 VSIX through Setup and a short catherd task on SSH or Dev Containers. No remote runtime was available on this machine, so this is explicitly **untested**, not silently passed.
 3. `darwin-x64` and Linux artifacts are build-verified but have not been executed on native target machines.
 
-GitHub Release downloads were added after this checkpoint (`docs/release/github.md`, 2026-09-29). Version `0.1.0` is published with four VSIX files and `SHA256SUMS`. This does not close the Marketplace publisher, license, remote, or native-execution gates above.
+Distribution was added after this checkpoint (`docs/release/github.md`, 2026-09-29). Version `0.1.0` is available on the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=cathouse.cathouse), [Open VSX](https://open-vsx.org/extension/cathouse/cathouse), and as four GitHub Release VSIX files with `SHA256SUMS`. This closes the publisher/distribution gate, but not the license, remote, or native-execution gates above.

@@ -43,27 +43,27 @@ catherd stays the source of truth: CatHouse only uses catherd's CLI and MCP serv
 - A Claude account (Setup can open the login).
 - At least one worker backend: Codex CLI (the default profile), opencode v2, or the claude CLI for `claude-code:` rungs. Setup shows what's missing and how to fix it.
 
-The Claude Code runtime ships inside this extension (the VSIX is platform-specific), so you don't need a separate `claude` install unless your profile uses `claude-code:` rungs.
+The Claude Code runtime ships inside this extension (the build is platform-specific), so you don't need a separate `claude` install unless your profile uses `claude-code:` rungs.
 
 ## Install
 
-Download the VSIX for your machine from the project's [GitHub Releases](https://github.com/mahtifarahani/CatHouse/releases). The same file installs in VS Code and in Cursor.
+### VS Code
 
-| Machine | File |
-|---|---|
-| macOS Apple Silicon | `cathouse-darwin-arm64-<version>.vsix` |
-| macOS Intel | `cathouse-darwin-x64-<version>.vsix` |
-| Linux x64 | `cathouse-linux-x64-<version>.vsix` |
-| Linux ARM64 | `cathouse-linux-arm64-<version>.vsix` |
-
-In either editor, open Extensions, open the view menu (…), and choose **Install from VSIX...**. In Cursor the Command Palette command is **Extensions: Install from VSIX...**.
+Install [CatHouse from the VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=cathouse.cathouse), or search for `CatHouse` in the Extensions view.
 
 ```bash
-code --install-extension ./cathouse-darwin-arm64-<version>.vsix
-cursor --install-extension ./cathouse-darwin-arm64-<version>.vsix
+code --install-extension cathouse.cathouse
 ```
 
-The `cursor` command is available after Command Palette → **Shell Command: Install 'cursor' command in PATH**. A newer VSIX replaces the installed extension (`cathouse.cathouse`).
+### Cursor
+
+Install [CatHouse from Open VSX](https://open-vsx.org/extension/cathouse/cathouse), or search for `CatHouse` in Cursor's Extensions view.
+
+```bash
+cursor --install-extension cathouse.cathouse
+```
+
+The `cursor` command is available after Command Palette → **Shell Command: Install 'cursor' command in PATH**. For manual or offline installation, download the matching platform VSIX from [GitHub Releases](https://github.com/mahtifarahani/CatHouse/releases) and choose **Extensions → … → Install from VSIX...**. The extension id is `cathouse.cathouse`.
 
 ## Getting started
 
