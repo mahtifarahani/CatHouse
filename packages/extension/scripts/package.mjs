@@ -101,7 +101,7 @@ mkdirSync(join(root, "..", "..", "dist"), { recursive: true });
 const out = join(root, "..", "..", "dist", `cathouse-${target}-${manifest.version}.vsix`);
 execFileSync(
   join(root, "node_modules", ".bin", "vsce"),
-  ["package", "--target", target, "--skip-license", "--allow-missing-repository", "--out", out],
+  ["package", "--target", target, "--skip-license", "--out", out],
   { cwd: stage, stdio: "inherit" },
 );
 console.log(`packaged ${out}`);

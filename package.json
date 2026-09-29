@@ -16,7 +16,8 @@
     "test": "vitest run",
     "package": "pnpm build && pnpm --filter cathouse package",
     "test:e2e": "pnpm build && pnpm --filter cathouse test:e2e",
-    "package:all": "pnpm build && for t in darwin-arm64 darwin-x64 linux-x64 linux-arm64; do pnpm --filter cathouse exec node scripts/package.mjs --target $t; done"
+    "package:all": "pnpm build && for t in darwin-arm64 darwin-x64 linux-x64 linux-arm64; do pnpm --filter cathouse exec node scripts/package.mjs --target $t; done",
+    "release:notes": "node scripts/release-notes.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.14",

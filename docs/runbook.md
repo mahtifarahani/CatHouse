@@ -16,14 +16,15 @@ curl -fsSL https://bun.sh/install | bash
 ```
 
 ```bash
-# catherd 1.0.0: first run is silent ~30 s while bunx resolves packages
-bunx catherd-cli@1.0.0 init --no-input
+# catherd 1.2.0: installs the global `catherd` too, syncs the public model sources,
+# and keeps an existing profile. The first bunx resolve is silent ~30 s.
+bunx catherd-cli@1.2.0 init --no-input --plain </dev/null
 ```
 
 ```bash
-# Claude plugin, with the HTTPS workaround for the SSH-only marketplace source
+# Claude plugin (1.1+ fetches over HTTPS; no SSH key needed)
 claude plugin marketplace add 47vigen/catherd
-GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=url.https://github.com/.insteadOf GIT_CONFIG_VALUE_0=git@github.com: claude plugin install catherd@catherd
+claude plugin install catherd@catherd
 ```
 
 ```bash
@@ -34,8 +35,15 @@ codex login
 
 ```bash
 # Verify: exit 3 means not ready; read each failing row's fix
-bunx catherd-cli@1.0.0 doctor
+bunx catherd-cli@1.2.0 doctor
 ```
+
+```bash
+# Upgrading a machine from catherd 1.0.0 (then start a new orchestrator session)
+claude plugin marketplace update catherd && claude plugin update catherd@catherd
+```
+
+Run `init` from a clean shell. A shell inside a Claude Code session carries `CLAUDE_CODE_*` variables, and `catherd doctor` would then probe that session's inbox (`push` row). CatHouse's own processes never see those variables.
 
 Once CatHouse's Setup screen exists, it performs these steps from buttons. Use the manual commands above only to prepare a dev machine or to debug Setup.
 
@@ -65,6 +73,7 @@ pnpm build
 | `pnpm watch:webview` / `pnpm watch:extension` | rebuild on change (run both, then reload the dev host window) |
 | `pnpm package` | build + platform VSIX for this machine → `dist/cathouse-<target>-<version>.vsix` (~96–105 MB: includes the Agent SDK's Claude binary; ADR 0008) |
 | `pnpm package:all` | VSIX for darwin-arm64, darwin-x64, linux-x64, linux-arm64 (other targets' binaries fetched with `npm pack`) |
+| `pnpm release:notes -- --tag vX.Y.Z` | print the GitHub Release body for that tag; fails if the manifest version or changelog section does not match |
 
 **Run in a dev host:** open the repo in VS Code (or Cursor), press F5 and pick **Run CatHouse** (`.vscode/launch.json`; its preLaunchTask runs `pnpm build`). The Activity Bar shows the CatHouse icon; selecting it opens the complete application directly, with Chat as the default tab after Setup is complete.
 
@@ -73,7 +82,7 @@ pnpm build
 **Packaging notes:**
 - Packaging stages a clean folder (`packages/extension/.pkg/<target>/`) instead of packing the source folder, so there is no `.vscodeignore` in the source tree; the staged one only drops `*.map` and `*.d.ts`.
 - Everything except the Agent SDK is bundled by esbuild/Vite; the SDK ships as files in `node_modules` (ADR 0008).
-- Publisher `cathouse` and license `UNLICENSED` are placeholders (`--skip-license`, `--allow-missing-repository`) until the owner picks real values.
+- Publisher `cathouse` and license `UNLICENSED` are placeholders (`--skip-license`) until the owner picks real values. The manifest `repository` field points at `https://github.com/mahtifarahani/CatHouse.git`.
 
 ## 4. Remote verification
 
@@ -83,9 +92,27 @@ pnpm build
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `ssh: connect to host github.com port 22` on plugin install | marketplace `git-subdir` source uses SSH | use the `GIT_CONFIG_*` HTTPS env above |
+| `ssh: connect to host github.com port 22` on plugin install | a catherd 1.0 marketplace clone (`git-subdir` over SSH) | `claude plugin marketplace update catherd` (1.1+ uses HTTPS), or pass the `GIT_CONFIG_*` HTTPS env (`url.https://github.com/.insteadOf git@github.com:`) |
+| Setup: catherd "found 1.0.0, CatHouse needs 1.2.0" / plugin "outdated" | machine still on catherd 1.0 | click **Install and set up catherd**, then **Update plugin**; start a new chat |
+| the chat goes idle right after a role is dispatched | expected since catherd 1.1: roles report back by push | wait for the "catherd reported back" divider; you can chat meanwhile |
+| doctor `push` row "no session" | doctor ran outside a Claude Code session (always the case from CatHouse) | nothing to fix; run `catherd doctor` from a Claude Code session's Bash tool to test push |
 | `error E_RUNTIME_TOO_OLD` | Bun < 1.4 | `bun upgrade` |
 | doctor `plugin` row "stale" | plugin version ≠ catherd version | `claude plugin marketplace update catherd && claude plugin update catherd@catherd`, then a new session |
 | `Agent type … not found` in a run | profile agents changed after the session started | start a new orchestrator session |
 | doctor `sandbox:codex` "not tested" | dead probe on Codex 0.157 (upstream bug) | ignore |
 | `bunx` seems hung on first run | resolving ~108 packages | wait ~30 s |
+| release workflow fails before packaging | tag, `packages/extension/package.json` `version`, or `docs/CHANGELOG.md` heading disagree | set all three to the same `X.Y.Z` and push a new tag; tags are immutable |
+
+## 6. GitHub Release
+
+Users download VSIX files from GitHub Releases, not from `dist/` in git (`dist/` is gitignored, and a Linux VSIX is over GitHub's 100 MB file limit). The workflow is `.github/workflows/release.yml`. Full rules, traps, and the install text: `docs/release/github.md`.
+
+```bash
+# version in packages/extension/package.json is already X.Y.Z
+# docs/CHANGELOG.md has ## [X.Y.Z] - YYYY-MM-DD with the notes
+pnpm release:notes -- --tag vX.Y.Z
+git tag vX.Y.Z
+git push origin vX.Y.Z
+```
+
+The tag push builds `cathouse-<target>-<version>.vsix` for darwin-arm64, darwin-x64, linux-x64, and linux-arm64, writes `SHA256SUMS`, and publishes the release. A tag containing `-` is marked pre-release.

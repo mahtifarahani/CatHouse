@@ -1,0 +1,101 @@
+{
+  "id": "20260929-080322-add-subtract-a-b-with-node-test-coverage",
+  "title": "Add subtract(a, b) with node:test coverage",
+  "repo": "/tmp/spike/repo",
+  "createdAt": "2026-09-29T08:03:22.418Z",
+  "stateMd": "# Add subtract(a, b) with node:test coverage\n\nHEAD e151ab3\n\nDirty:\n- none\n\nRunning:\n- none\n\nLast check: npm test: 5 tests, 5 pass, 0 fail; reviewer-M1 no findings; verifier-M1 VERDICT: PASS\n\nNext: run complete — no further milestones\nProtocol next: finish: the final gate, then the report\n",
+  "live": [],
+  "totals": {
+    "runs": 2,
+    "ok": 2,
+    "notOk": [],
+    "tokens": {
+      "input": 291090,
+      "cached": 246656,
+      "output": 3041
+    },
+    "costUsd": 0,
+    "wallMinutes": 6
+  },
+  "agents": {
+    "runs": 2,
+    "totalTokens": 43845,
+    "costUsd": 0
+  },
+  "jev": {
+    "decisions": 0,
+    "fallbacks": 0
+  },
+  "budget": null,
+  "milestones": [
+    "M1 | subtract(a, b) exported next to add; test/index.test.js covers add and subtract with node:test | e151ab3 | 4 | npm test: 5 tests, 5 pass, 0 fail; reviewer-M1 no findings; verifier-M1 VERDICT: PASS"
+  ],
+  "warnings": [],
+  "questions": [],
+  "verifier": {
+    "item": "acceptance",
+    "carried": false,
+    "at": "2026-09-29T08:07:14.993Z"
+  },
+  "records": [
+    {
+      "dispatchId": "01M3P32TS73AHPS0NDZ1NDB4T5",
+      "name": "M1.L1",
+      "role": "worker",
+      "lane": "M1.L1",
+      "rung": "codex:gpt-6-luna#high",
+      "status": "ok",
+      "secs": 61,
+      "startedAt": "2026-09-29T08:04:16.946Z",
+      "endedAt": "2026-09-29T08:05:17.989Z",
+      "replyStatus": "complete",
+      "replyWhy": "implementation and all five tests pass.",
+      "tokens": {
+        "input": 126549,
+        "cached": 110848,
+        "output": 1380
+      },
+      "costUsd": null,
+      "changedOwned": ["src/index.js", "test/index.test.js"],
+      "violations": [],
+      "threadHeavy": false
+    },
+    {
+      "dispatchId": "01M3P35H96PW6WSA91QT7MHB92",
+      "name": "reviewer-M1",
+      "role": "reviewer",
+      "lane": null,
+      "rung": "codex:gpt-6-sol#high",
+      "status": "ok",
+      "secs": 67,
+      "startedAt": "2026-09-29T08:05:45.454Z",
+      "endedAt": "2026-09-29T08:06:52.532Z",
+      "replyStatus": "complete",
+      "replyWhy": "read-only review found no issues.",
+      "tokens": {
+        "input": 164541,
+        "cached": 135808,
+        "output": 1661
+      },
+      "costUsd": null,
+      "changedOwned": [],
+      "violations": [],
+      "threadHeavy": false
+    }
+  ],
+  "routes": [
+    {
+      "at": "2026-09-29T08:04:08.121Z",
+      "lane": "M1.L1",
+      "role": "worker",
+      "rung": "codex:gpt-6-luna#high",
+      "source": "route",
+      "decidedBy": "lane",
+      "from": null,
+      "reason": null,
+      "kind": "repo_code",
+      "difficulty": "copy"
+    }
+  ],
+  "climbs": []
+}

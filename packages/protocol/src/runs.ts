@@ -21,6 +21,10 @@ export const RunListItemSchema = z.object({
   roleRuns: z.number(),
   landed: z.number().optional(),
   budgetFraction: z.number().nullable().optional(),
+  /** The Claude Code session that started the run (catherd 1.1+); null for 1.0 runs. */
+  session: z.object({ name: z.string(), live: z.boolean() }).nullable().optional(),
+  /** The session a run moved to, when another session continued it. */
+  continuedIn: z.string().nullable().optional(),
 });
 export type RunListItem = z.infer<typeof RunListItemSchema>;
 
@@ -81,6 +85,10 @@ export const RunDetailSchema = z.object({
   budget: BudgetSchema,
   milestones: z.array(z.string()),
   warnings: z.array(z.string()),
+  /** Owner questions parked on one milestone (catherd 1.1 `park`). */
+  questions: z.array(z.object({ milestone: z.string(), question: z.string() })),
+  /** The verifier's latest gate step (catherd 1.1 `gate_check`). */
+  verifier: z.object({ item: z.string(), carried: z.boolean(), at: z.string() }).nullable(),
   records: z.array(RecordLiteSchema),
   /** The last route row per lane (TUI "ROUTES"). */
   routes: z.array(RouteLiteSchema),

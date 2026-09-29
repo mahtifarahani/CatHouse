@@ -1,12 +1,13 @@
 import { z } from "zod";
 
-// Raw catherd 1.0.0 output shapes (docs/research/catherd-*-contract.md). Objects are loose so a
+// Raw catherd 1.2.0 output shapes (docs/research/catherd-*-contract.md). Objects are loose so a
 // newer catherd adding fields does not break parsing; only the fields CatHouse uses are checked.
 
 export const DoctorCheckSchema = z.looseObject({
   id: z.string(),
   label: z.string(),
-  state: z.enum(["ok", "warn", "fail", "skip"]),
+  // "info" (1.1+): worth knowing, nothing to fix (the shipped defaults' access rows)
+  state: z.enum(["ok", "warn", "fail", "skip", "info"]),
   word: z.string(),
   detail: z.string(),
   fix: z.string().optional(),
@@ -19,6 +20,8 @@ export const DoctorReportSchema = z.looseObject({
 export type DoctorReport = z.infer<typeof DoctorReportSchema>;
 
 const Spent = z.object({ spent: z.number(), cap: z.number() });
+/** The Claude Code session that started a run (1.1+); null for runs started by 1.0. */
+const RunSessionSchema = z.looseObject({ name: z.string(), live: z.boolean() }).nullable();
 export const RunSummarySchema = z.looseObject({
   id: z.string(),
   title: z.string(),
@@ -58,6 +61,10 @@ export const RunSummarySchema = z.looseObject({
     .nullable(),
   milestones: z.array(z.string()),
   warnings: z.array(z.string()),
+  questions: z.array(z.looseObject({ milestone: z.string(), question: z.string() })),
+  verifier: z.looseObject({ at: z.string(), item: z.string(), carried: z.boolean() }).nullable(),
+  session: RunSessionSchema,
+  continuedIn: z.string().nullable(),
 });
 export type RunSummary = z.infer<typeof RunSummarySchema>;
 
@@ -77,6 +84,8 @@ export const RunsListSchema = z.looseObject({
       createdAt: z.string(),
       live: z.number(),
       roleRuns: z.number(),
+      session: RunSessionSchema,
+      continuedIn: z.string().nullable(),
     }),
   ),
   corrupt: z.array(z.looseObject({ id: z.string(), dir: z.string(), reason: z.string() })),

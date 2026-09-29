@@ -26,7 +26,7 @@ With catherd alone, you install Bun, the catherd CLI, the Claude plugin and each
 
 The views in detail:
 
-- **Setup** installs and checks everything catherd needs: Bun, catherd 1.0.0, the catherd Claude plugin, your Claude login, and your worker backends. Nothing is installed until you click.
+- **Setup** installs and checks everything catherd needs: Bun, catherd 1.2.0, the catherd Claude plugin, your Claude login, and your worker backends. Nothing is installed until you click.
 - **Chat** runs `/catherd` on a task directly from the CatHouse Activity Bar view. Questions and permission requests appear as cards, and you get a notification when the orchestrator is waiting for you. A run continues after a window reload.
 - **Runs** shows live roles, budget, climbs, routes, landed milestones, each role's reply and debug output, and `state.md`. You can cancel a live role.
 - **Profiles** edits catherd profiles: rungs per role, access, failover, budget, isolation and more. Edits are staged with undo/redo, and you see a diff before saving.
@@ -37,6 +37,7 @@ catherd stays the source of truth: CatHouse only uses catherd's CLI and MCP serv
 
 ## Requirements
 
+- VS Code 1.100 or newer, or Cursor.
 - macOS or Linux (Windows is not supported yet).
 - A trusted workspace that is a git repository.
 - A Claude account (Setup can open the login).
@@ -44,12 +45,31 @@ catherd stays the source of truth: CatHouse only uses catherd's CLI and MCP serv
 
 The Claude Code runtime ships inside this extension (the VSIX is platform-specific), so you don't need a separate `claude` install unless your profile uses `claude-code:` rungs.
 
+## Install
+
+Download the VSIX for your machine from the project's [GitHub Releases](https://github.com/mahtifarahani/CatHouse/releases). The same file installs in VS Code and in Cursor.
+
+| Machine | File |
+|---|---|
+| macOS Apple Silicon | `cathouse-darwin-arm64-<version>.vsix` |
+| macOS Intel | `cathouse-darwin-x64-<version>.vsix` |
+| Linux x64 | `cathouse-linux-x64-<version>.vsix` |
+| Linux ARM64 | `cathouse-linux-arm64-<version>.vsix` |
+
+In either editor, open Extensions, open the view menu (…), and choose **Install from VSIX...**. In Cursor the Command Palette command is **Extensions: Install from VSIX...**.
+
+```bash
+code --install-extension ./cathouse-darwin-arm64-<version>.vsix
+cursor --install-extension ./cathouse-darwin-arm64-<version>.vsix
+```
+
+The `cursor` command is available after Command Palette → **Shell Command: Install 'cursor' command in PATH**. A newer VSIX replaces the installed extension (`cathouse.cathouse`).
+
 ## Getting started
 
-1. Install the VSIX for your platform: Extensions → … → Install from VSIX.
-2. Open a git repository and click the CatHouse icon in the activity bar.
-3. Open Setup and click through the items it lists.
-4. The default **Chat** tab is ready for a task; describe it and click **Start task**.
+1. Open a git repository and click the CatHouse icon in the activity bar.
+2. Open Setup and click through the items it lists.
+3. The default **Chat** tab is ready for a task; describe it and click **Start task**.
 
 ## Commands
 

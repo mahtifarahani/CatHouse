@@ -74,6 +74,7 @@ const en = {
   "session.mode.acceptEdits": "auto-accept file edits",
   "session.mode.plan": "plan only",
   "session.mode.auto": "auto (classifier)",
+  "session.inbound": "catherd reported back",
   "session.compacted":
     "The conversation was compacted. catherd runs can lose track of their protocol after this; check that routing, the reviewer and the verifier still run.",
   "tabs.setup": "Setup",
@@ -102,6 +103,14 @@ const en = {
   "runs.roleRuns": "{n} role runs",
   "runs.landed": "{n} landed",
   "runs.budget": "budget {pct}%",
+  "runs.session": "session {name}",
+  "runs.sessionLive": "session {name} (live)",
+  "runs.continuedIn": "continued in {name}",
+  "runs.questionsTitle": "Parked questions",
+  "runs.questionsHelp":
+    "catherd parked these milestones for your answer; the other milestones go on. Answer in the orchestrator chat.",
+  "runs.verifierStep": "Verifier: {item} ({ago})",
+  "runs.verifierCarried": "Verifier: {item}, carried over ({ago})",
   "runs.paused": "Runs (updates paused)",
   "runs.updated": "updated {ago}",
   "runs.pause": "Pause updates",
@@ -163,7 +172,7 @@ const en = {
   "profiles.filterHelp": "Searches section paths, labels and current values. Press / to focus.",
   "profiles.noFilterResults": "No profile setting matches this filter.",
   "profiles.help.roles":
-    "catherd 1.0.0 defines these eight roles. Configure whether they run, their access, ordered model ladder and starting rung; custom roles are not supported.",
+    "catherd defines these eight roles. Configure whether they run, their access, ordered model ladder and starting rung; custom roles are not supported.",
   "profiles.help.routing":
     "Prefer lower cost or higher speed; Jev can refine routing from run history.",
   "profiles.help.billing": "Tell catherd which quota or billing pool each backend consumes.",
@@ -219,9 +228,11 @@ const en = {
   "profiles.remove": "Remove",
   "profiles.addRung": "Add a rung to {role}",
   "profiles.addRungPlaceholder": "+ add rung…",
-  "profiles.unscored": "unscored, needs treat-like",
-  "profiles.treatPrompt": "{rung} is unscored. Treat it like:",
+  "profiles.unscored": "unscored: catherd infers its values",
+  "profiles.treatPrompt":
+    "{rung} is unscored. catherd will borrow its nearest stand-in's values; you can pick one:",
   "profiles.addWithTreat": "Add",
+  "profiles.addInferred": "Add (let catherd infer)",
   "profiles.routing": "Routing",
   "profiles.objective": "Objective",
   "profiles.jev": "Jev",

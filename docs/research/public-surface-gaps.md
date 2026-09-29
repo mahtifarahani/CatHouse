@@ -1,5 +1,7 @@
 # catherd 1.0.0: public-surface gaps and CatHouse workarounds
 
+> **Baseline: catherd 1.0.0.** CatHouse now pins **1.2.0**. Where 1.1/1.2 changed something CatHouse relies on, [`catherd-1.2-upgrade.md`](catherd-1.2-upgrade.md) wins over this doc.
+
 catherd's public surface is the CLI (with `--json` on reads) and the 21 MCP tools. The services are internal (no `exports` in `package.json`, Bun-only). The TUI reaches past the public surface through its `Effects` seam (`src/entry/tui/effects.ts`). This table lists what CatHouse needs but cannot get publicly, with the workaround and the proposed upstream fix. Citations are relative to catherd at `b257da7`.
 
 | # | Gap | Where the TUI gets it | CatHouse workaround (v1) | Proposed upstream change (catherd 1.1) |
@@ -13,7 +15,7 @@ catherd's public surface is the CLI (with `--json` on reads) and the 21 MCP tool
 | 7 | JSON from mutating CLI commands | n/a | success = exit 0; failure = parse stderr `error E_CODE: message` / `fix: …` | `--json` on `profile use/new/copy/rm/set`, `runs cancel`, `catalog treat-like` |
 | 8 | No MCP tools for doctor, activate, delete, catalog refresh, treat-like | direct service calls | CLI for each | optional MCP twins |
 | 9 | The verifier's current step / elapsed time | not exposed anywhere | show from the orchestrator's SDK stream (`task_progress` for the verifier subagent: duration, last tool) | a `status` field (ideas.md, verifier bottleneck idea 4) |
-| 10 | Plugin marketplace source uses SSH | n/a | install with the HTTPS `insteadOf` env (`catherd-known-issues.md`) | `"url": "https://github.com/47vigen/catherd.git"` in `marketplace.json` |
+| 10 | Plugin marketplace source uses SSH (**fixed upstream in 1.1**) | n/a | install with the HTTPS `insteadOf` env (`catherd-known-issues.md`) | `"url": "https://github.com/47vigen/catherd.git"` in `marketplace.json` |
 
 **Rules that follow:**
 - CatHouse reads no catherd run file from disk: `read_run_file` covers routes and state.md (ADR 0007).

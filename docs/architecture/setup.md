@@ -22,7 +22,7 @@ Until Bun, catherd, the Claude plugin and the bundled Claude binary are good, th
 | Fact | Probe | Why this probe |
 |---|---|---|
 | Bun | `bun --version` | ≥ `PINNED.bun` (1.4.0) |
-| catherd | `bunx --no-install catherd-cli@1.0.0 --version` | `--no-install` never downloads; "Could not find an existing … binary" = not installed |
+| catherd | `bunx --no-install catherd-cli@1.2.0 --version` | `--no-install` never downloads; "Could not find an existing … binary" = not installed |
 | catherd set up | `<catherd config dir>/config.json` has `activeProfile` | config dir resolved like upstream `paths.ts` (`CATHERD_CONFIG_DIR` → `CATHERD_HOME/config` → `XDG_CONFIG_HOME/catherd` → `~/.config/catherd`); read only |
 | bundled Claude | `<bundled> --version` | ships with CatHouse (ADR 0008) |
 | plugin | `$CLAUDE_CONFIG_DIR/plugins/installed_plugins.json` → `catherd@catherd` version | must equal `PINNED.plugin` |
@@ -43,7 +43,7 @@ The last successful doctor report and its timestamp are stored under `cathouse.r
 | `plugin` | gate | `install-plugin` / `update-plugin` (needs the bundled binary) |
 | `claude-login` | start | `login-claude` |
 | `claude-cli` | start (only with claude-code rungs) | `install-claude-cli` |
-| `doctor:<check id>` | fail → start; warn → optional; `access:full`, `access:advisory`, `sandbox:codex` and skips → info | `backend:codex` → `install-codex` / `login-codex`; `backend:opencode` → `install-opencode`; others show doctor's `fix` with a Copy button |
+| `doctor:<check id>` | fail → start; warn → optional; `info` rows (catherd 1.1+), `access:full`, `access:advisory`, `sandbox:codex` and skips → info. 1.2 adds `sources`, `push` (always `skip`/"no session" from CatHouse, whose env has no Claude session), `mcp` and `access:<backend>` rows | `backend:codex` → `install-codex` / `login-codex`; `backend:opencode` → `install-opencode`; others show doctor's `fix` with a Copy button |
 | `readiness` | start | `check-readiness` |
 
 Doctor rows `bun` and `plugin` are hidden (CatHouse has its own items for them).
@@ -54,8 +54,8 @@ Doctor rows `bun` and `plugin` are hidden (CatHouse has its own items for them).
 |---|---|
 | `install-bun` | `bash -c "curl -fsSL https://bun.sh/install \| bash"` |
 | `upgrade-bun` | `bun upgrade` |
-| `init-catherd` | `bunx catherd-cli@1.0.0 init --no-input --plain` |
-| `install-plugin` | bundled `plugin marketplace add 47vigen/catherd` (or `marketplace update catherd` if `known_marketplaces.json` has it), then `plugin install catherd@catherd`. Both run with `GIT_HTTPS_ENV` (the SSH workaround) |
+| `init-catherd` | `bunx catherd-cli@1.2.0 init --no-input --plain`. 1.1+ also installs the global `catherd` at that version (the plugin's launcher prefers it) and 1.2 syncs the public model sources; an existing profile is kept |
+| `install-plugin` | bundled `plugin marketplace add 47vigen/catherd` (or `marketplace update catherd` if `known_marketplaces.json` has it), then `plugin install catherd@catherd`. Both run with `GIT_HTTPS_ENV`. That was the 1.0 SSH workaround; 1.1+ marketplaces fetch over HTTPS, so it is now a harmless no-op kept for old marketplace clones |
 | `update-plugin` | `plugin marketplace update catherd` + `plugin update catherd@catherd` |
 | `login-claude` | terminal: `'<bundled>' auth login` |
 | `install-claude-cli` | `npm i -g @anthropic-ai/claude-code@latest` |

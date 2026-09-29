@@ -63,7 +63,7 @@
       "grok": "metered"
     },
     "jev": {
-      "use": "auto"
+      "use": "off"
     },
     "isolated": {
       "codex": false,

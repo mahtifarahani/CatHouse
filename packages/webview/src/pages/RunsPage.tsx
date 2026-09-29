@@ -32,6 +32,9 @@ export function RunRow({ run, onOpen }: { run: RunListItem; onOpen: () => void }
           {run.landed !== undefined && ` · ${t("runs.landed", { n: run.landed })}`}
           {typeof run.budgetFraction === "number" &&
             ` · ${t("runs.budget", { pct: Math.round(run.budgetFraction * 100) })}`}
+          {run.session &&
+            ` · ${t(run.session.live ? "runs.sessionLive" : "runs.session", { name: run.session.name })}`}
+          {run.continuedIn && ` · ${t("runs.continuedIn", { name: run.continuedIn })}`}
         </span>
         <span className="ms-auto text-xs text-muted-foreground">{ago(run.createdAt)}</span>
       </button>
@@ -166,6 +169,19 @@ function RunDetailView({
             {d.repo} · {t("runs.started", { ago: ago(d.createdAt) })} ·{" "}
             {t("runs.updated", { ago: ago(run.updatedAt) })}
           </p>
+          {d.questions.length > 0 && (
+            <Section title={t("runs.questionsTitle")}>
+              <p className="text-xs text-muted-foreground">{t("runs.questionsHelp")}</p>
+              <ul className="flex flex-col gap-1">
+                {d.questions.map((q) => (
+                  <li key={q.milestone} className="flex flex-wrap items-baseline gap-2">
+                    <Badge tone="warn">{q.milestone}</Badge>
+                    <span className="min-w-0 flex-1 [overflow-wrap:anywhere]">{q.question}</span>
+                  </li>
+                ))}
+              </ul>
+            </Section>
+          )}
           {d.budget && (
             <Section title={t("runs.budgetTitle")}>
               <Meter fraction={d.budget.fraction} label={t("runs.budgetTitle")} />
@@ -190,6 +206,14 @@ function RunDetailView({
             <p className="text-xs text-muted-foreground">
               {t("runs.jevLine", { decisions: d.jev.decisions, fallbacks: d.jev.fallbacks })}
             </p>
+            {d.verifier && (
+              <p className="text-xs text-muted-foreground">
+                {t(d.verifier.carried ? "runs.verifierCarried" : "runs.verifierStep", {
+                  item: d.verifier.item,
+                  ago: ago(d.verifier.at),
+                })}
+              </p>
+            )}
           </Section>
           <Section title={t("runs.liveTitle")}>
             {d.live.length === 0 ? (

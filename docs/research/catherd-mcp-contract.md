@@ -1,5 +1,7 @@
 # catherd 1.0.0: MCP server contract
 
+> **Baseline: catherd 1.0.0.** CatHouse now pins **1.2.0**. Where 1.1/1.2 changed something CatHouse relies on, [`catherd-1.2-upgrade.md`](catherd-1.2-upgrade.md) wins over this doc.
+
 Citations are relative to the catherd repo at commit `b257da7`. The server has **exactly 21 tools**; `test/entry/mcp.test.ts:17-39` asserts the list.
 
 ## Summary for CatHouse
@@ -7,6 +9,7 @@ Citations are relative to the catherd repo at commit `b257da7`. The server has *
 - A successful result has **no `structuredContent`** and no `outputSchema`. Parse the JSON from `content[0].text`.
 - An error result is `isError: true`, with `structuredContent: {code, message, fix}`.
 - `wait` has **no timeout**. It sends progress only when the request carries a `progressToken`.
+- **1.1+: `wait` is gone.** Records are pushed to the owning session; `result` and `cancel` mark a record read and `peek` claims the run, so CatHouse calls none of them (ADR 0005 amendment, `catherd-1.2-upgrade.md` §1). The 1.0 rule follows.
 - **`wait` and `cancel` hand each record to exactly one caller.** A CatHouse `wait` would steal records from the orchestrator, so CatHouse must never call `wait`. `cancel` is allowed, but the orchestrator must then be told.
 - Every new `catherd mcp` process runs `reconcileAll` at startup, which writes files. Keep one long-lived process per repo.
 
@@ -147,7 +150,7 @@ BillingKey is `codex, claude, claude-code, opencode-go, opencode, cursor, grok` 
   warnings: string[] }
 ```
 
-## 7. `wait`: blocking, progress, single delivery
+## 7. `wait`: blocking, progress, single delivery (1.0 only; removed in 1.1)
 
 - **No timeout.** It polls every `pollMs` (250 ms) until at least one targeted dispatch finishes, or every one with `all: true` (`dispatch-service.ts:239-287`). Dispatch lifetimes are bounded by the profile's `timeouts` (idle 15 min, wall 90 min by default), which the supervisor enforces.
 - **Returns at once** with a hint when nothing is left to collect (`:170,224-227`).

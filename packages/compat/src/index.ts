@@ -16,17 +16,17 @@ export interface CompatEntry {
   /** Minimum standalone `claude` for `claude-code:` rungs (catherd's adapter minimum) */
   claudeCode: string;
   /** Which gateway adapter maps this version's shapes */
-  adapter: "v1_0";
+  adapter: "v1_2";
 }
 
 export const SUPPORTED: readonly CompatEntry[] = [
   {
-    catherd: "1.0.0",
-    plugin: "1.0.0",
+    catherd: "1.2.0",
+    plugin: "1.2.0",
     sdk: "0.3.283",
     bun: "1.4.0",
     claudeCode: "2.1.282",
-    adapter: "v1_0",
+    adapter: "v1_2",
   },
 ];
 

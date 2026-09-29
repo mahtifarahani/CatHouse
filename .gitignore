@@ -7,3 +7,5 @@ dist/
 out-test/
 dist-spike/
 .pkg/
+.vitest/
+release-notes.md

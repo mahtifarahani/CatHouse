@@ -1,5 +1,7 @@
 # catherd 1.0.0: run lifecycle
 
+> **Baseline: catherd 1.0.0.** CatHouse now pins **1.2.0**. Where 1.1/1.2 changed something CatHouse relies on, [`catherd-1.2-upgrade.md`](catherd-1.2-upgrade.md) wins over this doc.
+
 Citations are relative to the catherd repo at commit `b257da7`. This explains what happens behind the MCP tools, so CatHouse can display it correctly and avoid interfering.
 
 ## 1. Start (`run-service.ts:23-42`)
@@ -63,7 +65,7 @@ The MCP server's own watchers finalize dispatches as they end (`dispatch-service
 3. `stopOrphan`: if the supervisor is dead but the worker is alive, it signals the worker's group (SIGTERM, then SIGKILL, guarded by pid and start time) and writes `exit.json` with reason `cancelled`.
 4. Waits for the dispatch to finish, finalizes it, and **collects the record itself**. If a `wait` got there first, it adds the hint "a wait in flight also returned this record".
 
-CLI twin: `catherd runs cancel <run> <name>`. **CatHouse consequence:** after a UI cancel, tell the orchestrator session (a `streamInput` note), because its `wait` will not return that record.
+CLI twin: `catherd runs cancel <run> <name>`. **CatHouse consequence (1.0):** after a UI cancel, tell the orchestrator session (a `streamInput` note), because its `wait` will not return that record. **Since 1.1** the CLI cancel leaves the record unread and catherd pushes it to the run's owner, while MCP `cancel` marks it read. CatHouse therefore cancels through the CLI and still sends the note.
 
 ## 6. Reconcile (`reconcile.ts:56-101`)
 

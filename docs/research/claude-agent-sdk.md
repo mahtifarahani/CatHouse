@@ -109,7 +109,7 @@ type PermissionResult =
 
 ## 9. Risks to verify in the Phase 1 spike
 
-1. A `wait` longer than 2 min survives in an SDK session (with `MCP_TOOL_TIMEOUT`), or is backgrounded and wakes the session.
+1. (catherd 1.0; resolved by Phase 1 spike a, and moot since catherd 1.1 removed `wait`: pushes reach SDK sessions, `docs/spikes/catherd-1.2.md`.) A `wait` longer than 2 min survives in an SDK session (with `MCP_TOOL_TIMEOUT`), or is backgrounded and wakes the session.
 2. catherd's native subagents (`~/.claude/agents/catherd-*`) are registered in the SDK session (`init.agents`).
 3. `canUseTool` + AskUserQuestion round-trips from the webview.
 4. After a window reload, `resume: sessionId` continues the same run with no duplicate `run_start`.

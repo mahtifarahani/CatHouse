@@ -1,5 +1,7 @@
 # catherd 1.0.0: doctor, init, backends, agent links
 
+> **Baseline: catherd 1.0.0.** CatHouse now pins **1.2.0**. Where 1.1/1.2 changed something CatHouse relies on, [`catherd-1.2-upgrade.md`](catherd-1.2-upgrade.md) wins over this doc.
+
 Citations are relative to the catherd repo at commit `b257da7`. This is the basis for CatHouse's Setup screen.
 
 ## 1. `doctor` checks

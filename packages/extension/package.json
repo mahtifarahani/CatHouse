@@ -7,6 +7,14 @@
   "icon": "media/icon.png",
   "private": true,
   "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mahtifarahani/CatHouse.git"
+  },
+  "homepage": "https://github.com/mahtifarahani/CatHouse#readme",
+  "bugs": {
+    "url": "https://github.com/mahtifarahani/CatHouse/issues"
+  },
   "engines": {
     "vscode": "^1.100.0"
   },

@@ -15,7 +15,7 @@ import {
 
 const fixture = (name: string) =>
   readFileSync(
-    fileURLToPath(new URL(`../../../compat/fixtures/1.0.0/${name}`, import.meta.url)),
+    fileURLToPath(new URL(`../../../compat/fixtures/1.2.0/${name}`, import.meta.url)),
     "utf8",
   );
 
@@ -38,7 +38,8 @@ describe("parseCliError", () => {
 describe("MCP tool allowlist (ADR 0005)", () => {
   it("never allows an orchestrator tool", () => {
     for (const t of ORCHESTRATOR_TOOLS) expect(isAllowedTool(t)).toBe(false);
-    expect(ALLOWED_TOOLS).not.toContain("wait");
+    // 1.1+: result/cancel mark a record read and peek claims the run, hiding it from the orchestrator
+    for (const t of ["wait", "result", "cancel", "peek"]) expect(ALLOWED_TOOLS).not.toContain(t);
   });
 });
 
@@ -94,7 +95,17 @@ describe("CatherdCli", () => {
     });
     const report = await cli.doctor();
     expect(report.ready).toBe(false);
-    expect(seen[0]).toEqual(["bunx", "catherd-cli@1.0.0", "doctor", "--json"]);
+    expect(seen[0]).toEqual(["bunx", "catherd-cli@1.2.0", "doctor", "--json"]);
+  });
+
+  it("accepts 1.1's info rows in doctor", async () => {
+    const cli = new CatherdCli({
+      cwd: "/repo",
+      env,
+      runner: fakeRunner({ code: 0, stdout: fixture("doctor-ready.json") }, []),
+    });
+    const report = await cli.doctor();
+    expect(report.checks.find((c) => c.id === "access:full")?.state).toBe("info");
   });
 
   it("turns stderr into CatherdError", async () => {

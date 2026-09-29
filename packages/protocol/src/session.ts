@@ -55,6 +55,11 @@ export const SessionEventSchema = z.discriminatedUnion("kind", [
     text: z.string().optional(),
   }),
   z.object({ kind: z.literal("user"), text: z.string() }),
+  /**
+   * A turn the session started on its own: catherd 1.1+ pushes each finished role into the
+   * session's peer inbox. The SDK does not show the message text, only that a turn began.
+   */
+  z.object({ kind: z.literal("inbound") }),
   /** The conversation was compacted; the catherd skill is known to decay after this. */
   z.object({ kind: z.literal("compacted") }),
 ]);

@@ -61,7 +61,7 @@ const CatalogQuerySchema = z.looseObject({
           enabled: z.boolean(),
           why: z.string().optional(),
           scores: z.record(z.string(), z.unknown()).optional(),
-          // {like, source: "shipped" | "user"} in 1.0.0; a bare string is accepted too.
+          // {like, source: "shipped" | "user"} since 1.0.0; a bare string is accepted too.
           treatLike: z
             .union([z.string(), z.looseObject({ like: z.string(), source: z.string().optional() })])
             .nullable()
@@ -74,16 +74,15 @@ const CatalogQuerySchema = z.looseObject({
     }),
   ),
 });
-const CancelSchema = z.looseObject({
-  record: z.looseObject({ status: z.string() }).nullable().optional(),
-  hints: z.array(z.string()).optional(),
-});
-const ResultSchema = z.looseObject({
-  name: z.string(),
-  state: z.string().nullable(),
-  reply: z.string().nullable().optional(),
-  replyPath: z.string().nullable().optional(),
-});
+
+/** `catherd runs cancel` prints `<mark> <name> <status>`, then one indented hint per line. */
+export function parseCancelOutput(stdout: string): { status: string; hints: string[] } {
+  const [head = "", ...rest] = stdout.split("\n").filter((l) => l.trim());
+  return {
+    status: head.trim().split(/\s+/).pop() || "cancelled",
+    hints: rest.map((l) => l.trim()),
+  };
+}
 
 function issues(list: { path: string; message: string; fix?: string | undefined }[]) {
   return list.map((i) => ({ path: i.path, message: i.message, ...(i.fix ? { fix: i.fix } : {}) }));
@@ -132,7 +131,16 @@ export class CatherdGateway {
   /** Runs of this repo, newest first; the newest 10 get landed/budget from status(run). */
   async runsList(): Promise<{ runs: RunListItem[]; corrupt: number }> {
     const list = await this.cli.runsList(this.repo);
-    const runs: RunListItem[] = list.runs.map((r) => ({ ...r }));
+    const runs: RunListItem[] = list.runs.map((r) => ({
+      id: r.id,
+      title: r.title,
+      repo: r.repo,
+      createdAt: r.createdAt,
+      live: r.live,
+      roleRuns: r.roleRuns,
+      session: r.session ? { name: r.session.name, live: r.session.live } : null,
+      continuedIn: r.continuedIn,
+    }));
     await Promise.all(
       runs.slice(0, 10).map(async (r) => {
         try {
@@ -171,15 +179,40 @@ export class CatherdGateway {
       budget: summary.budget,
       milestones: summary.milestones,
       warnings: summary.warnings,
+      questions: summary.questions.map((q) => ({ milestone: q.milestone, question: q.question })),
+      verifier: summary.verifier
+        ? {
+            item: summary.verifier.item,
+            carried: summary.verifier.carried,
+            at: summary.verifier.at,
+          }
+        : null,
       records: show.records.map(recordLite),
       routes,
       climbs,
     };
   }
 
+  /**
+   * A role's latest reply, read from its record's reply file. MCP `result` would mark the record
+   * read, and catherd 1.1+ then never pushes it to the orchestrator session (ADR 0005).
+   */
   async roleReply(id: string, name: string) {
-    const r = ResultSchema.parse(await this.mcp.call("result", { run: id, name }));
-    return { name: r.name, state: r.state, reply: r.reply ?? "", replyPath: r.replyPath ?? null };
+    const [show, s] = await Promise.all([this.cli.runsShow(id), this.summary(id)]);
+    const record = show.records.filter((r) => r.name === name).at(-1);
+    const live = s?.live.find((l) => l.name === name);
+    if (live) return { name, state: live.state, reply: "", replyPath: null };
+    if (!record) return { name, state: null, reply: "", replyPath: null };
+    const text = await this.mcp
+      .call("read_run_file", { run: id, path: record.replyPath })
+      .catch(() => "");
+    return {
+      name,
+      state: "finished",
+      // decodeToolResult parses JSON-looking text; a reply that is JSON comes back as a value
+      reply: typeof text === "string" ? text : JSON.stringify(text, null, 2),
+      replyPath: record.replyPath,
+    };
   }
 
   async roleDebug(id: string, name: string) {
@@ -198,10 +231,12 @@ export class CatherdGateway {
     });
   }
 
-  /** Stops a live role. The caller must tell a live orchestrator session (ADR 0005). */
+  /**
+   * Stops a live role through the CLI. Unlike MCP `cancel`, the CLI leaves the record unread, so
+   * catherd pushes it to the session that owns the run (ADR 0005).
+   */
   async cancelRole(id: string, name: string) {
-    const r = CancelSchema.parse(await this.mcp.call("cancel", { run: id, name }));
-    return { status: r.record?.status ?? "cancelled", hints: r.hints ?? [] };
+    return parseCancelOutput(await this.cli.action(["runs", "cancel", id, name]));
   }
 
   private async profileDoc(
@@ -240,6 +275,7 @@ export class CatherdGateway {
         to: s.to,
         inferred: s.inferred,
         via: typeof s.via === "string" ? s.via : null,
+        note: typeof s.note === "string" ? s.note : null,
       })),
       validation: { valid: v.valid, errors: issues(v.errors), warnings: issues(v.warnings) },
     };
@@ -326,7 +362,10 @@ export class CatherdGateway {
           rung: r.rung,
           enabled: r.enabled,
           ...(r.why ? { why: r.why } : {}),
-          scored: Object.keys(r.scores ?? {}).length > 0,
+          // 1.2 fills a missing value from the nearest stand-in as `inferred`: not a real score
+          scored: Object.values(r.scores ?? {}).some(
+            (v) => (v as { confidence?: unknown } | null)?.confidence !== "inferred",
+          ),
           treatLike:
             typeof r.treatLike === "object" && r.treatLike
               ? r.treatLike.like

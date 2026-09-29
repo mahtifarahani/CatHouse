@@ -55,7 +55,8 @@ export type TranscriptItem =
   | { type: "task"; id: string; description: string; status?: string; durationMs?: number }
   | { type: "result"; subtype: string; isError: boolean; costUsd?: number }
   | { type: "init"; ok: boolean; detail: string }
-  | { type: "compacted" };
+  | { type: "compacted" }
+  | { type: "inbound" };
 
 /** Folds the event stream into display items (tool calls merged with their results/progress). */
 export function toTranscript(events: SessionEvent[]): TranscriptItem[] {
@@ -127,6 +128,9 @@ export function toTranscript(events: SessionEvent[]): TranscriptItem[] {
           isError: e.isError,
           ...(e.costUsd === undefined ? {} : { costUsd: e.costUsd }),
         });
+        break;
+      case "inbound":
+        items.push({ type: "inbound" });
         break;
       case "compacted":
         items.push({ type: "compacted" });

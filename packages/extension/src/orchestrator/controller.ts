@@ -45,7 +45,7 @@ export interface ControllerDeps {
 
 const MAX_EVENTS = 500;
 export const RESUME_PROMPT = (runId: string | undefined) =>
-  `CatHouse reconnected after a window reload. Continue${runId ? ` catherd run ${runId}` : " the catherd run"} from where it stopped: call status() first, collect any roles left running with wait before dispatching anything, then carry on following the catherd skill.`;
+  `CatHouse reconnected after a window reload. Continue${runId ? ` catherd run ${runId}` : " the catherd run"} from where it stopped: call peek(${runId ? `"${runId}"` : "run"}) first to see live roles, unread records and the next protocol step, read each unread record with result before dispatching anything, then carry on following the catherd skill.`;
 
 type Pending = { request: PromptRequest; resolve: (a: PromptAnswer) => void };
 
@@ -81,6 +81,14 @@ export class SessionController {
   }
 
   private onEvent(repo: string, e: SessionEvent): void {
+    // Every turn the session starts by itself (a catherd push) re-sends `init`; show it once.
+    if (e.kind === "init" && this.state.sessionId === e.sessionId) return;
+    if (e.kind === "inbound") {
+      this.state.turnActive = true;
+      this.push(e);
+      this.publishState();
+      return;
+    }
     if (e.kind === "init") {
       this.state.sessionId = e.sessionId;
       this.state.phase = "running";
@@ -256,12 +264,12 @@ export class SessionController {
   }
 
   /**
-   * A role was cancelled from the dashboard. catherd's cancel hands the record to CatHouse, so the
-   * orchestrator's wait will never return it: tell the live session (ADR 0005).
+   * A role was cancelled from the dashboard. catherd pushes the cancelled record to the session
+   * that owns the run; this note tells the live session it was the user's choice (ADR 0005).
    */
   noteRoleCancelled(runId: string, name: string, status: string): boolean {
     if (!this.session || this.state.runId !== runId) return false;
-    const text = `CatHouse: the user cancelled role ${name} from the dashboard (record status: ${status}). Its record will not come back from wait; decide the next step.`;
+    const text = `CatHouse: the user cancelled role ${name} from the dashboard (record status: ${status}). catherd announces its record as usual; read it with result, then decide the next step.`;
     this.push({ kind: "user", text });
     this.session.send(text);
     return true;

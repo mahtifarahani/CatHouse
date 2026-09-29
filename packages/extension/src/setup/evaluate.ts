@@ -21,7 +21,10 @@ function backendAction(id: string, word: string): SetupItem["action"] {
   return undefined;
 }
 
-/** Doctor rows about the shipped defaults: shown as info, not warnings (known-issues doc). */
+/**
+ * Doctor rows about the shipped defaults: shown as info, not warnings. catherd 1.1+ marks them
+ * `info` itself; the ids stay listed for a `sandbox:codex` warning, which is still advisory.
+ */
 const INFO_ROWS = new Set(["access:full", "access:advisory", "sandbox:codex"]);
 /** Doctor rows CatHouse already shows as its own items. */
 const COVERED_ROWS = new Set(["bun", "plugin"]);
@@ -196,7 +199,7 @@ export function evaluate(
     for (const c of f.doctor.checks) {
       if (COVERED_ROWS.has(c.id)) continue;
       if (c.state === "ok") continue;
-      const info = INFO_ROWS.has(c.id);
+      const info = c.state === "info" || INFO_ROWS.has(c.id);
       const action =
         c.state === "fail" || c.state === "warn" ? backendAction(c.id, c.word) : undefined;
       items.push({

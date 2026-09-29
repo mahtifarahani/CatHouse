@@ -3,7 +3,7 @@
     "name": "default",
     "objective": "cost",
     "jev": {
-      "use": "auto"
+      "use": "off"
     },
     "billing": {
       "codex": "chatgpt-plan",
@@ -113,26 +113,30 @@
     {
       "from": "codex:gpt-6-luna#high",
       "to": "opencode:opencode-go/gpt-6-luna#high",
-      "inferred": true,
-      "via": null
+      "inferred": false,
+      "via": null,
+      "note": null
     },
     {
       "from": "codex:gpt-6-sol#medium",
       "to": "opencode:opencode-go/kimi-k3#max",
       "inferred": true,
-      "via": "gpt-6-sol#medium"
+      "via": "gpt-6-sol#medium",
+      "note": "scores borrowed from gpt-6-sol#medium"
     },
     {
       "from": "codex:gpt-6-sol#high",
       "to": "opencode:opencode-go/kimi-k3#max",
       "inferred": true,
-      "via": "gpt-6-sol#medium"
+      "via": "gpt-6-sol#medium",
+      "note": "scores borrowed from gpt-6-sol#medium"
     },
     {
       "from": "codex:gpt-6-sol#xhigh",
       "to": "opencode:opencode-go/kimi-k3#max",
       "inferred": true,
-      "via": "gpt-6-sol#medium"
+      "via": "gpt-6-sol#medium",
+      "note": "scores borrowed from gpt-6-sol#medium"
     }
   ]
 }

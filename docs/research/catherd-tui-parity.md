@@ -1,5 +1,7 @@
 # catherd 1.0.0 TUI: feature-parity checklist for CatHouse
 
+> **Baseline: catherd 1.0.0.** CatHouse now pins **1.2.0**. Where 1.1/1.2 changed something CatHouse relies on, [`catherd-1.2-upgrade.md`](catherd-1.2-upgrade.md) wins over this doc.
+
 > Status 2026-09-28 (Phase 5): all public-surface parity items are implemented (`docs/architecture/webview.md` §Pages). Known differences from the TUI remain: live per-keystroke draft validation is not possible (public-surface gap 3; errors appear on Save); the ladder column shows the role's rungs in order, not catherd's computed `candidates()` (gap 6); agent-file changes appear after save, not in the preview (gap 4).
 
 Citations are relative to the catherd repo at commit `b257da7`. TUI code: `src/entry/tui/` (23 files). Every screen as text: `docs/tui-frames.md` (generated, checked in CI).
@@ -85,10 +87,10 @@ Top line: `PROFILE <name> (active) · N unsaved · switch · new`.
 | ROUTES | lane, role, source, kind/difficulty, rung | FILE `routes.jsonl` (last row per lane) |
 | LANDED | milestone lines | `RunSummary.milestones` |
 | STATE | state.md tail | `RunSummary.stateTail`; full via MCP `read_run_file` |
-| Cancel live role | double confirm within 5 s | MCP `cancel` (or CLI `runs cancel`), then notify the orchestrator session |
+| Cancel live role | double confirm within 5 s | CLI `runs cancel` (1.1+: MCP `cancel` would mark the record read), then notify the orchestrator session |
 | Refresh / pause | `r` / `p` | UI |
 
-Extra in CatHouse beyond the TUI: records table (`runs show --json`), per-role debug (`runs show --debug --name`), role reply (MCP `result`), `runs_summary`, knowledge (`read_knowledge`), lane files and plan (`read_run_file`).
+Extra in CatHouse beyond the TUI: records table (`runs show --json`), per-role debug (`runs show --debug --name`), role reply (1.0: MCP `result`; 1.1+: `read_run_file` of the record's `replyPath`), `runs_summary`, knowledge (`read_knowledge`), lane files and plan (`read_run_file`).
 
 ## Commands (`src/entry/tui/commands.ts:56-404`)
 
@@ -109,3 +111,15 @@ Extra in CatHouse beyond the TUI: records table (`runs show --json`), per-role d
 | app.palette, app.help, tab.*, list.*, tree.*, dialog.* | navigation | none |
 
 CatHouse registers the meaningful ones as VS Code commands (`cathouse.*`) so they appear in the Command Palette.
+
+## catherd 1.1/1.2 additions (open)
+
+The 1.1 and 1.2 TUI added these. CatHouse covers the first two partly; the rest are open.
+
+- [~] Runs: which Claude Code session started a run, live or idle, "continued in" (list rows show it; no grouping by session yet).
+- [~] Run: parked owner questions and the verifier's latest gate step (shown in run detail).
+- [ ] Run: a milestone's digest (`<run>/digests/<milestone>.md`, via `read_run_file`).
+- [ ] Profiles `r`: sync the public sources, with each source's age and last error (MCP `catalog_sync`).
+- [ ] Profiles `i`: a rung's values with confidence and source, plus catherd's run evidence (`catalog_query`).
+- [ ] Profiles `t`: treat-like picker with the three nearest stand-ins first (`catalog treat-like --suggest`), plus `--clear`/`--reset`.
+- [ ] `roles.<role>.network` switch.

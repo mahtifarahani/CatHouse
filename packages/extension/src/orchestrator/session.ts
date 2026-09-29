@@ -29,7 +29,10 @@ export interface SessionOptions {
   onStderr?: (s: string) => void;
 }
 
-/** A catherd `wait` can block for tens of minutes; MCP_TOOL_TIMEOUT caps a single tool call. */
+/**
+ * MCP_TOOL_TIMEOUT caps a single tool call. catherd 1.1+ has no blocking `wait` (finished roles
+ * are pushed into the session), so this is only a generous ceiling.
+ */
 export const MCP_TOOL_TIMEOUT_MS = String(4 * 60 * 60 * 1000);
 
 class Inbox implements AsyncIterable<SDKUserMessage> {

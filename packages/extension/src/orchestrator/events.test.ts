@@ -65,7 +65,15 @@ describe("event mapper", () => {
     expect(ev.some((e) => e.kind === "run_started")).toBe(false);
   });
 
-  it("maps catherd wait heartbeats to the real tool call", () => {
+  it("maps a pushed turn's command_lifecycle start to inbound", () => {
+    const map = createEventMapper();
+    expect(map({ type: "command_lifecycle", state: "started", command_uuid: "c1" })).toEqual([
+      { kind: "inbound" },
+    ]);
+    expect(map({ type: "command_lifecycle", state: "completed", command_uuid: "c1" })).toEqual([]);
+  });
+
+  it("maps tool progress heartbeats to the real tool call", () => {
     expect(
       createEventMapper()({
         type: "tool_progress",

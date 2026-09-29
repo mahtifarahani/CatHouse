@@ -1,5 +1,7 @@
 # catherd 1.0.0: on-disk layout
 
+> **Baseline: catherd 1.0.0.** CatHouse now pins **1.2.0**. Where 1.1/1.2 changed something CatHouse relies on, [`catherd-1.2-upgrade.md`](catherd-1.2-upgrade.md) wins over this doc.
+
 Citations are relative to the catherd repo at commit `b257da7`.
 
 **CatHouse rule:** CatHouse never writes any of these files. It may read `routes.jsonl` (no public surface exposes it; see `public-surface-gaps.md`), and it may watch files as a *refresh trigger*. All state it shows comes from CLI `--json` or read-safe MCP tools.

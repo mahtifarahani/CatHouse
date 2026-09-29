@@ -191,4 +191,41 @@ describe("SessionController", () => {
     });
     expect(c.snapshot().turnActive).toBe(false);
   });
+
+  it("treats a catherd push as a new turn and shows its repeated init once", async () => {
+    const { c, created, sent } = setup();
+    await c.start("/repo", "a");
+    const o = created[0] as SessionOptions;
+    const init = {
+      kind: "init" as const,
+      sessionId: "s1",
+      claudeCodeVersion: "2.1.283",
+      catherdPlugin: { name: "catherd", path: "/p", version: "1.2.0" },
+      catherdMcpStatus: "connected",
+      pluginErrors: [],
+      agents: [],
+      permissionMode: "default",
+    };
+    o.onEvent(init);
+    o.onEvent({ kind: "result", subtype: "success", sessionId: "s1", isError: false });
+    expect(c.snapshot().turnActive).toBe(false);
+
+    // the SDK stream of a pushed turn: command_lifecycle started → init again → … → result
+    o.onEvent({ kind: "inbound" });
+    expect(c.snapshot().turnActive).toBe(true);
+    expect(sent.at(-1)).toMatchObject({ type: "state", state: { turnActive: true } });
+    o.onEvent(init);
+    expect(c.snapshot().events.filter((e) => e.kind === "init")).toHaveLength(1);
+    expect(c.snapshot().events.filter((e) => e.kind === "inbound")).toHaveLength(1);
+    o.onEvent({ kind: "result", subtype: "success", sessionId: "s1", isError: false });
+    expect(c.snapshot().turnActive).toBe(false);
+  });
+
+  it("resumes with peek, never with the removed wait", async () => {
+    const { c, links, created } = setup();
+    links.set("/repo", { sessionId: "s9", runId: "r9", savedAt: "x" });
+    await c.resume("/repo");
+    expect(created[0]?.prompt).toContain('peek("r9")');
+    expect(created[0]?.prompt).not.toMatch(/\bwait\b/);
+  });
 });

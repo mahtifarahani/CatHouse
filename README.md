@@ -10,12 +10,12 @@
 
 catherd still does the real work: Claude plans and verifies, Codex, opencode, or headless Claude Code workers write the code, and Jev can choose the model and effort for each job. CatHouse gives that workflow a home inside the editor—without reimplementing the orchestrator or taking ownership of its data.
 
-> CatHouse is currently in pre-release development. The macOS arm64 build is verified; release identity and native testing for the remaining targets are still in progress. See [Project status](#project-status).
+> Downloads are platform VSIX files on [GitHub Releases](https://github.com/mahtifarahani/CatHouse/releases). The macOS arm64 build is verified; the other targets are build-verified. The VS Code Marketplace is not set up yet. See [Project status](#project-status).
 
 ## What CatHouse adds
 
-- **Guided Setup** — checks and installs Bun, `catherd-cli@1.0.0`, the catherd Claude plugin, login, and worker backends. Installers run only after you click.
-- **Chat** — starts `/catherd:catherd <task>` directly from the Activity Bar and streams the orchestration session into VS Code.
+- **Guided Setup** — checks and installs Bun, `catherd-cli@1.2.0`, the catherd Claude plugin, login, and worker backends. Installers run only after you click.
+- **Chat** — starts `/catherd:catherd <task>` directly from the Activity Bar and streams the orchestration session into VS Code. Roles report back by themselves when they finish (catherd's push notices), so you can keep chatting while they run.
 - **Human-in-the-loop cards** — answers Claude questions and permission requests without leaving the editor, with notifications when a run needs attention.
 - **Runs** — follows live roles, budget, climbs, routes, landed milestones, replies, state, and debug output; live roles can be cancelled from the UI.
 - **Profiles** — edits roles, rungs, models, effort, access, isolation, budget, routing, and failover with staged changes, undo/redo, validation, and a diff before save.
@@ -45,7 +45,7 @@ VS Code extension host
 
 ## Requirements
 
-- VS Code 1.100 or newer
+- VS Code 1.100 or newer, or Cursor
 - macOS or Linux (Windows is not supported yet)
 - A trusted workspace containing a Git repository
 - A Claude account
@@ -58,24 +58,67 @@ CatHouse ships its orchestration-time Claude Code runtime inside each platform-s
 
 Bun, catherd, and the catherd Claude plugin are mandatory, but you do not need to prepare them manually: CatHouse's Setup page detects what is missing and offers each installation step explicitly.
 
-## Getting started
+## Install
 
-CatHouse is not publicly released yet. To try a development build:
+Each version is a [GitHub Release](https://github.com/mahtifarahani/CatHouse/releases). Download the VSIX that matches your machine. `<version>` is the release number, for example `0.1.0`.
 
-1. Clone this repository.
-2. Install dependencies and build the VSIX for your machine:
+| Machine | File |
+|---|---|
+| macOS Apple Silicon (`uname -m` prints `arm64`) | `cathouse-darwin-arm64-<version>.vsix` |
+| macOS Intel (`uname -m` prints `x86_64`) | `cathouse-darwin-x64-<version>.vsix` |
+| Linux x64 | `cathouse-linux-x64-<version>.vsix` |
+| Linux ARM64 | `cathouse-linux-arm64-<version>.vsix` |
 
-   ```bash
-   pnpm install
-   pnpm package
-   ```
+The same file installs in VS Code and in Cursor. Windows builds are not published.
 
-3. In VS Code, open **Extensions → … → Install from VSIX** and select the artifact in `dist/`.
-4. Open a Git repository and select the CatHouse icon in the Activity Bar.
-5. Complete the guided Setup checklist.
-6. Open **Chat**, describe the task, and select **Start task**.
+Each release also includes `SHA256SUMS`. After downloading the VSIX and that file into one folder:
+
+```bash
+shasum -a 256 -c SHA256SUMS
+```
+
+On Linux, `sha256sum -c SHA256SUMS` checks the same list.
+
+### VS Code
+
+1. Open Extensions (`Cmd+Shift+X` on macOS, `Ctrl+Shift+X` on Linux).
+2. Open the Extensions view menu (…) and choose **Install from VSIX...**.
+3. Select the downloaded file. Reload the window if VS Code asks.
+
+```bash
+code --install-extension ~/Downloads/cathouse-darwin-arm64-<version>.vsix
+```
+
+### Cursor
+
+1. Open Extensions.
+2. Open the Extensions view menu (…) and choose **Install from VSIX...**. The Command Palette command is **Extensions: Install from VSIX...**.
+3. Select the downloaded file. Reload the window if Cursor asks.
+
+If the `cursor` command is on your PATH (Command Palette → **Shell Command: Install 'cursor' command in PATH**):
+
+```bash
+cursor --install-extension ~/Downloads/cathouse-darwin-arm64-<version>.vsix
+```
+
+Installing a newer VSIX replaces the previous CatHouse. The extension id is `cathouse.cathouse`.
+
+### First run
+
+1. Open a trusted workspace that contains a Git repository.
+2. Select the CatHouse icon in the Activity Bar.
+3. Complete the guided Setup checklist. Nothing is installed until you click.
+4. Open **Chat**, describe the task, and select **Start task**.
 
 CatHouse does not run installers in the background. Setup checks are side-effect-free, and every installation or upgrade starts only from a user action. `catherd doctor`, which can refresh catherd state, runs only when requested or after an explicit setup action.
+
+A release exists after a version tag is pushed. Until the first tag, build a VSIX from source with the commands in [Development](#development).
+
+## Versioning
+
+CatHouse uses semantic versioning. The number in `packages/extension/package.json` is the extension version. The Git tag `vX.Y.Z` must be that same number with a `v` prefix. Release notes are the matching `## [X.Y.Z] - YYYY-MM-DD` section of [docs/CHANGELOG.md](docs/CHANGELOG.md). Pushing the tag runs the release workflow, which attaches the four VSIX files and those notes to the GitHub Release. A tag with a hyphen, such as `v0.1.0-rc.1`, is published as a pre-release.
+
+The checklist for cutting a release is in [docs/release/github.md](docs/release/github.md).
 
 ## Development
 
@@ -92,6 +135,7 @@ CatHouse is a pnpm TypeScript monorepo:
 Common commands:
 
 ```bash
+pnpm install
 pnpm build
 pnpm typecheck
 pnpm lint
@@ -100,15 +144,19 @@ pnpm test:e2e
 pnpm package
 ```
 
+`pnpm package` writes `dist/cathouse-<target>-<version>.vsix` for this machine. Install that file the same way as a GitHub Release asset. `pnpm package:all` builds darwin-arm64, darwin-x64, linux-x64, and linux-arm64.
+
 Press `F5` in VS Code and choose **Run CatHouse** to launch an Extension Development Host. See the [runbook](docs/runbook.md) for machine setup, platform packaging, isolated test environments, and troubleshooting.
 
 ## Project status
 
 The feature set is code-complete on macOS and includes the Setup flow, dashboards, in-editor run control, session recovery, accessibility work, and per-platform VSIX packaging.
 
-Before a public release, the project still needs:
+GitHub Releases are the download channel. The workflow that builds and attaches the VSIX files is in the repository; a release appears when a version tag is pushed. The manifest version is still `0.0.1`, so no public tag has been cut.
 
-- the final publisher ID, SPDX license, and initial public version;
+Before Marketplace publishing, the project still needs:
+
+- the final publisher ID, SPDX license, and the version number for the first tag;
 - one end-to-end run on a remote Linux extension host;
 - native execution checks for the macOS x64 and Linux artifacts.
 

@@ -14,24 +14,31 @@ import { type ReadinessSnapshot, SetupService } from "./service";
 
 const ready: SetupFacts = {
   bun: { version: "1.4.2" },
-  catherd: { version: "1.0.0" },
+  catherd: { version: "1.2.0" },
   catherdConfig: { exists: true, path: "/c/config.json" },
   sdkBinary: { path: "/sdk/claude", version: "2.1.283" },
-  plugin: { version: "1.0.0", installPath: "/p" },
+  plugin: { version: "1.2.0", installPath: "/p" },
   claudeLogin: { loggedIn: true, method: "claude.ai", email: "a@b" },
   needsClaudeCli: false,
   claudeCli: {},
   doctor: {
     ready: true,
-    version: "1.0.0",
+    version: "1.2.0",
     checks: [
       { id: "bun", label: "Bun", state: "ok", word: "ready", detail: "1.4.2" },
       {
         id: "access:full",
         label: "full access",
-        state: "warn",
-        word: "warning",
+        state: "info",
+        word: "default",
         detail: "verifier",
+      },
+      {
+        id: "access:custom",
+        label: "custom access",
+        state: "info",
+        word: "default",
+        detail: "a row catherd marks info itself",
       },
       {
         id: "backend:opencode",
@@ -75,6 +82,7 @@ describe("evaluate", () => {
     expect(r.gateOpen).toBe(true);
     expect(r.canStart).toBe(true);
     expect(r.items.find((i) => i.id === "doctor:access:full")?.state).toBe("info");
+    expect(r.items.find((i) => i.id === "doctor:access:custom")?.state).toBe("info");
     expect(r.items.find((i) => i.id === "doctor:bun")).toBeUndefined();
     expect(r.items.find((i) => i.id === "doctor:backend:opencode")).toMatchObject({
       state: "warn",
@@ -100,7 +108,7 @@ describe("evaluate", () => {
         claudeLogin: { loggedIn: false },
         doctor: {
           ready: false,
-          version: "1.0.0",
+          version: "1.2.0",
           checks: [
             {
               id: "backend:codex",
@@ -150,7 +158,7 @@ describe("actions", () => {
   it("pins catherd and opens logins in a terminal", () => {
     expect(stepsFor("init-catherd", ctx)[0]).toMatchObject({
       cmd: "bunx",
-      args: ["catherd-cli@1.0.0", "init", "--no-input", "--plain"],
+      args: ["catherd-cli@1.2.0", "init", "--no-input", "--plain"],
     });
     expect(stepsFor("login-claude", ctx)[0]).toMatchObject({
       kind: "terminal",
@@ -208,7 +216,7 @@ describe("detect", () => {
     const f = await detect(detectDeps(run, home));
     expect(calls.find((c) => c.cmd === "bunx")?.args).toEqual([
       "--no-install",
-      "catherd-cli@1.0.0",
+      "catherd-cli@1.2.0",
       "--version",
     ]);
     expect(f.catherd).toEqual({});
@@ -230,20 +238,20 @@ describe("detect", () => {
       join(home, "claude", "plugins", "installed_plugins.json"),
       JSON.stringify({
         version: 2,
-        plugins: { "catherd@catherd": [{ scope: "user", installPath: "/p", version: "1.0.0" }] },
+        plugins: { "catherd@catherd": [{ scope: "user", installPath: "/p", version: "1.2.0" }] },
       }),
     );
     const run = fakeRun(({ cmd, args }) =>
       cmd === "bunx"
-        ? { stdout: "1.0.0\n" }
+        ? { stdout: "1.2.0\n" }
         : args.includes("auth")
           ? { stdout: '{"loggedIn":true,"authMethod":"claude.ai"}' }
           : { stdout: "1.4.2" },
     );
     const f = await detect(detectDeps(run, home));
-    expect(f.catherd.version).toBe("1.0.0");
+    expect(f.catherd.version).toBe("1.2.0");
     expect(f.catherdConfig.exists).toBe(true);
-    expect(f.plugin).toEqual({ installPath: "/p", version: "1.0.0" });
+    expect(f.plugin).toEqual({ installPath: "/p", version: "1.2.0" });
     expect(f.claudeLogin).toMatchObject({ loggedIn: true, method: "claude.ai" });
   });
 });
@@ -262,13 +270,13 @@ describe("SetupService", () => {
       JSON.stringify({
         version: 2,
         plugins: {
-          "catherd@catherd": [{ scope: "user", installPath: "/p", version: "1.0.0" }],
+          "catherd@catherd": [{ scope: "user", installPath: "/p", version: "1.2.0" }],
         },
       }),
     );
     const run = fakeRun(({ cmd, args }) =>
       cmd === "bunx"
-        ? { stdout: "1.0.0\n" }
+        ? { stdout: "1.2.0\n" }
         : args.includes("auth")
           ? { stdout: '{"loggedIn":true,"authMethod":"claude.ai"}' }
           : { stdout: "1.4.2" },

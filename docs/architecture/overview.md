@@ -27,19 +27,19 @@ See `protocol.md` and `webview.md` for the details.
 ```
 VS Code window
 ├─ Extension host (Node, "workspace" kind — runs on the remote host in SSH/WSL/containers)
-│   ├─ SetupService ── spawns detectors/installers (bun, bunx catherd-cli@1.0.0, bundled claude)
+│   ├─ SetupService ── spawns detectors/installers (bun, bunx catherd-cli@1.2.0, bundled claude)
 │   ├─ CatherdGateway (per repo)
-│   │    ├─ MCP client ──stdio──► `bunx catherd-cli@1.0.0 mcp` (long-lived, cwd = repo)     [ADR 0006]
-│   │    ├─ CLI runner  ──spawn──► `bunx catherd-cli@1.0.0 <cmd> --json`
+│   │    ├─ MCP client ──stdio──► `bunx catherd-cli@1.2.0 mcp` (long-lived, cwd = repo)     [ADR 0006]
+│   │    ├─ CLI runner  ──spawn──► `bunx catherd-cli@1.2.0 <cmd> --json`
 │   │    └─ RunFilesReader ─read─► <data>/repos/<key>/runs/<id>/routes.jsonl              [ADR 0007]
 │   ├─ OrchestratorSession (per active run) ── Agent SDK query() ──► bundled Claude Code binary
-│   │        └─ loads plugin catherd@1.0.0 from installPath → its own `catherd mcp` (the orchestrator's)
+│   │        └─ loads plugin catherd@1.2.0 from installPath → its own `catherd mcp` (the orchestrator's)
 │   ├─ Panel host: one full WebviewView in the Activity Bar ── message router
 │   └─ State: workspaceState {runId ↔ sessionId, repo, createdAt}, UI prefs
 └─ Webview (React) ◄── postMessage protocol v1 (zod) ──► panel host
 ```
 
-Note: two `catherd mcp` processes exist per active repo (the gateway's and the orchestrator's). That is safe because CatHouse never calls `wait`/`dispatch` (ADR 0005). catherd coordinates through file locks and leases.
+Note: two `catherd mcp` processes exist per active repo (the gateway's and the orchestrator's). That is safe because CatHouse never dispatches, claims a run (`peek`) or marks a record read (`result`, `cancel`) (ADR 0005). Only the orchestrator's server has the Claude session's messaging socket, so only it owns runs and pushes finished roles into the session (catherd 1.1+). catherd coordinates through file locks and leases.
 
 ## Packages
 
@@ -55,7 +55,7 @@ Note: two `catherd mcp` processes exist per active repo (the gateway's and the o
 
 - The UI renders only `protocol` models. Raw catherd JSON never crosses into the webview.
 - Reads: polling (runs list 2 s, open run 1 s, pausable) plus FileSystemWatcher triggers; profile/catalog on demand.
-- Writes: profile edits → gateway → MCP `profile_set` / CLI; cancel → MCP `cancel`, then a note to the orchestrator session.
+- Writes: profile edits → gateway → MCP `profile_set` / CLI; cancel → CLI `catherd runs cancel` (the record stays unread, so catherd still pushes it to the orchestrator), then a note to the orchestrator session.
 - Orchestration: only the OrchestratorSession (the skill inside Claude) drives runs.
 
 ## Gating

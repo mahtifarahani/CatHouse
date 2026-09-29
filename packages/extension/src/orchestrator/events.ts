@@ -111,9 +111,14 @@ export function createEventMapper() {
         }
         return out;
       }
+      case "command_lifecycle":
+        // A turn the session starts by itself: catherd 1.1+ pushes a finished role into the peer
+        // inbox, and the CLI runs it as a queued command (docs/spikes/catherd-1.2.md). Only
+        // "started" matters; the turn ends with its own `result`.
+        return m.state === "started" ? [{ kind: "inbound" }] : [];
       case "tool_progress":
-        // catherd's 30 s progress ticks during a long `wait` arrive as heartbeats whose
-        // parent_tool_use_id is the real tool call (docs/spikes/phase1.md finding 1).
+        // Progress heartbeats of a long tool call; parent_tool_use_id is the real tool call
+        // (docs/spikes/phase1.md finding 1).
         return [
           {
             kind: "tool_progress",

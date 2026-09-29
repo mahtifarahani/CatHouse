@@ -1,0 +1,1146 @@
+{
+  "total": 35,
+  "models": [
+    {
+      "id": "claude-fable-5-1",
+      "name": "Claude Fable 5.1",
+      "backend": "claude",
+      "model": "claude-fable-5-1",
+      "billing": "claude",
+      "efforts": ["low", "medium", "high", "xhigh", "max"],
+      "context": 1000000,
+      "capabilities": {
+        "toolUse": true,
+        "imageIn": true,
+        "reasoning": true
+      },
+      "roles": [
+        "architect",
+        "verifier",
+        "worker",
+        "reviewer",
+        "ui-reviewer",
+        "writer",
+        "researcher"
+      ],
+      "listed": true,
+      "notes": {
+        "plan": "Pro and Team Standard pay usage credits for Fable; Max includes it up to half the weekly limit"
+      },
+      "price": {
+        "input": 10,
+        "cached": 0.25,
+        "output": 50
+      },
+      "speed": {
+        "openrouter.uptime_last_30m": 99.76841244033756
+      },
+      "rungs": [
+        {
+          "rung": "claude:claude-fable-5-1#low",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 74.2,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "claude-opus-5-5#low"
+            },
+            "terminal": {
+              "value": 55.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "adjacent",
+              "source": "shipped",
+              "date": "2026-09-22"
+            },
+            "honesty": {
+              "value": 95.1,
+              "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "gpt-6-sol#low"
+            },
+            "agentic": {
+              "value": 0.1384,
+              "benchmark": "Arena agent, net improvement 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "steer": {
+              "value": 0.0832,
+              "benchmark": "Arena agent steerability 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "frontend": {
+              "value": 1751.4868,
+              "benchmark": "Arena WebDev rating 2026-09-25",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-25"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 0.6400000000000001,
+            "mode": "claude-plan"
+          },
+          "evidence": null
+        },
+        {
+          "rung": "claude:claude-fable-5-1#medium",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 74.2,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "claude-opus-5-5#high"
+            },
+            "terminal": {
+              "value": 55.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "adjacent",
+              "source": "shipped",
+              "date": "2026-09-22"
+            },
+            "honesty": {
+              "value": 95.1,
+              "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "gpt-6-sol#medium"
+            },
+            "agentic": {
+              "value": 0.1384,
+              "benchmark": "Arena agent, net improvement 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "steer": {
+              "value": 0.0832,
+              "benchmark": "Arena agent steerability 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "frontend": {
+              "value": 1751.4868,
+              "benchmark": "Arena WebDev rating 2026-09-25",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-25"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 1.6,
+            "mode": "claude-plan"
+          },
+          "evidence": null
+        },
+        {
+          "rung": "claude:claude-fable-5-1#high",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 74.2,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "claude-opus-5-5#high"
+            },
+            "terminal": {
+              "value": 55.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "adjacent",
+              "source": "shipped",
+              "date": "2026-09-22"
+            },
+            "honesty": {
+              "value": 95.1,
+              "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "gpt-6-sol#high"
+            },
+            "agentic": {
+              "value": 0.1384,
+              "benchmark": "Arena agent, net improvement 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "steer": {
+              "value": 0.0832,
+              "benchmark": "Arena agent steerability 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "frontend": {
+              "value": 1751.4868,
+              "benchmark": "Arena WebDev rating 2026-09-25",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-25"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 2.72,
+            "mode": "claude-plan"
+          },
+          "evidence": null
+        },
+        {
+          "rung": "claude:claude-fable-5-1#xhigh",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 74.2,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "claude-opus-5-5#high"
+            },
+            "terminal": {
+              "value": 55.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "adjacent",
+              "source": "shipped",
+              "date": "2026-09-22"
+            },
+            "honesty": {
+              "value": 98.5,
+              "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "gpt-6-astra#max"
+            },
+            "agentic": {
+              "value": 0.1384,
+              "benchmark": "Arena agent, net improvement 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "steer": {
+              "value": 0.0832,
+              "benchmark": "Arena agent steerability 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "frontend": {
+              "value": 1751.4868,
+              "benchmark": "Arena WebDev rating 2026-09-25",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-25"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 4.16,
+            "mode": "claude-plan"
+          },
+          "evidence": null
+        },
+        {
+          "rung": "claude:claude-fable-5-1#max",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 67.4,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-25"
+            },
+            "terminal": {
+              "value": 55.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "verified",
+              "source": "shipped",
+              "date": "2026-09-22"
+            },
+            "honesty": {
+              "value": 98.5,
+              "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "gpt-6-astra#max"
+            },
+            "agentic": {
+              "value": 0.1406,
+              "benchmark": "Arena agent, net improvement 2026-09-28",
+              "confidence": "measured",
+              "source": "arena",
+              "date": "2026-09-28"
+            },
+            "steer": {
+              "value": 0.084,
+              "benchmark": "Arena agent steerability 2026-09-28",
+              "confidence": "measured",
+              "source": "arena",
+              "date": "2026-09-28"
+            },
+            "frontend": {
+              "value": 1751.4868,
+              "benchmark": "Arena WebDev rating 2026-09-25",
+              "confidence": "measured",
+              "source": "arena",
+              "date": "2026-09-25"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 11.520000000000001,
+            "mode": "claude-plan"
+          },
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "id": "claude-fable-5-1",
+      "name": "Claude Fable 5.1",
+      "backend": "claude-code",
+      "model": "claude-fable-5-1",
+      "billing": "claude-code",
+      "efforts": ["low", "medium", "high", "xhigh", "max"],
+      "context": 1000000,
+      "capabilities": {
+        "toolUse": true,
+        "imageIn": true,
+        "reasoning": true
+      },
+      "roles": [
+        "architect",
+        "verifier",
+        "worker",
+        "reviewer",
+        "ui-reviewer",
+        "writer",
+        "researcher"
+      ],
+      "listed": true,
+      "notes": {
+        "plan": "Pro and Team Standard pay usage credits for Fable; Max includes it up to half the weekly limit"
+      },
+      "price": {
+        "input": 10,
+        "cached": 0.25,
+        "output": 50
+      },
+      "speed": {
+        "openrouter.uptime_last_30m": 99.76841244033756
+      },
+      "rungs": [
+        {
+          "rung": "claude-code:claude-fable-5-1#low",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 74.2,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "claude-opus-5-5#low"
+            },
+            "terminal": {
+              "value": 55.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "adjacent",
+              "source": "shipped",
+              "date": "2026-09-22"
+            },
+            "honesty": {
+              "value": 95.1,
+              "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "gpt-6-sol#low"
+            },
+            "agentic": {
+              "value": 0.1384,
+              "benchmark": "Arena agent, net improvement 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "steer": {
+              "value": 0.0832,
+              "benchmark": "Arena agent steerability 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "frontend": {
+              "value": 1751.4868,
+              "benchmark": "Arena WebDev rating 2026-09-25",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-25"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 0.6400000000000001,
+            "mode": "claude-plan"
+          },
+          "evidence": null
+        },
+        {
+          "rung": "claude-code:claude-fable-5-1#medium",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 74.2,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "claude-opus-5-5#high"
+            },
+            "terminal": {
+              "value": 55.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "adjacent",
+              "source": "shipped",
+              "date": "2026-09-22"
+            },
+            "honesty": {
+              "value": 95.1,
+              "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "gpt-6-sol#medium"
+            },
+            "agentic": {
+              "value": 0.1384,
+              "benchmark": "Arena agent, net improvement 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "steer": {
+              "value": 0.0832,
+              "benchmark": "Arena agent steerability 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "frontend": {
+              "value": 1751.4868,
+              "benchmark": "Arena WebDev rating 2026-09-25",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-25"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 1.6,
+            "mode": "claude-plan"
+          },
+          "evidence": null
+        },
+        {
+          "rung": "claude-code:claude-fable-5-1#high",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 74.2,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "claude-opus-5-5#high"
+            },
+            "terminal": {
+              "value": 55.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "adjacent",
+              "source": "shipped",
+              "date": "2026-09-22"
+            },
+            "honesty": {
+              "value": 95.1,
+              "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "gpt-6-sol#high"
+            },
+            "agentic": {
+              "value": 0.1384,
+              "benchmark": "Arena agent, net improvement 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "steer": {
+              "value": 0.0832,
+              "benchmark": "Arena agent steerability 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "frontend": {
+              "value": 1751.4868,
+              "benchmark": "Arena WebDev rating 2026-09-25",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-25"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 2.72,
+            "mode": "claude-plan"
+          },
+          "evidence": null
+        },
+        {
+          "rung": "claude-code:claude-fable-5-1#xhigh",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 74.2,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "claude-opus-5-5#high"
+            },
+            "terminal": {
+              "value": 55.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "adjacent",
+              "source": "shipped",
+              "date": "2026-09-22"
+            },
+            "honesty": {
+              "value": 98.5,
+              "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "gpt-6-astra#max"
+            },
+            "agentic": {
+              "value": 0.1384,
+              "benchmark": "Arena agent, net improvement 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "steer": {
+              "value": 0.0832,
+              "benchmark": "Arena agent steerability 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "frontend": {
+              "value": 1751.4868,
+              "benchmark": "Arena WebDev rating 2026-09-25",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-25"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 4.16,
+            "mode": "claude-plan"
+          },
+          "evidence": null
+        },
+        {
+          "rung": "claude-code:claude-fable-5-1#max",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 67.4,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-25"
+            },
+            "terminal": {
+              "value": 55.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "verified",
+              "source": "shipped",
+              "date": "2026-09-22"
+            },
+            "honesty": {
+              "value": 98.5,
+              "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "gpt-6-astra#max"
+            },
+            "agentic": {
+              "value": 0.1406,
+              "benchmark": "Arena agent, net improvement 2026-09-28",
+              "confidence": "measured",
+              "source": "arena",
+              "date": "2026-09-28"
+            },
+            "steer": {
+              "value": 0.084,
+              "benchmark": "Arena agent steerability 2026-09-28",
+              "confidence": "measured",
+              "source": "arena",
+              "date": "2026-09-28"
+            },
+            "frontend": {
+              "value": 1751.4868,
+              "benchmark": "Arena WebDev rating 2026-09-25",
+              "confidence": "measured",
+              "source": "arena",
+              "date": "2026-09-25"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 11.520000000000001,
+            "mode": "claude-plan"
+          },
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "id": "claude-fable-5-1",
+      "name": "Claude Fable 5.1",
+      "backend": "opencode",
+      "model": "opencode/claude-fable-5-1",
+      "billing": "opencode",
+      "efforts": ["low", "medium", "high", "xhigh", "max"],
+      "context": 1000000,
+      "capabilities": {
+        "toolUse": true,
+        "imageIn": true,
+        "reasoning": true
+      },
+      "roles": [
+        "architect",
+        "verifier",
+        "worker",
+        "reviewer",
+        "ui-reviewer",
+        "writer",
+        "researcher"
+      ],
+      "listed": false,
+      "notes": {
+        "plan": "Pro and Team Standard pay usage credits for Fable; Max includes it up to half the weekly limit"
+      },
+      "price": {
+        "input": 10,
+        "cached": 0.25,
+        "output": 50
+      },
+      "speed": {
+        "openrouter.uptime_last_30m": 99.76841244033756
+      },
+      "rungs": [
+        {
+          "rung": "opencode:opencode/claude-fable-5-1#low",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 74.2,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "claude-opus-5-5#low"
+            },
+            "terminal": {
+              "value": 55.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "adjacent",
+              "source": "shipped",
+              "date": "2026-09-22"
+            },
+            "honesty": {
+              "value": 95.1,
+              "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "gpt-6-sol#low"
+            },
+            "agentic": {
+              "value": 0.1384,
+              "benchmark": "Arena agent, net improvement 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "steer": {
+              "value": 0.0832,
+              "benchmark": "Arena agent steerability 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "frontend": {
+              "value": 1751.4868,
+              "benchmark": "Arena WebDev rating 2026-09-25",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-25"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 0.6400000000000001,
+            "mode": "metered"
+          },
+          "evidence": null
+        },
+        {
+          "rung": "opencode:opencode/claude-fable-5-1#medium",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 74.2,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "claude-opus-5-5#high"
+            },
+            "terminal": {
+              "value": 55.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "adjacent",
+              "source": "shipped",
+              "date": "2026-09-22"
+            },
+            "honesty": {
+              "value": 95.1,
+              "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "gpt-6-sol#medium"
+            },
+            "agentic": {
+              "value": 0.1384,
+              "benchmark": "Arena agent, net improvement 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "steer": {
+              "value": 0.0832,
+              "benchmark": "Arena agent steerability 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "frontend": {
+              "value": 1751.4868,
+              "benchmark": "Arena WebDev rating 2026-09-25",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-25"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 1.6,
+            "mode": "metered"
+          },
+          "evidence": null
+        },
+        {
+          "rung": "opencode:opencode/claude-fable-5-1#high",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 74.2,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "claude-opus-5-5#high"
+            },
+            "terminal": {
+              "value": 55.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "adjacent",
+              "source": "shipped",
+              "date": "2026-09-22"
+            },
+            "honesty": {
+              "value": 95.1,
+              "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "gpt-6-sol#high"
+            },
+            "agentic": {
+              "value": 0.1384,
+              "benchmark": "Arena agent, net improvement 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "steer": {
+              "value": 0.0832,
+              "benchmark": "Arena agent steerability 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "frontend": {
+              "value": 1751.4868,
+              "benchmark": "Arena WebDev rating 2026-09-25",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-25"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 2.72,
+            "mode": "metered"
+          },
+          "evidence": null
+        },
+        {
+          "rung": "opencode:opencode/claude-fable-5-1#xhigh",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 74.2,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "claude-opus-5-5#high"
+            },
+            "terminal": {
+              "value": 55.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "adjacent",
+              "source": "shipped",
+              "date": "2026-09-22"
+            },
+            "honesty": {
+              "value": 98.5,
+              "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "gpt-6-astra#max"
+            },
+            "agentic": {
+              "value": 0.1384,
+              "benchmark": "Arena agent, net improvement 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "steer": {
+              "value": 0.0832,
+              "benchmark": "Arena agent steerability 2026-09-27",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-27"
+            },
+            "frontend": {
+              "value": 1751.4868,
+              "benchmark": "Arena WebDev rating 2026-09-25",
+              "confidence": "adjacent",
+              "source": "arena",
+              "date": "2026-09-25"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 4.16,
+            "mode": "metered"
+          },
+          "evidence": null
+        },
+        {
+          "rung": "opencode:opencode/claude-fable-5-1#max",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 67.4,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-25"
+            },
+            "terminal": {
+              "value": 55.8,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "verified",
+              "source": "shipped",
+              "date": "2026-09-22"
+            },
+            "honesty": {
+              "value": 98.5,
+              "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "gpt-6-astra#max"
+            },
+            "agentic": {
+              "value": 0.1406,
+              "benchmark": "Arena agent, net improvement 2026-09-28",
+              "confidence": "measured",
+              "source": "arena",
+              "date": "2026-09-28"
+            },
+            "steer": {
+              "value": 0.084,
+              "benchmark": "Arena agent steerability 2026-09-28",
+              "confidence": "measured",
+              "source": "arena",
+              "date": "2026-09-28"
+            },
+            "frontend": {
+              "value": 1751.4868,
+              "benchmark": "Arena WebDev rating 2026-09-25",
+              "confidence": "measured",
+              "source": "arena",
+              "date": "2026-09-25"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 1,
+            "value": 11.520000000000001,
+            "mode": "metered"
+          },
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "id": "claude-haiku-4-5",
+      "name": "Claude Haiku 4.5",
+      "backend": "claude",
+      "model": "claude-haiku-4-5-20251001",
+      "billing": "claude",
+      "efforts": [],
+      "context": 200000,
+      "capabilities": {
+        "toolUse": true,
+        "imageIn": true,
+        "reasoning": true
+      },
+      "roles": [
+        "architect",
+        "verifier",
+        "worker",
+        "reviewer",
+        "ui-reviewer",
+        "writer",
+        "researcher"
+      ],
+      "listed": true,
+      "notes": {
+        "effort": "no effort parameter in Claude Code: its only rung there is #default"
+      },
+      "price": {
+        "input": 1,
+        "cached": 0.1,
+        "output": 5
+      },
+      "speed": {
+        "openrouter.uptime_last_30m": 99.90727576188415
+      },
+      "rungs": [
+        {
+          "rung": "claude:claude-haiku-4-5-20251001#default",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 54,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "claude-sonnet-5#high"
+            },
+            "terminal": {
+              "value": 37.3,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "gpt-5.6-sol#high"
+            },
+            "honesty": {
+              "value": 21.8,
+              "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "gpt-5.6-luna#high"
+            },
+            "agentic": {
+              "value": 0.048,
+              "benchmark": "Arena agent, net improvement 2026-09-28",
+              "confidence": "inferred",
+              "source": "arena",
+              "date": "2026-09-28",
+              "from": "claude-sonnet-5#high"
+            },
+            "frontend": {
+              "value": 1337.5807,
+              "benchmark": "WebDev Arena (Epoch AI) 2026-09-29",
+              "confidence": "calibrated",
+              "source": "epoch",
+              "date": "2026-09-29"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 0,
+            "value": 0.19,
+            "mode": "claude-plan"
+          },
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "id": "claude-haiku-4-5",
+      "name": "Claude Haiku 4.5",
+      "backend": "claude-code",
+      "model": "claude-haiku-4-5-20251001",
+      "billing": "claude-code",
+      "efforts": [],
+      "context": 200000,
+      "capabilities": {
+        "toolUse": true,
+        "imageIn": true,
+        "reasoning": true
+      },
+      "roles": [
+        "architect",
+        "verifier",
+        "worker",
+        "reviewer",
+        "ui-reviewer",
+        "writer",
+        "researcher"
+      ],
+      "listed": true,
+      "notes": {
+        "effort": "no effort parameter in Claude Code: its only rung there is #default"
+      },
+      "price": {
+        "input": 1,
+        "cached": 0.1,
+        "output": 5
+      },
+      "speed": {
+        "openrouter.uptime_last_30m": 99.90727576188415
+      },
+      "rungs": [
+        {
+          "rung": "claude-code:claude-haiku-4-5-20251001#default",
+          "enabled": true,
+          "scores": {
+            "repo_code": {
+              "value": 54,
+              "benchmark": "DeepSWE 1.1",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "claude-sonnet-5#high"
+            },
+            "terminal": {
+              "value": 37.3,
+              "benchmark": "Terminal-Bench 4.0",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "gpt-5.6-sol#high"
+            },
+            "honesty": {
+              "value": 21.8,
+              "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
+              "confidence": "inferred",
+              "source": "shipped",
+              "date": "2026-09-22",
+              "from": "gpt-5.6-luna#high"
+            },
+            "agentic": {
+              "value": 0.048,
+              "benchmark": "Arena agent, net improvement 2026-09-28",
+              "confidence": "inferred",
+              "source": "arena",
+              "date": "2026-09-28",
+              "from": "claude-sonnet-5#high"
+            },
+            "frontend": {
+              "value": 1337.5807,
+              "benchmark": "WebDev Arena (Epoch AI) 2026-09-29",
+              "confidence": "calibrated",
+              "source": "epoch",
+              "date": "2026-09-29"
+            }
+          },
+          "treatLike": null,
+          "cost": {
+            "tier": 0,
+            "value": 0.19,
+            "mode": "claude-plan"
+          },
+          "evidence": null
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 # catherd 1.0.0: CLI contract
 
+> **Baseline: catherd 1.0.0.** CatHouse now pins **1.2.0**. Where 1.1/1.2 changed something CatHouse relies on, [`catherd-1.2-upgrade.md`](catherd-1.2-upgrade.md) wins over this doc.
+
 Citations are relative to the catherd repo at commit `b257da7`. Router: `src/cli.ts`; commands: `src/entry/*-command.ts`.
 
 ## Invocation from CatHouse

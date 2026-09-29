@@ -1,10 +1,11 @@
-// ADR 0005: CatHouse may call only these catherd MCP tools. `wait` and `cancel` hand each record
-// to exactly one caller; `wait` would steal records from the orchestrator, so it is forbidden.
-// `cancel` is allowed, but the caller must then tell the orchestrator session.
+// ADR 0005: CatHouse may call only these catherd MCP tools. Since catherd 1.1, catherd pushes each
+// finished role's record to the Claude Code session that owns the run, and a record stays "unread"
+// until the orchestrator reads it. `result` and `cancel` mark a record read (so the owner is never
+// told about it) and `peek` makes the caller the run's owner, so all three are forbidden here: the
+// gateway reads replies with `read_run_file` and cancels with the CLI (`catherd runs cancel`).
 
 export const ALLOWED_TOOLS = [
   "status",
-  "result",
   "runs_summary",
   "read_run_file",
   "read_knowledge",
@@ -12,13 +13,19 @@ export const ALLOWED_TOOLS = [
   "profile_validate",
   "profile_set",
   "catalog_query",
-  "cancel",
+  "catalog_sync",
 ] as const;
 export type AllowedTool = (typeof ALLOWED_TOOLS)[number];
 
 /** Orchestrator-only tools, listed so a test can prove none of them is allowed. */
 export const ORCHESTRATOR_TOOLS = [
-  "wait",
+  "result",
+  "cancel",
+  "peek",
+  "park",
+  "answer",
+  "gate_check",
+  "gate_pass",
   "dispatch",
   "run_start",
   "route",

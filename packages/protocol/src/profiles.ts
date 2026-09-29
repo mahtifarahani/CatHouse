@@ -68,6 +68,8 @@ export const ProfilesStateSchema = z.object({
       to: z.string(),
       inferred: z.boolean(),
       via: z.string().nullable(),
+      /** catherd 1.1+'s own wording, e.g. "scores borrowed from gpt-6-sol#medium". */
+      note: z.string().nullable().optional(),
     }),
   ),
   validation: z.object({

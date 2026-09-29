@@ -970,18 +970,19 @@ function RolesEditor({
                         ))}
                       </select>
                       <Button
-                        disabled={!treatFor.like}
                         onClick={() => {
-                          edit(
-                            (d) => {
-                              d.roles[role] = { ...cfg, rungs: [...cfg.rungs, treatFor.rung] };
-                            },
-                            { rung: treatFor.rung, like: treatFor.like },
-                          );
+                          // catherd 1.2+: without a treat-like, the rung takes its nearest
+                          // stand-in's values as `inferred` and validation lists it to confirm.
+                          const add = (d: ProfileDoc) => {
+                            d.roles[role] = { ...cfg, rungs: [...cfg.rungs, treatFor.rung] };
+                          };
+                          if (treatFor.like)
+                            edit(add, { rung: treatFor.rung, like: treatFor.like });
+                          else edit(add);
                           setTreatFor(undefined);
                         }}
                       >
-                        {t("profiles.addWithTreat")}
+                        {treatFor.like ? t("profiles.addWithTreat") : t("profiles.addInferred")}
                       </Button>
                       <Button variant="ghost" onClick={() => setTreatFor(undefined)}>
                         {t("common.cancel")}
@@ -1014,7 +1015,7 @@ function GeneralEditor({
   doc: ProfileDoc;
   edit: Edit;
   models: CatalogModel[];
-  standIns: { from: string; to: string; inferred: boolean }[];
+  standIns: { from: string; to: string; inferred: boolean; note?: string | null }[];
   filter: string;
   sections: Sections;
 }) {
@@ -1175,9 +1176,11 @@ function GeneralEditor({
               <li key={from} className="flex items-center gap-1">
                 <span className="flex-1">
                   {from} → {to}
-                  {standIns.find((s) => s.from === from && s.to === to)?.inferred
-                    ? ` (${t("profiles.inferred")})`
-                    : ""}
+                  {(() => {
+                    const s = standIns.find((x) => x.from === from && x.to === to);
+                    if (s?.note) return ` (${s.note})`;
+                    return s?.inferred ? ` (${t("profiles.inferred")})` : "";
+                  })()}
                 </span>
                 <Button
                   variant="ghost"

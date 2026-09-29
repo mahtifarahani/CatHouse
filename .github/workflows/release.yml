@@ -1,0 +1,62 @@
+# Publishes platform VSIX files as a GitHub Release.
+# Push a tag vX.Y.Z that matches packages/extension/package.json and a
+# "## [X.Y.Z]" section in docs/CHANGELOG.md. See docs/release/github.md.
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check the tag against the changelog
+        run: node scripts/release-notes.mjs --tag "${GITHUB_REF_NAME}" --out release-notes.md
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.29.1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build every platform VSIX
+        run: pnpm package:all
+
+      - name: Checksums
+        run: |
+          set -euo pipefail
+          count="$(find dist -name 'cathouse-*.vsix' | wc -l | tr -d ' ')"
+          test "$count" = "4"
+          (cd dist && sha256sum -- *.vsix > SHA256SUMS)
+
+      - name: Publish the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          args=(--title "CatHouse ${GITHUB_REF_NAME}" --notes-file release-notes.md)
+          if [[ "${GITHUB_REF_NAME}" == *-* ]]; then
+            args+=(--prerelease)
+          fi
+          gh release create "${GITHUB_REF_NAME}" dist/*.vsix dist/SHA256SUMS "${args[@]}"

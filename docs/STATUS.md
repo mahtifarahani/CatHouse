@@ -1,6 +1,6 @@
 # STATUS
 
-Last updated: 2026-09-28. Update this file at the end of every section.
+Last updated: 2026-09-29. Update this file at the end of every section.
 
 ## Current phase
 
@@ -17,6 +17,19 @@ Last updated: 2026-09-28. Update this file at the end of every section.
 | 3 | Main pages (Overview, Runs, Profiles, Models, Diagnostics) | ✅ done | `docs/architecture/webview.md`, parity checklist ticks in `docs/research/catherd-tui-parity.md` |
 | 4 | Run control in UI (start, prompts, cancel, resume) | ✅ done | `docs/architecture/orchestrator.md` |
 | 5 | Release prep (remote, trust, a11y, themes, VSIX per platform) | 🚧 external gates | `docs/release/phase5.md`, `docs/runbook.md`, `docs/CHANGELOG.md` |
+| — | Upgrade to catherd 1.2.0 (push model, new fields, fixtures) | ✅ done (2026-09-29) | `docs/research/catherd-1.2-upgrade.md`, `docs/spikes/catherd-1.2.md`, ADR 0005 amendment |
+
+## catherd 1.2.0 upgrade (2026-09-29)
+
+catherd released 1.1.0, 1.1.1 and 1.2.0 after CatHouse pinned 1.0.0. CatHouse now pins **catherd-cli 1.2.0 / plugin 1.2.0** (tag `v1.2.0`, commit `3cee546`; `packages/compat`). The full delta and its citations are in `docs/research/catherd-1.2-upgrade.md`.
+
+- **Push instead of `wait` (1.1).** A spike proved that catherd's notices reach an Agent SDK session and start a turn by themselves. A real one-milestone run (worker → reviewer → native verifier → land) was driven by push in about 4 min (`docs/spikes/catherd-1.2.md`). The event mapper turns `command_lifecycle started` into an `inbound` event. The controller keeps `turnActive` right during pushed turns and shows each repeated `init` only once. The resume prompt uses `peek`.
+- **Gateway boundary (ADR 0005 amended).** `result`, `cancel` and `peek` are forbidden: they mark records read or claim the run, which would stop catherd from notifying the orchestrator. Replies come from `read_run_file(record.replyPath)` and cancel uses the CLI `catherd runs cancel`. `catalog_sync` is allowed but not used yet.
+- **Contract fixes.** doctor rows can be `info`: without that, Setup's readiness check failed on 1.2 with `E_CONTRACT`. `RunSummary` and runs-list rows carry `session`, `continuedIn`, `questions` and `verifier`. Stand-ins carry `note`. Catalog values carry `confidence`, and inferred-only rungs count as unscored.
+- **UI.** Runs show the starting session, parked questions and the verifier step. Profiles show catherd's stand-in note and allow adding an unscored rung without a treat-like. The transcript has a "catherd reported back" divider.
+- **This machine** was upgraded with `bunx catherd-cli@1.2.0 init --no-input --plain` (global `catherd` 1.2.0 installed, default profile kept) and `claude plugin marketplace update catherd && claude plugin update catherd@catherd`. doctor: ready. It warns about the 1.0 profile's downgrading failover stand-in (`failover.codex:gpt-6-sol#high`) and about opencode and Docker, which are not installed or running here.
+- **Verified:** Biome (`node_modules/.bin/biome check .`; `npx biome` dies in the agent sandbox), typecheck, 95 unit tests, production build, live contract 7/7 against 1.2.0 (fixtures re-recorded in `packages/compat/fixtures/1.2.0/`), and e2e 5/5 in VS Code 1.139 with the spike repo as workspace.
+- **Not done:** a visual pass of the new Runs/Profiles/transcript bits in the Extension Development Host. The 1.1/1.2 TUI parity items (sessions grouping, milestone digests, source sync/age, rung value provenance, the treat-like suggest picker, the `network` switch) are listed as open in `docs/research/catherd-tui-parity.md`.
 
 ## Phase 0 outcome
 
@@ -24,7 +37,7 @@ Verified build, typecheck, lint, unit tests, VSIX (197 KB) and the e2e smoke tes
 
 ## Phase 1 outcome (so far)
 
-- Machine prepared: Bun 1.4.2, `bunx catherd-cli@1.0.0 init --no-input` (default profile, 2 native agents linked), Codex upgraded 0.142.2 → 0.158.0, plugin catherd@catherd 1.0.0 installed through the SDK's bundled Claude binary with the HTTPS workaround. `doctor --json` → ready. The Claude CLI login already existed (claude.ai Pro); it was hidden by leaked env vars.
+- Machine prepared (then on 1.0.0; upgraded to 1.2.0 on 2026-09-29, see above): Bun 1.4.2, `bunx catherd-cli@1.0.0 init --no-input` (default profile, 2 native agents linked), Codex upgraded 0.142.2 → 0.158.0, plugin catherd@catherd 1.0.0 installed through the SDK's bundled Claude binary with the HTTPS workaround. `doctor --json` → ready. The Claude CLI login already existed (claude.ai Pro); it was hidden by leaked env vars.
 - Built: gateway (`docs/architecture/gateway.md`), orchestrator session + controller + event mapper (`docs/architecture/orchestrator.md`), protocol `session.*` / `catherd.status`, webview Session page with prompt cards.
 - Spikes (`docs/spikes/phase1.md`): plugin load ✅, native agents ✅, 178 s `wait` in the foreground ✅, resume without a duplicate run ✅, runId capture ✅. Prompt cards: live test in VS Code done by the owner (spike c).
 - Tests at end of Phase 1: 44 unit + 6 live contract + 1 e2e.
@@ -49,7 +62,7 @@ Post-checkpoint UX correction: the status-only sidebar, Open Dashboard button an
 
 Profiles follow-up: fixed a clean-draft effect that repeatedly queued resets and made checkboxes/selects appear inert, plus the in-flight polling race that could leave New/Delete on the old profile. The unreliable browser `window.prompt` used by New Profile was replaced with a labelled, focus-trapped in-webview dialog with inline name validation and busy state. Role checkbox staging and the exact catherd CLI create command are covered by unit tests.
 
-Role semantics are now explicit in the UI: catherd 1.0.0 accepts only its eight built-in roles, so Profiles configures that fixed set and cannot create a custom role. New Chat is a conversation with the catherd orchestrator rather than a role persona; a user can request researcher/reviewer/etc. in the task or a follow-up, but catherd remains responsible for routing and dispatch.
+Role semantics are now explicit in the UI: catherd (1.0.0 through 1.2.0) accepts only its eight built-in roles, so Profiles configures that fixed set and cannot create a custom role. New Chat is a conversation with the catherd orchestrator rather than a role persona; a user can request researcher/reviewer/etc. in the task or a follow-up, but catherd remains responsible for routing and dispatch.
 
 New Chat readability follow-up: the idle orchestrator form is now a structured composer with a larger resizable task field, separated permission controls, a visible readiness callout and clearer heading hierarchy. Dense supporting text across the dashboard has a 13 px minimum and shared inputs have a 32 px minimum height; the scale still inherits the user's VS Code base font and all colours remain theme tokens.
 
@@ -85,10 +98,12 @@ Prompt-placement follow-up: permission and question cards now stay in a fixed tr
 2. On an available SSH host or Dev Container, install the linux-x64 VSIX on the remote extension host and run Setup plus one short task. Docker is installed on this Mac but its daemon was not running; no SSH/Dev Container target was available, so remote remains explicitly untested.
 3. Execute the darwin-x64 and Linux VSIX artifacts on native target machines. They are build-verified only.
 4. After these gates, set Phase 5 to done and start the owner's bug/improvement backlog.
+5. To publish downloadable VSIX files, cut a GitHub Release with `docs/release/github.md`: choose the version (the open `0.1.0` decision), move `docs/CHANGELOG.md` `## Unreleased` under `## [X.Y.Z] - YYYY-MM-DD`, tag `vX.Y.Z`, and push the tag. The workflow attaches the four platform VSIX files. No tag has been pushed yet, so the Releases page is still empty.
+6. catherd 1.2 follow-up: check the new Runs (session, parked questions, verifier), Profiles (stand-in note, Add (let catherd infer)) and "catherd reported back" transcript bits in the Extension Development Host, then pick from the 1.1/1.2 parity backlog in `docs/research/catherd-tui-parity.md`.
 
-## Environment facts (planning machine, 2026-09-28)
+## Environment facts (planning machine, updated 2026-09-29)
 
-macOS (Darwin 27), VS Code 1.139.1 and Cursor 3.21.18 installed, Node 22.13.1 via nvm, pnpm present, `claude` 2.1.168 on PATH (too old for `claude-code:` rungs), Bun 1.4.2 (installed 2026-09-28 into ~/.bun), catherd-cli 1.0.0 (bunx cache), Codex 0.158.0, plugin catherd@catherd 1.0.0, opencode not installed, no Jev key. npm latest: `@anthropic-ai/claude-agent-sdk` 0.3.283, `@anthropic-ai/claude-code` 2.1.283, `catherd-cli` 1.0.0, `@vscode/vsce` 4.0.0, `@vscode/test-electron` 3.1.0.
+macOS (Darwin 27), VS Code 1.139.1 and Cursor 3.21.18 installed, Node 22.13.1 via nvm, pnpm present, `claude` 2.1.283 on PATH, Bun 1.4.2 (installed 2026-09-28 into ~/.bun), catherd-cli 1.2.0 (global `catherd` in ~/.bun/bin plus the bunx cache), Codex 0.158.0, plugin catherd@catherd 1.2.0, opencode not installed, no Jev or Artificial Analysis key. npm latest: `@anthropic-ai/claude-agent-sdk` 0.3.283, `@anthropic-ai/claude-code` 2.1.283, `catherd-cli` 1.0.0, `@vscode/vsce` 4.0.0, `@vscode/test-electron` 3.1.0.
 
 Profiles density follow-up: every Profiles setting group (Roles, Routing, Billing, Harness isolation, Budget, Failover, Timeouts & limits, Push notifications) is now a collapsible section that starts closed and shows a one-line summary in its header. Each role card's rung list collapses too, Expand all / Collapse all are available, open state persists in webview state, and filtering opens every match. Settings are stacked in one column instead of a two-column grid. Verified with lint, typecheck, 76 unit tests and build. The owner has not yet done the visual check in the Extension Development Host.
 
@@ -113,7 +128,7 @@ Verified with typecheck, 83 unit tests, production build and `biome check packag
 
 ## Open questions / risks
 
-- Phase 1 spikes decide whether long `wait` calls survive in an SDK session (see `docs/research/claude-agent-sdk.md` §9).
+- (Resolved) Long `wait` calls survived in an SDK session (Phase 1), and catherd 1.1+ push notices reach SDK sessions (`docs/spikes/catherd-1.2.md`). On Linux, catherd's doctor may ask for `crossSessionInbound`; this is untested with CatHouse.
 - Upstream PRs to propose (non-blocking): `docs/research/public-surface-gaps.md`.
 
 Composer drafts and attachments follow-up: the New Chat task, the active-session follow-up, the permission mode and their attachments are stored in VS Code webview state (`usePersistentState`), so switching dashboard tabs or hiding the view keeps the unsent input. Both composers now take files: an **Attach files** button opens VS Code's native picker through the new read-only `app.pickFiles` method, and files can be dropped onto the textarea (hold Shift when dragging into a VS Code webview). Explorer/Finder drops attach paths; plain `File` drops inline text up to 200 KB. Attachments are removable chips and are appended to the message as a path list plus inline `<attached_file>` blocks by `composeMessage` (unit-tested). Verified with lint, 80 unit tests, typecheck and production build; the Shift-drag and native picker still need a manual check in the Extension Development Host.
@@ -123,3 +138,5 @@ Overview/Repos follow-up: Overview is now an at-a-glance page of three clickable
 Chat readability and text-size follow-up: the Session transcript is now a chat: user bubbles, a `catherd` speaker header, tool calls grouped into steps cards with status/tool icons, server chips, readable key/value input and output, collapsed older steps, and card/divider treatments for init, run start, sub-agent tasks, turn results and compaction. A gear button beside the catherd version opens Settings with a Text size control (80–160 %) that scales the whole view relative to the VS Code font size and persists per view. Details: `docs/architecture/webview.md` §Transcript layout, §Settings. Verified with lint, typecheck, 83 unit tests and production build; a visual pass in the Extension Development Host is the next step. Follow-up: text size now changes through a draft + preview and an Apply button, so dragging the slider no longer reflows the view under the pointer.
 
 Setup attention follow-up: whenever the dashboard status bar reports `setup needs attention`, the Setup tab now shows a theme-aware red dot. The tab's accessible name includes the same warning, so the state is not communicated by colour alone. Verified with lint, typecheck, unit tests and production build; the owner has not yet checked it visually in the Extension Development Host.
+
+GitHub download follow-up: platform VSIX files are published as GitHub Release assets, not committed under `dist/` (gitignored, and a Linux VSIX exceeds GitHub's 100 MB file limit). Pushing `vX.Y.Z` runs `.github/workflows/release.yml`, which checks the tag against `packages/extension/package.json` and `docs/CHANGELOG.md` (`scripts/release-notes.mjs`), builds all four targets, uploads `SHA256SUMS`, and writes VS Code and Cursor install steps into the release body. The root README and the extension README document the same install path. The manifest version is still `0.0.1` and no tag has been pushed, so nothing is downloadable until the owner cuts the first release. Report: `docs/release/github.md`.

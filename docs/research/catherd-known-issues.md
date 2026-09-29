@@ -1,10 +1,12 @@
 # catherd 1.0.0: known issues and limits that matter to CatHouse
 
+> **Baseline: catherd 1.0.0.** CatHouse now pins **1.2.0**. Where 1.1/1.2 changed something CatHouse relies on, [`catherd-1.2-upgrade.md`](catherd-1.2-upgrade.md) wins over this doc.
+
 Sources: `docs/dev/ideas.md`, `docs/dev/manual-tests.md`, `CHANGELOG.md` and `docs/superpowers/plans/2026-09-27-09-run-findings.md` in the catherd repo at commit `b257da7`.
 
 ## Blockers CatHouse must work around
 
-1. **The plugin install fails without GitHub SSH.** `.claude-plugin/marketplace.json` gives the plugin the source `{"source": "git-subdir", "url": "47vigen/catherd", "path": "plugin", "ref": "v1.0.0"}`. The marketplace itself clones over HTTPS, but Claude Code clones that shorthand over SSH, so `claude plugin install catherd@catherd` dies with `ssh: connect to host github.com port 22` on any machine without GitHub SSH (`ideas.md:29-34`). **Workaround (CatHouse applies it to every plugin install/update):**
+1. **(Fixed in 1.1: the marketplace fetches over HTTPS.)** **The plugin install fails without GitHub SSH.** `.claude-plugin/marketplace.json` gives the plugin the source `{"source": "git-subdir", "url": "47vigen/catherd", "path": "plugin", "ref": "v1.0.0"}`. The marketplace itself clones over HTTPS, but Claude Code clones that shorthand over SSH, so `claude plugin install catherd@catherd` dies with `ssh: connect to host github.com port 22` on any machine without GitHub SSH (`ideas.md:29-34`). **Workaround (CatHouse applies it to every plugin install/update):**
 
    ```bash
    GIT_CONFIG_COUNT=1 \

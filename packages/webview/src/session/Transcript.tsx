@@ -115,6 +115,12 @@ function Item({ it }: { it: Exclude<TranscriptItem, ToolItem> }) {
         </div>
       );
     }
+    case "inbound":
+      return (
+        <Divider tone="text-info" icon="cat">
+          {t("session.inbound")}
+        </Divider>
+      );
     case "compacted":
       return (
         <Divider tone="text-warning" icon="layers">

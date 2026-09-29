@@ -1,5 +1,7 @@
 # catherd: overview
 
+> **Baseline: catherd 1.0.0.** CatHouse now pins **1.2.0**. Where 1.1/1.2 changed something CatHouse relies on, [`catherd-1.2-upgrade.md`](catherd-1.2-upgrade.md) wins over this doc.
+
 Upstream: https://github.com/47vigen/catherd. This doc describes **catherd 1.0.0** (tag `v1.0.0`; docs read at commit `b257da7`). The npm package is `catherd-cli` and the command is `catherd`. License: MIT.
 
 All `path:line` citations in `docs/research/` point into the catherd repo at `b257da7`. To read them locally:

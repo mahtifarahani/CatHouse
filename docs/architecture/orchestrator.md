@@ -1,6 +1,6 @@
 # Orchestrator session
 
-Status: **built in Phases 1 and 4** (session, controller, event mapper, panel wiring; repo picker, permission modes, prompt badge/notification, cancel-role note, Continue, compaction marker). Source: `packages/extension/src/orchestrator/`.
+Status: **built in Phases 1 and 4** (session, controller, event mapper, panel wiring; repo picker, permission modes, prompt badge/notification, cancel-role note, Continue, compaction marker). Moved to catherd 1.2's push model on 2026-09-29 (`docs/spikes/catherd-1.2.md`). Source: `packages/extension/src/orchestrator/`.
 
 ## Pieces
 
@@ -8,7 +8,7 @@ Status: **built in Phases 1 and 4** (session, controller, event mapper, panel wi
 |---|---|
 | `plugin.ts` | `findCatherdPlugin()` reads `$CLAUDE_CONFIG_DIR/plugins/installed_plugins.json` (default `~/.claude`) → `plugins["catherd@catherd"][0].{installPath, version}` |
 | `session.ts` | `OrchestratorSession`: one Agent SDK `query()` in streaming-input mode |
-| `events.ts` | `createEventMapper()`: SDK messages → protocol `SessionEvent`s (pure). It remembers `run_start` tool_use ids so the matching tool_result becomes `run_started {runId, dir}`, and maps `wait` heartbeats (`tool_progress`, whose `parent_tool_use_id` is the real call) to `tool_progress {toolUseId, elapsedSecs}` |
+| `events.ts` | `createEventMapper()`: SDK messages → protocol `SessionEvent`s (pure). It remembers `run_start` tool_use ids so the matching tool_result becomes `run_started {runId, dir}`, maps tool heartbeats (`tool_progress`, whose `parent_tool_use_id` is the real call) to `tool_progress {toolUseId, elapsedSecs}`, and maps `command_lifecycle {state: "started"}` (a turn catherd's push started) to `inbound` |
 | `controller.ts` | `SessionController`: the one session of a window. It handles start/resume/send/interrupt/answer/stop, keeps pending prompt cards and a bounded transcript (500 events) so a reloaded webview can rebuild, and saves the run ↔ session link. It is vscode-free (deps injected) |
 
 ## SDK options (`session.ts`)
@@ -22,7 +22,7 @@ query({ prompt: inbox /* AsyncIterable<SDKUserMessage> */, options: {
   canUseTool,                                      // AskUserQuestion + permissions → onPrompt → webview cards
   permissionMode: "default",
   toolConfig: { askUserQuestion: { previewFormat: "markdown" } },
-  env: { ...processEnv(), MCP_TOOL_TIMEOUT: "14400000" }, // 4 h: a catherd `wait` blocks in the foreground
+  env: { ...processEnv(), MCP_TOOL_TIMEOUT: "14400000" }, // 4 h ceiling; no catherd 1.2 tool blocks
   resume?: sessionId,
 }})
 ```
@@ -39,13 +39,15 @@ The SDK is ESM-only and finds its platform binary (`@anthropic-ai/claude-agent-s
 
 - **Start** sends `/catherd:catherd <task>` as the first message. The skill does the rest (A-lines, `run_start`, …).
 - **Link:** on `init` → `sessionId`, on `run_started` → `runId`, saved in `workspaceState["cathouse.links.v1"][repo] = {sessionId, runId?, savedAt}`.
-- **Resume** (after a window reload): if the saved session's transcript exists (`getSessionInfo`), it resumes it with `RESUME_PROMPT(runId)` ("call status() first, collect roles with wait, carry on"). Otherwise it starts a fresh session with a bare `/catherd:catherd` (the skill resumes the latest run). **Resume never sends a task, so it never calls `run_start`.** Spike (d) verified the resumed path: the same run, no duplicate.
+- **Resume** (after a window reload): if the saved session's transcript exists (`getSessionInfo`), it resumes it with `RESUME_PROMPT(runId)` ("call `peek(run)` first, read unread records with `result`, carry on"). Otherwise it starts a fresh session with a bare `/catherd:catherd` (the skill resumes the latest run). **Resume never sends a task, so it never calls `run_start`.** Spike (d) verified the resumed path: the same run, no duplicate.
 - One session per window (`E_SESSION_ACTIVE`). A missing plugin → `E_PLUGIN_MISSING`.
 
-## Timing behaviour (from spikes)
+## Timing behaviour: push (catherd 1.1+, from `docs/spikes/catherd-1.2.md`)
 
-- A catherd `wait` is a **foreground** tool call. It blocked 178 s in the spike and was not backgrounded. The UI shows it as a running tool with `tool_progress` elapsed time (heartbeat every 30 s).
-- A follow-up sent with `session.send` during a `wait` queues until the tool returns. Use **Interrupt** to cut in.
+- `dispatch` returns at once and the orchestrator **ends its turn**. The SDK emits `result`, `turnActive` becomes false, and the session stays open and idle while roles run. The user can send follow-ups meanwhile.
+- When a role finishes, catherd's MCP server (a child of the SDK's Claude Code, which gives it `CLAUDE_CODE_MESSAGING_SOCKET`) writes the notice to the session's peer inbox. The session starts a turn by itself: `command_lifecycle started` → `system/init` (same session id) → assistant … → `result`. The notice text is not in the SDK stream.
+- The controller maps `command_lifecycle started` to an `inbound` event: `turnActive` becomes true (Interrupt works) and the transcript shows a "catherd reported back" divider. It drops a repeated `init` with a session id it already has, so each push does not add another init chip.
+- (1.0, historical) `wait` was a foreground tool call that blocked 178 s in Phase 1 spike (a).
 
 ## Protocol surface
 
@@ -61,10 +63,10 @@ Methods: `session.state`, `session.start {task, repo?}`, `session.resume {repo?}
 - **Repo:** `app.workspace` lists the workspace folders and the selected repo; `app.setRepo` changes it (stored in `workspaceState["cathouse.repo.v1"]`, broadcast on topic `app`). Before a chat starts, `app.addFolders` opens VS Code's native multi-folder picker and `app.removeFolder` removes the selected folder from the workspace without deleting it from disk. Workspace mutations are rejected during a starting/running session. `repoFor()` in `extension.ts` resolves requested → selected → first folder. Start and Resume pass the selected repo explicitly; the per-repo gateway follows the selection. One orchestrator session per window, on the repo it started in.
 - **Permission mode:** `session.start {permissionMode}` (default `default`; also `acceptEdits`, `plan`, `auto`) and `session.setMode` (→ `query.setPermissionMode`). catherd's own tools stay allowed in every mode (ADR 0002).
 - **Waiting prompts:** the controller calls `onPromptsChanged(count, latest)`. The extension shows the count as the Activity Bar badge (`SidebarProvider.setBadge`) and, if the CatHouse view isn't visible, a notification ("the orchestrator has a question / asks to use X") whose Open action reveals that same view.
-- **Cancel note:** `runs.cancelRole` calls `controller.noteRoleCancelled(run, name, status)`, which sends the live session a message (its `wait` will never return that record; ADR 0005).
+- **Cancel note:** `runs.cancelRole` cancels through the CLI, which leaves the record unread, so catherd still pushes it to the owning session. `controller.noteRoleCancelled(run, name, status)` then tells the live session that the user cancelled it from the dashboard (ADR 0005).
 - **Continue:** a run's detail page has "Continue in orchestrator" (→ `session.resume`, then the Orchestrator tab).
 - **Compaction:** `system/compact_boundary` → `{kind: "compacted"}` → a warning line in the transcript (the skill is known to decay after compaction; `docs/research/catherd-known-issues.md`).
 
 ## Tests
 
-`events.test.ts` (init, run_started, failed run_start, heartbeat, task/result) and `controller.test.ts` (start prompt + link, single session, missing plugin, resume without task, fresh fallback, prompt round-trip + kind mismatch, deny on stop, follow-ups, prompt count + permission mode). E2E `pages.e2e.ts` covers `app.workspace` / `app.setRepo`.
+`events.test.ts` (init, run_started, failed run_start, heartbeat, `command_lifecycle` → `inbound`, task/result) and `controller.test.ts` (start prompt + link, single session, missing plugin, resume without task and with `peek`, fresh fallback, prompt round-trip + kind mismatch, deny on stop, follow-ups, prompt count + permission mode, pushed turn: `turnActive` and a single init). E2E `pages.e2e.ts` covers `app.workspace` / `app.setRepo`.

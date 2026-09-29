@@ -1,5 +1,7 @@
 # catherd 1.0.0: profile schema
 
+> **Baseline: catherd 1.0.0.** CatHouse now pins **1.2.0**. Where 1.1/1.2 changed something CatHouse relies on, [`catherd-1.2-upgrade.md`](catherd-1.2-upgrade.md) wins over this doc.
+
 Citations are relative to the catherd repo at commit `b257da7`. Main files: `src/domain/profile.ts`, `src/domain/profile-rules.ts`, `src/services/profile-service.ts`.
 
 ## Documents, patches and resolution
