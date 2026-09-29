@@ -73,7 +73,7 @@ pnpm build
 | `pnpm watch:webview` / `pnpm watch:extension` | rebuild on change (run both, then reload the dev host window) |
 | `pnpm package` | build + platform VSIX for this machine → `dist/cathouse-<target>-<version>.vsix` (~96–105 MB: includes the Agent SDK's Claude binary; ADR 0008) |
 | `pnpm package:all` | VSIX for darwin-arm64, darwin-x64, linux-x64, linux-arm64 (other targets' binaries fetched with `npm pack`) |
-| `pnpm release:notes -- --tag vX.Y.Z` | print the GitHub Release body for that tag; fails if the manifest version or changelog section does not match |
+| `pnpm release:notes --tag vX.Y.Z` | print the GitHub Release body for that tag; fails if the manifest version or changelog section does not match |
 
 **Run in a dev host:** open the repo in VS Code (or Cursor), press F5 and pick **Run CatHouse** (`.vscode/launch.json`; its preLaunchTask runs `pnpm build`). The Activity Bar shows the CatHouse icon; selecting it opens the complete application directly, with Chat as the default tab after Setup is complete.
 

@@ -4,7 +4,7 @@ Last updated: 2026-09-29. Update this file at the end of every section.
 
 ## Current phase
 
-**Phase 5 (release prep): code-complete on macOS; external/owner gates remain.** Platform VSIX, extension README, the eight open parity items, accessibility and Light/Dark/High Contrast checks are done. A remote runtime was not available. Waiting on publisher/license/version decisions and native execution of non-arm64 artifacts.
+**Phase 5 (release prep): code-complete on macOS; external/owner gates remain.** Platform VSIX, extension README, the eight open parity items, accessibility and Light/Dark/High Contrast checks are done. A remote runtime was not available. GitHub release version `0.1.0` is selected; Marketplace publisher/license decisions and native execution of non-arm64 artifacts remain.
 
 ## Checklist
 
@@ -94,11 +94,11 @@ Prompt-placement follow-up: permission and question cards now stay in a fixed tr
 
 ## Exact next step (Phase 5)
 
-1. Owner chooses the publisher id, SPDX license, and whether to publish as `0.1.0`; update the manifest and generate the license file.
+1. Owner chooses the Marketplace publisher id and SPDX license; update the manifest and generate the license file. GitHub release version `0.1.0` is selected independently.
 2. On an available SSH host or Dev Container, install the linux-x64 VSIX on the remote extension host and run Setup plus one short task. Docker is installed on this Mac but its daemon was not running; no SSH/Dev Container target was available, so remote remains explicitly untested.
 3. Execute the darwin-x64 and Linux VSIX artifacts on native target machines. They are build-verified only.
 4. After these gates, set Phase 5 to done and start the owner's bug/improvement backlog.
-5. To publish downloadable VSIX files, cut a GitHub Release with `docs/release/github.md`: choose the version (the open `0.1.0` decision), move `docs/CHANGELOG.md` `## Unreleased` under `## [X.Y.Z] - YYYY-MM-DD`, tag `vX.Y.Z`, and push the tag. The workflow attaches the four platform VSIX files. No tag has been pushed yet, so the Releases page is still empty.
+5. Publish downloadable VSIX files with `docs/release/github.md`: the manifest and changelog are prepared for `0.1.0`; validate, commit, tag `v0.1.0`, and push the commit and tag. The workflow attaches the four platform VSIX files.
 6. catherd 1.2 follow-up: check the new Runs (session, parked questions, verifier), Profiles (stand-in note, Add (let catherd infer)) and "catherd reported back" transcript bits in the Extension Development Host, then pick from the 1.1/1.2 parity backlog in `docs/research/catherd-tui-parity.md`.
 
 ## Environment facts (planning machine, updated 2026-09-29)
@@ -141,4 +141,6 @@ Setup attention follow-up: whenever the dashboard status bar reports `setup need
 
 Profiles rung-disclosure follow-up: the tiny, unlabeled triangle in each role card is now a bordered 32 px control with the shared chevron icon and a visible `Rungs (n)` label. The role name and enable checkbox come first, and the control exposes state-specific “Show/Hide the model ladder” labels through both `aria-label` and the native tooltip. Verified with targeted Biome, webview typecheck and production build; the owner has not yet checked it visually in the Extension Development Host.
 
-GitHub download follow-up: platform VSIX files are published as GitHub Release assets, not committed under `dist/` (gitignored, and a Linux VSIX exceeds GitHub's 100 MB file limit). Pushing `vX.Y.Z` runs `.github/workflows/release.yml`, which checks the tag against `packages/extension/package.json` and `docs/CHANGELOG.md` (`scripts/release-notes.mjs`), builds all four targets, uploads `SHA256SUMS`, and writes VS Code and Cursor install steps into the release body. The root README and the extension README document the same install path. The manifest version is still `0.0.1` and no tag has been pushed, so nothing is downloadable until the owner cuts the first release. Report: `docs/release/github.md`.
+GitHub download follow-up: platform VSIX files are published as GitHub Release assets, not committed under `dist/` (gitignored, and a Linux VSIX exceeds GitHub's 100 MB file limit). Pushing `vX.Y.Z` runs `.github/workflows/release.yml`, which checks the tag against `packages/extension/package.json` and `docs/CHANGELOG.md` (`scripts/release-notes.mjs`), builds all four targets, uploads `SHA256SUMS`, and writes VS Code and Cursor install steps into the release body. The root README and the extension README document the same install path. The manifest and changelog are prepared for `0.1.0`; the tag is the remaining GitHub-publication step. Report: `docs/release/github.md`.
+
+GitHub `0.1.0` release preparation: manifest and changelog were set to `0.1.0`; the incorrect documented `pnpm release:notes -- --tag ...` invocation was corrected to `pnpm release:notes --tag ...`. Verification passed: release-notes tests 4/4, typecheck, unit tests 95 passed (7 opt-in/live skipped), production build, and local darwin-arm64 VSIX packaging (95.94 MB). The release commit/tag and four-platform GitHub Actions run remain.

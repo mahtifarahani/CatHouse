@@ -1,6 +1,6 @@
 # GitHub Release downloads
 
-Status: workflow and install docs added on 2026-09-29. No version tag has been pushed, so [the Releases page](https://github.com/mahtifarahani/CatHouse/releases) is still empty. Publisher `cathouse`, license `UNLICENSED`, and manifest version `0.0.1` are unchanged.
+Status: first public version selected as `0.1.0` on 2026-09-29. The release commit and tag are the next step. Marketplace publisher `cathouse` and license `UNLICENSED` remain placeholders and do not block GitHub Release downloads.
 
 ## What this publishes
 
@@ -21,7 +21,7 @@ One VSIX per platform (ADR 0008), attached to a GitHub Release:
 
 Semantic versioning. Three places must name the same version:
 
-1. `packages/extension/package.json` field `version` (currently `0.0.1`, `packages/extension/package.json:5`). The packager puts this number in the filename (`packages/extension/scripts/package.mjs:101`).
+1. `packages/extension/package.json` field `version` (currently `0.1.0`, `packages/extension/package.json:5`). The packager puts this number in the filename (`packages/extension/scripts/package.mjs:101`).
 2. A changelog heading `## [X.Y.Z] - YYYY-MM-DD` in `docs/CHANGELOG.md`. Notes stay under `## Unreleased` until the release commit. The extractor accepts only an exact heading (`scripts/release-notes.mjs:12`, `scripts/release-notes.mjs:28-46`), so `## [0.1.0-rc.1]` is not treated as `0.1.0`.
 3. An annotated or lightweight Git tag `vX.Y.Z`. `v0.1.0-rc.1` is valid. The workflow treats any tag containing `-` as a GitHub pre-release (`.github/workflows/release.yml:59-61`).
 
@@ -62,7 +62,7 @@ Pick the asset with `uname -m`: `arm64` is Apple Silicon (`darwin-arm64`); `x86_
 From a clean `main` commit that already contains the version bump and the changelog section:
 
 ```bash
-pnpm release:notes -- --tag vX.Y.Z
+pnpm release:notes --tag vX.Y.Z
 git tag vX.Y.Z
 git push origin vX.Y.Z
 ```
@@ -84,20 +84,20 @@ Do not move an existing tag. GitHub will not rebuild a release from a retargeted
 
 ```bash
 pnpm exec vitest run scripts/release-notes.test.mjs
-node scripts/release-notes.mjs --tag v0.0.1 ; test $? -ne 0
+node scripts/release-notes.mjs --tag v0.1.0
 ```
 
-The vitest file checks tag parsing, exact changelog sections, a manifest mismatch, and that the body names all four assets plus both editors. `v0.0.1` must fail today: the manifest is `0.0.1`, but `docs/CHANGELOG.md` has no `## [0.0.1]` section. That is the intended guard.
+The vitest file checks tag parsing, exact changelog sections, a manifest mismatch, and that the body names all four assets plus both editors. `v0.1.0` must pass before the release tag is pushed.
 
-The workflow itself has not run. No tag has been pushed from this change.
+Release preparation for `0.1.0` passed the release-notes tests (4), full unit suite (95 passed, 7 opt-in/live skipped), typecheck, production build, and local darwin-arm64 packaging. The local artifact is `dist/cathouse-darwin-arm64-0.1.0.vsix` (95.94 MB). The tag-triggered four-platform workflow is the next verification.
 
 ## Remaining work
 
-1. Owner chooses the first public version (the open choice is `0.1.0`), the publisher id, and an SPDX license.
-2. Move `## Unreleased` to `## [X.Y.Z] - YYYY-MM-DD`, set the manifest version, commit, tag, and push.
-3. Confirm the Release page lists four VSIX files and `SHA256SUMS`, and install one VSIX in VS Code and one in Cursor.
+1. Commit the `0.1.0` manifest and changelog, tag `v0.1.0`, and push the commit and tag.
+2. Confirm the Release page lists four VSIX files and `SHA256SUMS`, and install one VSIX in VS Code and one in Cursor.
+3. Choose the Marketplace publisher id and an SPDX license before Marketplace publishing.
 4. Remote and native execution of the non-arm64 artifacts stay open (`docs/release/phase5.md`).
 
 ## Next step
 
-Choose the version and push the first tag, using the commands in [Cut a release](#cut-a-release).
+Validate the release notes, then commit and push the first tag using the commands in [Cut a release](#cut-a-release).

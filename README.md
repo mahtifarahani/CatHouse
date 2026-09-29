@@ -152,11 +152,11 @@ Press `F5` in VS Code and choose **Run CatHouse** to launch an Extension Develop
 
 The feature set is code-complete on macOS and includes the Setup flow, dashboards, in-editor run control, session recovery, accessibility work, and per-platform VSIX packaging.
 
-GitHub Releases are the download channel. The workflow that builds and attaches the VSIX files is in the repository; a release appears when a version tag is pushed. The manifest version is still `0.0.1`, so no public tag has been cut.
+GitHub Releases are the download channel. The workflow that builds and attaches the VSIX files is in the repository; the first public release is `0.1.0`.
 
 Before Marketplace publishing, the project still needs:
 
-- the final publisher ID, SPDX license, and the version number for the first tag;
+- the final publisher ID and SPDX license;
 - one end-to-end run on a remote Linux extension host;
 - native execution checks for the macOS x64 and Linux artifacts.
 
@@ -165,4 +165,3 @@ The exact current checkpoint and next steps live in [docs/STATUS.md](docs/STATUS
 ## Relationship to catherd
 
 CatHouse is an independent VS Code interface built around the public contracts of [47vigen/catherd](https://github.com/47vigen/catherd). If you prefer the terminal, need the canonical CLI reference, or want to understand how the orchestrator works, start with the [catherd README](https://github.com/47vigen/catherd#readme).
-

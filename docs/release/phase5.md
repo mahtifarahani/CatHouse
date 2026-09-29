@@ -40,7 +40,7 @@ Results: 68 unit tests passed (7 opt-in/live tests skipped); default e2e run 2 p
 
 ## Remaining release gates
 
-1. Owner selects the publisher id, SPDX license, and whether the first public version is `0.1.0`; current manifest placeholders remain `cathouse`, `UNLICENSED`, and `0.0.1`.
+1. Owner selects the Marketplace publisher id and SPDX license; current manifest placeholders remain `cathouse` and `UNLICENSED`. The first GitHub release version was selected as `0.1.0`.
 2. Run the linux-x64 VSIX through Setup and a short catherd task on SSH or Dev Containers. No remote runtime was available on this machine, so this is explicitly **untested**, not silently passed.
 3. `darwin-x64` and Linux artifacts are build-verified but have not been executed on native target machines.
 

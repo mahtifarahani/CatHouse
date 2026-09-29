@@ -4,6 +4,8 @@ GitHub Release notes are the version sections below. Keep unfinished work under 
 
 ## Unreleased
 
+## [0.1.0] - 2026-09-29
+
 - Improved the Profiles role-card disclosure from a tiny triangle into a 32 px bordered `Rungs (n)` button with a standard chevron, clear Show/Hide model-ladder labels, and a tooltip.
 - **catherd 1.2.0.** CatHouse now pins `catherd-cli@1.2.0` and plugin `catherd@1.2.0`; Setup offers the upgrade on a 1.0 machine. Since catherd 1.1, roles report back by push instead of a blocking `wait`: the chat goes idle after a dispatch, and a "catherd reported back" divider marks each turn catherd starts (Interrupt works during it). The dashboard no longer marks role records as read. Role replies are read from the reply file, and Cancel role uses `catherd runs cancel`, so catherd still tells the orchestrator. Setup accepts doctor's new `info` rows (without that, readiness failed on 1.2). Runs show the Claude session that started each run, plus parked owner questions and the verifier's latest step. Profiles show catherd's stand-in notes and let you add an unscored rung without a treat-like (catherd 1.2 infers it). Resume asks the orchestrator to `peek`. Fixtures were re-recorded against 1.2.0.
 - Release: a version tag publishes the four platform VSIX files on GitHub Releases, with VS Code and Cursor install steps and SHA256 checksums. The release notes are this changelog's matching version section.
