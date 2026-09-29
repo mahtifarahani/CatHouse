@@ -10,7 +10,7 @@ import {
   profilePatch,
   ROLES,
 } from "@cathouse/protocol";
-import { Badge, Button, Card, Collapsible, cn, ErrorText, inputClass } from "@cathouse/ui";
+import { Badge, Button, Card, Collapsible, cn, ErrorText, Icon, inputClass } from "@cathouse/ui";
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { request, viewState } from "../lib/rpc";
 import { t } from "../lib/strings";
@@ -796,20 +796,6 @@ function RolesEditor({
               className={cn("@container flex flex-col gap-1.5", !cfg.enabled && "opacity-70")}
             >
               <div className="flex flex-wrap items-center gap-2">
-                <Button
-                  variant="ghost"
-                  className="px-1 py-0"
-                  aria-expanded={roleOpen}
-                  aria-label={t("profiles.toggleRungs", { role })}
-                  onClick={() => sections.toggle(`role:${role}`)}
-                >
-                  <span
-                    aria-hidden="true"
-                    className={cn("inline-block transition-transform", roleOpen && "rotate-90")}
-                  >
-                    ▸
-                  </span>
-                </Button>
                 <label className="flex items-center gap-1 font-medium">
                   <input
                     type="checkbox"
@@ -822,9 +808,22 @@ function RolesEditor({
                   />
                   {role}
                 </label>
-                <span className="text-xs text-muted-foreground">
-                  {t("profiles.summary.rungs", { n: cfg.rungs.length })}
-                </span>
+                <Button
+                  variant="ghost"
+                  className="min-h-8 border border-border bg-secondary/35 px-2 py-1 text-xs"
+                  aria-expanded={roleOpen}
+                  aria-label={t(roleOpen ? "profiles.collapseRungs" : "profiles.expandRungs", {
+                    role,
+                  })}
+                  title={t(roleOpen ? "profiles.collapseRungs" : "profiles.expandRungs", { role })}
+                  onClick={() => sections.toggle(`role:${role}`)}
+                >
+                  <Icon
+                    name="chevron"
+                    className={cn("size-4 transition-transform", roleOpen && "rotate-90")}
+                  />
+                  {t("profiles.rungs", { n: cfg.rungs.length })}
+                </Button>
                 {enforcement[role] && (
                   <Badge
                     className="ms-auto"
