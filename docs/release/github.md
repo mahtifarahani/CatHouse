@@ -1,6 +1,6 @@
 # GitHub Release downloads
 
-Status: first public version selected as `0.1.0` on 2026-09-29. The release commit and tag are the next step. Marketplace publisher `cathouse` and license `UNLICENSED` remain placeholders and do not block GitHub Release downloads.
+Status: [`v0.1.0`](https://github.com/mahtifarahani/CatHouse/releases/tag/v0.1.0) published successfully on 2026-09-29. The Release contains all four platform VSIX files and `SHA256SUMS`. Marketplace publisher `cathouse` and license `UNLICENSED` remain placeholders and do not block GitHub Release downloads.
 
 ## What this publishes
 
@@ -89,15 +89,14 @@ node scripts/release-notes.mjs --tag v0.1.0
 
 The vitest file checks tag parsing, exact changelog sections, a manifest mismatch, and that the body names all four assets plus both editors. `v0.1.0` must pass before the release tag is pushed.
 
-Release preparation for `0.1.0` passed the release-notes tests (4), full unit suite (95 passed, 7 opt-in/live skipped), typecheck, production build, and local darwin-arm64 packaging. The local artifact is `dist/cathouse-darwin-arm64-0.1.0.vsix` (95.94 MB). The tag-triggered four-platform workflow is the next verification.
+Release preparation for `0.1.0` passed the release-notes tests (4), full unit suite (95 passed, 7 opt-in/live skipped), typecheck, production build, and local darwin-arm64 packaging. The local artifact is `dist/cathouse-darwin-arm64-0.1.0.vsix` (95.94 MB). GitHub Actions run `36545374544` completed successfully: tag/changelog validation, dependency install, four-platform packaging, checksums, and Release publication all passed. The GitHub API confirmed a non-draft, non-prerelease Release with the four expected VSIX assets and `SHA256SUMS`, all in `uploaded` state.
 
 ## Remaining work
 
-1. Commit the `0.1.0` manifest and changelog, tag `v0.1.0`, and push the commit and tag.
-2. Confirm the Release page lists four VSIX files and `SHA256SUMS`, and install one VSIX in VS Code and one in Cursor.
-3. Choose the Marketplace publisher id and an SPDX license before Marketplace publishing.
-4. Remote and native execution of the non-arm64 artifacts stay open (`docs/release/phase5.md`).
+1. Install the released darwin-arm64 VSIX in VS Code and Cursor as a download-path smoke test.
+2. Choose the Marketplace publisher id and an SPDX license before Marketplace publishing.
+3. Remote and native execution of the non-arm64 artifacts stay open (`docs/release/phase5.md`).
 
 ## Next step
 
-Validate the release notes, then commit and push the first tag using the commands in [Cut a release](#cut-a-release).
+Smoke-test the downloaded darwin-arm64 asset in VS Code and Cursor, then continue the independent Marketplace identity work.

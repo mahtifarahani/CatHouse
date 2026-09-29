@@ -44,4 +44,4 @@ Results: 68 unit tests passed (7 opt-in/live tests skipped); default e2e run 2 p
 2. Run the linux-x64 VSIX through Setup and a short catherd task on SSH or Dev Containers. No remote runtime was available on this machine, so this is explicitly **untested**, not silently passed.
 3. `darwin-x64` and Linux artifacts are build-verified but have not been executed on native target machines.
 
-GitHub Release downloads were added after this checkpoint (`docs/release/github.md`, 2026-09-29). That path publishes the four VSIX files from a version tag. It does not close the publisher, license, remote, or native-execution gates above.
+GitHub Release downloads were added after this checkpoint (`docs/release/github.md`, 2026-09-29). Version `0.1.0` is published with four VSIX files and `SHA256SUMS`. This does not close the Marketplace publisher, license, remote, or native-execution gates above.

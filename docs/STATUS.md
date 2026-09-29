@@ -4,7 +4,7 @@ Last updated: 2026-09-29. Update this file at the end of every section.
 
 ## Current phase
 
-**Phase 5 (release prep): code-complete on macOS; external/owner gates remain.** Platform VSIX, extension README, the eight open parity items, accessibility and Light/Dark/High Contrast checks are done. A remote runtime was not available. GitHub release version `0.1.0` is selected; Marketplace publisher/license decisions and native execution of non-arm64 artifacts remain.
+**Phase 5 (release prep): GitHub `v0.1.0` published; Marketplace and native gates remain.** The public Release contains four platform VSIX files plus `SHA256SUMS`. A remote runtime was not available. Marketplace publisher/license decisions, a download-path smoke test, and native execution of non-arm64 artifacts remain.
 
 ## Checklist
 
@@ -98,7 +98,7 @@ Prompt-placement follow-up: permission and question cards now stay in a fixed tr
 2. On an available SSH host or Dev Container, install the linux-x64 VSIX on the remote extension host and run Setup plus one short task. Docker is installed on this Mac but its daemon was not running; no SSH/Dev Container target was available, so remote remains explicitly untested.
 3. Execute the darwin-x64 and Linux VSIX artifacts on native target machines. They are build-verified only.
 4. After these gates, set Phase 5 to done and start the owner's bug/improvement backlog.
-5. Publish downloadable VSIX files with `docs/release/github.md`: the manifest and changelog are prepared for `0.1.0`; validate, commit, tag `v0.1.0`, and push the commit and tag. The workflow attaches the four platform VSIX files.
+5. GitHub Release `v0.1.0` is published with the four platform VSIX files and `SHA256SUMS`. Smoke-test the downloaded darwin-arm64 asset in VS Code and Cursor; future releases follow `docs/release/github.md`.
 6. catherd 1.2 follow-up: check the new Runs (session, parked questions, verifier), Profiles (stand-in note, Add (let catherd infer)) and "catherd reported back" transcript bits in the Extension Development Host, then pick from the 1.1/1.2 parity backlog in `docs/research/catherd-tui-parity.md`.
 
 ## Environment facts (planning machine, updated 2026-09-29)
@@ -143,4 +143,6 @@ Profiles rung-disclosure follow-up: the tiny, unlabeled triangle in each role ca
 
 GitHub download follow-up: platform VSIX files are published as GitHub Release assets, not committed under `dist/` (gitignored, and a Linux VSIX exceeds GitHub's 100 MB file limit). Pushing `vX.Y.Z` runs `.github/workflows/release.yml`, which checks the tag against `packages/extension/package.json` and `docs/CHANGELOG.md` (`scripts/release-notes.mjs`), builds all four targets, uploads `SHA256SUMS`, and writes VS Code and Cursor install steps into the release body. The root README and the extension README document the same install path. The manifest and changelog are prepared for `0.1.0`; the tag is the remaining GitHub-publication step. Report: `docs/release/github.md`.
 
-GitHub `0.1.0` release preparation: manifest and changelog were set to `0.1.0`; the incorrect documented `pnpm release:notes -- --tag ...` invocation was corrected to `pnpm release:notes --tag ...`. Verification passed: release-notes tests 4/4, typecheck, unit tests 95 passed (7 opt-in/live skipped), production build, and local darwin-arm64 VSIX packaging (95.94 MB). The release commit/tag and four-platform GitHub Actions run remain.
+GitHub `0.1.0` release preparation: manifest and changelog were set to `0.1.0`; the incorrect documented `pnpm release:notes -- --tag ...` invocation was corrected to `pnpm release:notes --tag ...`. Verification passed: release-notes tests 4/4, typecheck, unit tests 95 passed (7 opt-in/live skipped), production build, and local darwin-arm64 VSIX packaging (95.94 MB).
+
+GitHub `v0.1.0` publication: commit `f5c8615` and annotated tag `v0.1.0` were pushed. GitHub Actions run `36545374544` completed successfully, including four-platform packaging, checksums, and Release creation. The API confirmed a public, non-draft, non-prerelease Release containing `cathouse-darwin-arm64-0.1.0.vsix`, `cathouse-darwin-x64-0.1.0.vsix`, `cathouse-linux-arm64-0.1.0.vsix`, `cathouse-linux-x64-0.1.0.vsix`, and `SHA256SUMS`, all uploaded successfully. The released download path has not yet been installed back into VS Code or Cursor.
