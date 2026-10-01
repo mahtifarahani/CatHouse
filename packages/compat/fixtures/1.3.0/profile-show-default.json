@@ -12,7 +12,8 @@
       "opencode-go": "subscription",
       "opencode": "metered",
       "cursor": "metered",
-      "grok": "metered"
+      "grok": "metered",
+      "antigravity": "metered"
     },
     "roles": {
       "architect": {
@@ -76,6 +77,9 @@
         "isolated": false
       },
       "grok": {
+        "isolated": false
+      },
+      "antigravity": {
         "isolated": false
       }
     },

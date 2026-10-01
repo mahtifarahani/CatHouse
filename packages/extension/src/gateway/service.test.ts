@@ -10,7 +10,7 @@ import { CatherdGateway } from "./service";
 const fixture = (n: string) =>
   JSON.parse(
     readFileSync(
-      fileURLToPath(new URL(`../../../compat/fixtures/1.2.0/${n}`, import.meta.url)),
+      fileURLToPath(new URL(`../../../compat/fixtures/1.3.0/${n}`, import.meta.url)),
       "utf8",
     ),
   );
@@ -245,7 +245,7 @@ describe("CatherdGateway runs (catherd 1.1+ push model)", () => {
     const g = gatewayWith(
       calls,
       {
-        status: { version: "1.2.0", runs: [summary], warnings: [] },
+        status: { version: "1.3.0", runs: [summary], warnings: [] },
         read_run_file: "STATUS: done\nall 5 tests pass",
       },
       [],
@@ -283,7 +283,7 @@ describe("CatherdGateway runs (catherd 1.1+ push model)", () => {
   });
 
   it("lists runs with the session that started them", async () => {
-    const g = gatewayWith([], { status: { version: "1.2.0", runs: [summary], warnings: [] } }, [], {
+    const g = gatewayWith([], { status: { version: "1.3.0", runs: [summary], warnings: [] } }, [], {
       runsList: async () => ({
         runs: [
           {

@@ -26,7 +26,7 @@ With catherd alone, you install Bun, the catherd CLI, the Claude plugin and each
 
 The views in detail:
 
-- **Setup** installs and checks everything catherd needs: Bun, catherd 1.2.0, the catherd Claude plugin, your Claude login, and your worker backends. Nothing is installed until you click.
+- **Setup** installs and checks everything catherd needs: Bun, catherd 1.3.0, the catherd Claude plugin, your Claude login, and your worker backends. Nothing is installed until you click.
 - **Chat** runs `/catherd` on a task directly from the CatHouse Activity Bar view. Questions and permission requests appear as cards, and you get a notification when the orchestrator is waiting for you. A run continues after a window reload.
 - **Runs** shows live roles, budget, climbs, routes, landed milestones, each role's reply and debug output, and `state.md`. You can cancel a live role.
 - **Profiles** edits catherd profiles: rungs per role, access, failover, budget, isolation and more. Edits are staged with undo/redo, and you see a diff before saving.

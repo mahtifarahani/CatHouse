@@ -1,5 +1,5 @@
 {
-  "total": 35,
+  "total": 57,
   "models": [
     {
       "id": "claude-fable-5-1",
@@ -33,7 +33,7 @@
         "output": 50
       },
       "speed": {
-        "openrouter.uptime_last_30m": 99.76841244033756
+        "openrouter.uptime_last_30m": 99.87962856815315
       },
       "rungs": [
         {
@@ -113,12 +113,12 @@
               "date": "2026-09-22"
             },
             "honesty": {
-              "value": 95.1,
+              "value": 98.5,
               "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-sol#medium"
+              "from": "gpt-6-astra#max"
             },
             "agentic": {
               "value": 0.1384,
@@ -170,12 +170,12 @@
               "date": "2026-09-22"
             },
             "honesty": {
-              "value": 95.1,
+              "value": 98.5,
               "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-sol#high"
+              "from": "gpt-6-astra#max"
             },
             "agentic": {
               "value": 0.1384,
@@ -212,12 +212,12 @@
           "enabled": true,
           "scores": {
             "repo_code": {
-              "value": 74.2,
+              "value": 74,
               "benchmark": "DeepSWE 1.1",
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "claude-opus-5-5#high"
+              "from": "gpt-6-astra#max"
             },
             "terminal": {
               "value": 55.8,
@@ -291,25 +291,25 @@
               "from": "gpt-6-astra#max"
             },
             "agentic": {
-              "value": 0.1406,
-              "benchmark": "Arena agent, net improvement 2026-09-28",
+              "value": 0.1455,
+              "benchmark": "Arena agent, net improvement 2026-09-30",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-09-28"
+              "date": "2026-09-30"
             },
             "steer": {
-              "value": 0.084,
-              "benchmark": "Arena agent steerability 2026-09-28",
+              "value": 0.0895,
+              "benchmark": "Arena agent steerability 2026-09-30",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-09-28"
+              "date": "2026-09-30"
             },
             "frontend": {
-              "value": 1751.4868,
-              "benchmark": "Arena WebDev rating 2026-09-25",
+              "value": 1750.6667,
+              "benchmark": "Arena WebDev rating 2026-09-30",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-09-25"
+              "date": "2026-09-30"
             }
           },
           "treatLike": null,
@@ -354,7 +354,7 @@
         "output": 50
       },
       "speed": {
-        "openrouter.uptime_last_30m": 99.76841244033756
+        "openrouter.uptime_last_30m": 99.87962856815315
       },
       "rungs": [
         {
@@ -434,12 +434,12 @@
               "date": "2026-09-22"
             },
             "honesty": {
-              "value": 95.1,
+              "value": 98.5,
               "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-sol#medium"
+              "from": "gpt-6-astra#max"
             },
             "agentic": {
               "value": 0.1384,
@@ -491,12 +491,12 @@
               "date": "2026-09-22"
             },
             "honesty": {
-              "value": 95.1,
+              "value": 98.5,
               "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-sol#high"
+              "from": "gpt-6-astra#max"
             },
             "agentic": {
               "value": 0.1384,
@@ -533,12 +533,12 @@
           "enabled": true,
           "scores": {
             "repo_code": {
-              "value": 74.2,
+              "value": 74,
               "benchmark": "DeepSWE 1.1",
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "claude-opus-5-5#high"
+              "from": "gpt-6-astra#max"
             },
             "terminal": {
               "value": 55.8,
@@ -612,25 +612,25 @@
               "from": "gpt-6-astra#max"
             },
             "agentic": {
-              "value": 0.1406,
-              "benchmark": "Arena agent, net improvement 2026-09-28",
+              "value": 0.1455,
+              "benchmark": "Arena agent, net improvement 2026-09-30",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-09-28"
+              "date": "2026-09-30"
             },
             "steer": {
-              "value": 0.084,
-              "benchmark": "Arena agent steerability 2026-09-28",
+              "value": 0.0895,
+              "benchmark": "Arena agent steerability 2026-09-30",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-09-28"
+              "date": "2026-09-30"
             },
             "frontend": {
-              "value": 1751.4868,
-              "benchmark": "Arena WebDev rating 2026-09-25",
+              "value": 1750.6667,
+              "benchmark": "Arena WebDev rating 2026-09-30",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-09-25"
+              "date": "2026-09-30"
             }
           },
           "treatLike": null,
@@ -675,7 +675,7 @@
         "output": 50
       },
       "speed": {
-        "openrouter.uptime_last_30m": 99.76841244033756
+        "openrouter.uptime_last_30m": 99.87962856815315
       },
       "rungs": [
         {
@@ -755,12 +755,12 @@
               "date": "2026-09-22"
             },
             "honesty": {
-              "value": 95.1,
+              "value": 98.5,
               "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-sol#medium"
+              "from": "gpt-6-astra#max"
             },
             "agentic": {
               "value": 0.1384,
@@ -812,12 +812,12 @@
               "date": "2026-09-22"
             },
             "honesty": {
-              "value": 95.1,
+              "value": 98.5,
               "benchmark": "OpenAI Broken Search Tool, 100 minus the failure rate GPT-6 system card appendix 11.6.4.2",
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-sol#high"
+              "from": "gpt-6-astra#max"
             },
             "agentic": {
               "value": 0.1384,
@@ -854,12 +854,12 @@
           "enabled": true,
           "scores": {
             "repo_code": {
-              "value": 74.2,
+              "value": 74,
               "benchmark": "DeepSWE 1.1",
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "claude-opus-5-5#high"
+              "from": "gpt-6-astra#max"
             },
             "terminal": {
               "value": 55.8,
@@ -933,25 +933,25 @@
               "from": "gpt-6-astra#max"
             },
             "agentic": {
-              "value": 0.1406,
-              "benchmark": "Arena agent, net improvement 2026-09-28",
+              "value": 0.1455,
+              "benchmark": "Arena agent, net improvement 2026-09-30",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-09-28"
+              "date": "2026-09-30"
             },
             "steer": {
-              "value": 0.084,
-              "benchmark": "Arena agent steerability 2026-09-28",
+              "value": 0.0895,
+              "benchmark": "Arena agent steerability 2026-09-30",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-09-28"
+              "date": "2026-09-30"
             },
             "frontend": {
-              "value": 1751.4868,
-              "benchmark": "Arena WebDev rating 2026-09-25",
+              "value": 1750.6667,
+              "benchmark": "Arena WebDev rating 2026-09-30",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-09-25"
+              "date": "2026-09-30"
             }
           },
           "treatLike": null,
@@ -996,7 +996,7 @@
         "output": 5
       },
       "speed": {
-        "openrouter.uptime_last_30m": 99.90727576188415
+        "openrouter.uptime_last_30m": 99.91122118399707
       },
       "rungs": [
         {
@@ -1009,7 +1009,7 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "claude-sonnet-5#high"
+              "from": "claude-sonnet-5#low"
             },
             "terminal": {
               "value": 37.3,
@@ -1025,22 +1025,22 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-5.6-luna#high"
+              "from": "gpt-5.6-luna#xhigh"
             },
             "agentic": {
-              "value": 0.048,
-              "benchmark": "Arena agent, net improvement 2026-09-28",
+              "value": 0.0482,
+              "benchmark": "Arena agent, net improvement 2026-09-27",
               "confidence": "inferred",
               "source": "arena",
-              "date": "2026-09-28",
-              "from": "claude-sonnet-5#high"
+              "date": "2026-09-27",
+              "from": "claude-sonnet-5#low"
             },
             "frontend": {
-              "value": 1337.5807,
-              "benchmark": "WebDev Arena (Epoch AI) 2026-09-29",
+              "value": 1337.8242,
+              "benchmark": "WebDev Arena (Epoch AI) 2026-10-01",
               "confidence": "calibrated",
               "source": "epoch",
-              "date": "2026-09-29"
+              "date": "2026-10-01"
             }
           },
           "treatLike": null,
@@ -1085,7 +1085,7 @@
         "output": 5
       },
       "speed": {
-        "openrouter.uptime_last_30m": 99.90727576188415
+        "openrouter.uptime_last_30m": 99.91122118399707
       },
       "rungs": [
         {
@@ -1098,7 +1098,7 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "claude-sonnet-5#high"
+              "from": "claude-sonnet-5#low"
             },
             "terminal": {
               "value": 37.3,
@@ -1114,22 +1114,22 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-5.6-luna#high"
+              "from": "gpt-5.6-luna#xhigh"
             },
             "agentic": {
-              "value": 0.048,
-              "benchmark": "Arena agent, net improvement 2026-09-28",
+              "value": 0.0482,
+              "benchmark": "Arena agent, net improvement 2026-09-27",
               "confidence": "inferred",
               "source": "arena",
-              "date": "2026-09-28",
-              "from": "claude-sonnet-5#high"
+              "date": "2026-09-27",
+              "from": "claude-sonnet-5#low"
             },
             "frontend": {
-              "value": 1337.5807,
-              "benchmark": "WebDev Arena (Epoch AI) 2026-09-29",
+              "value": 1337.8242,
+              "benchmark": "WebDev Arena (Epoch AI) 2026-10-01",
               "confidence": "calibrated",
               "source": "epoch",
-              "date": "2026-09-29"
+              "date": "2026-10-01"
             }
           },
           "treatLike": null,

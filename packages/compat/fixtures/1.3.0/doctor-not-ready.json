@@ -1,6 +1,6 @@
 {
   "ready": false,
-  "version": "1.2.0",
+  "version": "1.3.0",
   "checks": [
     {
       "id": "bun",
@@ -26,16 +26,18 @@
     {
       "id": "backend:codex",
       "label": "codex",
-      "state": "ok",
-      "word": "ready",
-      "detail": "0.158.0 · ChatGPT login · 7 models"
+      "state": "fail",
+      "word": "missing",
+      "detail": "codex is not on PATH",
+      "fix": "npm i -g @openai/codex"
     },
     {
       "id": "backend:claude-code",
       "label": "claude-code",
-      "state": "ok",
-      "word": "ready",
-      "detail": "2.1.283 · 4 models"
+      "state": "skip",
+      "word": "missing",
+      "detail": "claude is not on PATH (no profile uses it)",
+      "fix": "npm i -g @anthropic-ai/claude-code"
     },
     {
       "id": "backend:opencode",
@@ -44,6 +46,30 @@
       "word": "missing",
       "detail": "opencode is not on PATH (a failover stand-in uses it)",
       "fix": "curl -fsSL https://opencode.ai/v2/install | bash"
+    },
+    {
+      "id": "backend:cursor",
+      "label": "cursor",
+      "state": "skip",
+      "word": "missing",
+      "detail": "cursor-agent is not on PATH (no profile uses it)",
+      "fix": "curl https://cursor.com/install -fsS | bash"
+    },
+    {
+      "id": "backend:grok",
+      "label": "grok",
+      "state": "skip",
+      "word": "missing",
+      "detail": "grok is not on PATH (no profile uses it)",
+      "fix": "curl -fsSL https://x.ai/cli/install.sh | bash"
+    },
+    {
+      "id": "backend:antigravity",
+      "label": "antigravity",
+      "state": "skip",
+      "word": "missing",
+      "detail": "agy is not on PATH (no profile uses it)",
+      "fix": "curl -fsSL https://antigravity.google/cli/install.sh | bash (it installs ~/.local/bin/agy: put that dir on PATH), or brew install --cask antigravity-cli"
     },
     {
       "id": "jev",
@@ -64,9 +90,10 @@
     {
       "id": "plugin",
       "label": "Claude Code plugin",
-      "state": "ok",
-      "word": "ready",
-      "detail": "1.2.0"
+      "state": "fail",
+      "word": "missing",
+      "detail": "not installed in Claude Code",
+      "fix": "claude plugin marketplace add 47vigen/catherd && claude plugin install catherd@catherd"
     },
     {
       "id": "agents",
@@ -86,31 +113,23 @@
     {
       "id": "push",
       "label": "push to Claude Code",
-      "detail": "run catherd doctor from a Claude Code session to test push",
-      "state": "skip",
-      "word": "no session"
+      "detail": "sent; no transcript of this session was found to confirm it arrived",
+      "state": "warn",
+      "word": "not confirmed"
     },
     {
       "id": "locks",
       "label": "heavy-lock dir",
       "state": "ok",
       "word": "ready",
-      "detail": "/tmp/catherd-home/data/locks"
-    },
-    {
-      "id": "sandbox:codex",
-      "label": "codex sandbox",
-      "state": "ok",
-      "word": "ready",
-      "detail": "codex sandbox"
+      "detail": "/Users/dev/.local/share/catherd/locks"
     },
     {
       "id": "access:codex",
       "label": "codex worker access",
-      "state": "warn",
-      "word": "blocked",
-      "detail": "in codex sandbox, a worker cannot: docker version (failed to connect to the docker API at unix:///Users/dev/.orbstack/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /Users/dev/.orbstack/run/docker.sock: connect: no such file or directory)",
-      "fix": "docker version: the Codex sandbox cannot reach the Docker socket here: run the Docker checks in the verifier (full access), or give the role full access"
+      "state": "skip",
+      "word": "not installed",
+      "detail": "codex is not installed: no worker runs on it here"
     },
     {
       "id": "access:opencode",
@@ -132,6 +151,14 @@
       "state": "info",
       "word": "default",
       "detail": "the backend asks but cannot force: architect on claude (default), verifier on claude (default)"
+    },
+    {
+      "id": "ui-browser",
+      "label": "agent-browser",
+      "state": "warn",
+      "word": "missing",
+      "detail": "agent-browser is not on PATH, so ui-reviewer (default) cannot take screenshots",
+      "fix": "npm i -g agent-browser\nor turn the role off:\ncatherd profile set roles.ui-reviewer.enabled false --profile default"
     }
   ]
 }

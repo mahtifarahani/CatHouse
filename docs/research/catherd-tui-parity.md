@@ -1,6 +1,6 @@
 # catherd 1.0.0 TUI: feature-parity checklist for CatHouse
 
-> **Baseline: catherd 1.0.0.** CatHouse now pins **1.2.0**. Where 1.1/1.2 changed something CatHouse relies on, [`catherd-1.2-upgrade.md`](catherd-1.2-upgrade.md) wins over this doc.
+> **Baseline: catherd 1.0.0.** CatHouse now pins **1.3.0**. Where 1.1–1.3 changed something CatHouse relies on, [`catherd-1.2-upgrade.md`](catherd-1.2-upgrade.md) and [`catherd-1.3-upgrade.md`](catherd-1.3-upgrade.md) win over this doc.
 
 > Status 2026-09-28 (Phase 5): all public-surface parity items are implemented (`docs/architecture/webview.md` §Pages). Known differences from the TUI remain: live per-keystroke draft validation is not possible (public-surface gap 3; errors appear on Save); the ladder column shows the role's rungs in order, not catherd's computed `candidates()` (gap 6); agent-file changes appear after save, not in the preview (gap 4).
 

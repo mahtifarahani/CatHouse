@@ -209,7 +209,7 @@ const en = {
   "profiles.nowActive": "now active",
   "profiles.newSession": "Start a new orchestrator session to use: {agents}",
   "profiles.appliesWhen":
-    "Applies to: native Claude agents in new sessions; codex, claude-code and opencode from the next dispatch.",
+    "Applies to: native Claude agents in new sessions; codex, claude-code, opencode, cursor, grok and antigravity from the next dispatch.",
   "profiles.refused": "catherd refused the change; nothing was written:",
   "profiles.conflict":
     "The profile changed on disk since you opened it. Reload it and redo your edits.",

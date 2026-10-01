@@ -27,13 +27,13 @@ See `protocol.md` and `webview.md` for the details.
 ```
 VS Code window
 ├─ Extension host (Node, "workspace" kind — runs on the remote host in SSH/WSL/containers)
-│   ├─ SetupService ── spawns detectors/installers (bun, bunx catherd-cli@1.2.0, bundled claude)
+│   ├─ SetupService ── spawns detectors/installers (bun, bunx catherd-cli@1.3.0, bundled claude)
 │   ├─ CatherdGateway (per repo)
-│   │    ├─ MCP client ──stdio──► `bunx catherd-cli@1.2.0 mcp` (long-lived, cwd = repo)     [ADR 0006]
-│   │    ├─ CLI runner  ──spawn──► `bunx catherd-cli@1.2.0 <cmd> --json`
+│   │    ├─ MCP client ──stdio──► `bunx catherd-cli@1.3.0 mcp` (long-lived, cwd = repo)     [ADR 0006]
+│   │    ├─ CLI runner  ──spawn──► `bunx catherd-cli@1.3.0 <cmd> --json`
 │   │    └─ RunFilesReader ─read─► <data>/repos/<key>/runs/<id>/routes.jsonl              [ADR 0007]
 │   ├─ OrchestratorSession (per active run) ── Agent SDK query() ──► bundled Claude Code binary
-│   │        └─ loads plugin catherd@1.2.0 from installPath → its own `catherd mcp` (the orchestrator's)
+│   │        └─ loads plugin catherd@1.3.0 from installPath → its own `catherd mcp` (the orchestrator's)
 │   ├─ Panel host: one full WebviewView in the Activity Bar ── message router
 │   └─ State: workspaceState {runId ↔ sessionId, repo, createdAt}, UI prefs
 └─ Webview (React) ◄── postMessage protocol v1 (zod) ──► panel host

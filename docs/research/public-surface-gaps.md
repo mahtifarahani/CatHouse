@@ -1,6 +1,6 @@
 # catherd 1.0.0: public-surface gaps and CatHouse workarounds
 
-> **Baseline: catherd 1.0.0.** CatHouse now pins **1.2.0**. Where 1.1/1.2 changed something CatHouse relies on, [`catherd-1.2-upgrade.md`](catherd-1.2-upgrade.md) wins over this doc.
+> **Baseline: catherd 1.0.0.** CatHouse now pins **1.3.0**. Where 1.1–1.3 changed something CatHouse relies on, [`catherd-1.2-upgrade.md`](catherd-1.2-upgrade.md) and [`catherd-1.3-upgrade.md`](catherd-1.3-upgrade.md) win over this doc.
 
 catherd's public surface is the CLI (with `--json` on reads) and the 21 MCP tools. The services are internal (no `exports` in `package.json`, Bun-only). The TUI reaches past the public surface through its `Effects` seam (`src/entry/tui/effects.ts`). This table lists what CatHouse needs but cannot get publicly, with the workaround and the proposed upstream fix. Citations are relative to catherd at `b257da7`.
 

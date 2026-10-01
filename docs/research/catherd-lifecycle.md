@@ -1,6 +1,6 @@
 # catherd 1.0.0: run lifecycle
 
-> **Baseline: catherd 1.0.0.** CatHouse now pins **1.2.0**. Where 1.1/1.2 changed something CatHouse relies on, [`catherd-1.2-upgrade.md`](catherd-1.2-upgrade.md) wins over this doc.
+> **Baseline: catherd 1.0.0.** CatHouse now pins **1.3.0**. Where 1.1–1.3 changed something CatHouse relies on, [`catherd-1.2-upgrade.md`](catherd-1.2-upgrade.md) and [`catherd-1.3-upgrade.md`](catherd-1.3-upgrade.md) win over this doc.
 
 Citations are relative to the catherd repo at commit `b257da7`. This explains what happens behind the MCP tools, so CatHouse can display it correctly and avoid interfering.
 

@@ -1,6 +1,6 @@
 # STATUS
 
-Last updated: 2026-09-29. Update this file at the end of every section.
+Last updated: 2026-10-01. Update this file at the end of every section.
 
 ## Current phase
 
@@ -18,6 +18,18 @@ Last updated: 2026-09-29. Update this file at the end of every section.
 | 4 | Run control in UI (start, prompts, cancel, resume) | ✅ done | `docs/architecture/orchestrator.md` |
 | 5 | Release prep (remote, trust, a11y, themes, VSIX per platform) | 🚧 external gates | `docs/release/phase5.md`, `docs/runbook.md`, `docs/CHANGELOG.md` |
 | — | Upgrade to catherd 1.2.0 (push model, new fields, fixtures) | ✅ done (2026-09-29) | `docs/research/catherd-1.2-upgrade.md`, `docs/spikes/catherd-1.2.md`, ADR 0005 amendment |
+| — | Upgrade to catherd 1.3.0 (pin, fixtures; no contract change) | ✅ done (2026-10-01) | `docs/research/catherd-1.3-upgrade.md` |
+
+## catherd 1.3.0 upgrade (2026-10-01)
+
+catherd released 1.2.1 and 1.3.0 (npm `latest` = 1.3.0). CatHouse now pins **catherd-cli 1.3.0 / plugin 1.3.0** (tag `v1.3.0`, commit `f1422f8`; `packages/compat`, adapter label `v1_3`). Full delta with citations: `docs/research/catherd-1.3-upgrade.md`.
+
+- **No contract change.** The 26 MCP tools, `RunSummary`, `runs list --json` and the doctor row shape are identical to 1.2. Gateway schemas, the allowlist and the UI code are unchanged.
+- **New in catherd:** Cursor, Grok Build and Antigravity worker backends (off until a profile uses them). New doctor rows: `backend:` rows for each (`skip` when unused, shown as info), `quota:antigravity` (info), `ui-browser` (warn when `ui-reviewer` is on and `agent-browser` is missing), and a `budget.usd` warning on backends with no dollar cost. Also `catherd knowledge show|add|path`. All of this reaches Setup, Profiles and Models through catherd's own data.
+- **Code:** compat pin 1.2.0 → 1.3.0. Fixtures moved to `packages/compat/fixtures/1.3.0/`; MCP, doctor ready/not-ready and profile show were re-recorded. Test expectations were updated. The Profiles "Applies to" string now names the new backends.
+- **This machine** was upgraded with `bunx catherd-cli@1.3.0 init --no-input --plain` (global `catherd` 1.3.0) and `claude plugin marketplace update catherd && claude plugin update catherd@catherd` (plugin 1.3.0). doctor: **ready**. It warns about `ui-browser` (agent-browser not installed), Codex/opencode Docker access (the Docker daemon is not running) and the 1.0 profile's failover stand-in.
+- **Verified:** Biome, typecheck, 95 unit tests, production build, live contract 7/7 against 1.3.0, and e2e 5/5 in VS Code 1.139 (`CATHOUSE_EXPECT_READY=1 CATHOUSE_E2E_WORKSPACE=~/Projects/sc-weather`, a repo with a catherd run).
+- **Not done:** install/login buttons for `cursor-agent`/`grok`/`agy`, a Knowledge view, and the remaining 1.1/1.2 parity items (`docs/research/catherd-1.3-upgrade.md` §5).
 
 ## catherd 1.2.0 upgrade (2026-09-29)
 
@@ -62,7 +74,7 @@ Post-checkpoint UX correction: the status-only sidebar, Open Dashboard button an
 
 Profiles follow-up: fixed a clean-draft effect that repeatedly queued resets and made checkboxes/selects appear inert, plus the in-flight polling race that could leave New/Delete on the old profile. The unreliable browser `window.prompt` used by New Profile was replaced with a labelled, focus-trapped in-webview dialog with inline name validation and busy state. Role checkbox staging and the exact catherd CLI create command are covered by unit tests.
 
-Role semantics are now explicit in the UI: catherd (1.0.0 through 1.2.0) accepts only its eight built-in roles, so Profiles configures that fixed set and cannot create a custom role. New Chat is a conversation with the catherd orchestrator rather than a role persona; a user can request researcher/reviewer/etc. in the task or a follow-up, but catherd remains responsible for routing and dispatch.
+Role semantics are now explicit in the UI: catherd (1.0.0 through 1.3.0) accepts only its eight built-in roles, so Profiles configures that fixed set and cannot create a custom role. New Chat is a conversation with the catherd orchestrator rather than a role persona; a user can request researcher/reviewer/etc. in the task or a follow-up, but catherd remains responsible for routing and dispatch.
 
 New Chat readability follow-up: the idle orchestrator form is now a structured composer with a larger resizable task field, separated permission controls, a visible readiness callout and clearer heading hierarchy. Dense supporting text across the dashboard has a 13 px minimum and shared inputs have a 32 px minimum height; the scale still inherits the user's VS Code base font and all colours remain theme tokens.
 
@@ -99,11 +111,11 @@ Prompt-placement follow-up: permission and question cards now stay in a fixed tr
 3. Execute the darwin-x64 and Linux VSIX artifacts on native target machines. They are build-verified only.
 4. After these gates, set Phase 5 to done and start the owner's bug/improvement backlog.
 5. Smoke-test the VS Code Marketplace install in VS Code and the Open VSX install in Cursor. GitHub Release `v0.1.0` remains the manual/offline fallback with four platform VSIX files and `SHA256SUMS`; future releases follow `docs/release/github.md`.
-6. catherd 1.2 follow-up: check the new Runs (session, parked questions, verifier), Profiles (stand-in note, Add (let catherd infer)) and "catherd reported back" transcript bits in the Extension Development Host, then pick from the 1.1/1.2 parity backlog in `docs/research/catherd-tui-parity.md`.
+6. catherd 1.2/1.3 follow-up: check the new Runs (session, parked questions, verifier), Profiles (stand-in note, Add (let catherd infer)) and "catherd reported back" transcript bits in the Extension Development Host, then pick from the 1.1/1.2 parity backlog in `docs/research/catherd-tui-parity.md` and the 1.3 backlog in `docs/research/catherd-1.3-upgrade.md` §5. The next CatHouse release should ship the 1.3.0 pin (it is under `## Unreleased` in `docs/CHANGELOG.md`).
 
-## Environment facts (planning machine, updated 2026-09-29)
+## Environment facts (planning machine, updated 2026-10-01)
 
-macOS (Darwin 27), VS Code 1.139.1 and Cursor 3.21.18 installed, Node 22.13.1 via nvm, pnpm present, `claude` 2.1.283 on PATH, Bun 1.4.2 (installed 2026-09-28 into ~/.bun), catherd-cli 1.2.0 (global `catherd` in ~/.bun/bin plus the bunx cache), Codex 0.158.0, plugin catherd@catherd 1.2.0, opencode not installed, no Jev or Artificial Analysis key. npm latest: `@anthropic-ai/claude-agent-sdk` 0.3.283, `@anthropic-ai/claude-code` 2.1.283, `catherd-cli` 1.0.0, `@vscode/vsce` 4.0.0, `@vscode/test-electron` 3.1.0.
+macOS (Darwin 27), VS Code 1.139.1 and Cursor 3.21.18 installed, Node 22.13.1 via nvm, pnpm present, `claude` 2.1.283 on PATH, Bun 1.4.2 (installed 2026-09-28 into ~/.bun), catherd-cli 1.3.0 (global `catherd` in ~/.bun/bin plus the bunx cache), Codex 0.158.0, plugin catherd@catherd 1.3.0, agent-browser not installed, opencode not installed, no Jev or Artificial Analysis key. npm latest: `@anthropic-ai/claude-agent-sdk` 0.3.283, `@anthropic-ai/claude-code` 2.1.283, `catherd-cli` 1.3.0, `@vscode/vsce` 4.0.0, `@vscode/test-electron` 3.1.0.
 
 Profiles density follow-up: every Profiles setting group (Roles, Routing, Billing, Harness isolation, Budget, Failover, Timeouts & limits, Push notifications) is now a collapsible section that starts closed and shows a one-line summary in its header. Each role card's rung list collapses too, Expand all / Collapse all are available, open state persists in webview state, and filtering opens every match. Settings are stacked in one column instead of a two-column grid. Verified with lint, typecheck, 76 unit tests and build. The owner has not yet done the visual check in the Extension Development Host.
 

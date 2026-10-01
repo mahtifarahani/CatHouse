@@ -1,6 +1,6 @@
 {
   "ready": true,
-  "version": "1.2.0",
+  "version": "1.3.0",
   "checks": [
     {
       "id": "bun",
@@ -22,29 +22,52 @@
       "state": "warn",
       "word": "warning",
       "detail": "failover.codex:gpt-6-sol#high: downgrade: opencode:opencode-go/kimi-k3#max stands in for codex:gpt-6-sol#high, scoring below it on repo_code (and more)",
-      "fix": "catherd profile set --profile default failover.codex:gpt-6-sol#high claude-code:claude-opus-5-5#high"
+      "fix": "catherd profile set --profile default failover.codex:gpt-6-sol#high claude-code:claude-sonnet-5-5#high"
     },
     {
       "id": "backend:codex",
       "label": "codex",
       "state": "ok",
       "word": "ready",
-      "detail": "0.158.0 · ChatGPT login · 7 models"
+      "detail": "0.158.0 \u00b7 ChatGPT login \u00b7 7 models"
     },
     {
       "id": "backend:claude-code",
       "label": "claude-code",
       "state": "ok",
       "word": "ready",
-      "detail": "2.1.283 · 4 models"
+      "detail": "2.1.283 \u00b7 5 models"
     },
     {
       "id": "backend:opencode",
       "label": "opencode",
-      "state": "warn",
+      "state": "ok",
+      "word": "ready",
+      "detail": "2.0.18 \u00b7 8 models"
+    },
+    {
+      "id": "backend:cursor",
+      "label": "cursor",
+      "state": "skip",
+      "word": "too old",
+      "detail": "cursor-agent 2026.06.04 is older than 2026.09.28 (no profile uses it)",
+      "fix": "cursor-agent update"
+    },
+    {
+      "id": "backend:grok",
+      "label": "grok",
+      "state": "skip",
       "word": "missing",
-      "detail": "opencode is not on PATH (a failover stand-in uses it)",
-      "fix": "curl -fsSL https://opencode.ai/v2/install | bash"
+      "detail": "grok is not on PATH (no profile uses it)",
+      "fix": "curl -fsSL https://x.ai/cli/install.sh | bash"
+    },
+    {
+      "id": "backend:antigravity",
+      "label": "antigravity",
+      "state": "skip",
+      "word": "missing",
+      "detail": "agy is not on PATH (no profile uses it)",
+      "fix": "curl -fsSL https://antigravity.google/cli/install.sh | bash (it installs ~/.local/bin/agy: put that dir on PATH), or brew install --cask antigravity-cli"
     },
     {
       "id": "jev",
@@ -58,14 +81,14 @@
       "label": "sources",
       "state": "ok",
       "word": "fresh",
-      "detail": "models-dev 11 min, openrouter-models 11 min, openrouter-endpoints 11 min, litellm 11 min, arena 11 min, vectara 11 min, epoch 11 min; no Artificial Analysis key"
+      "detail": "models-dev 7 h, openrouter-models 7 h, openrouter-endpoints 7 h, litellm 7 h, arena 7 h, vectara 7 h, epoch 7 h; no Artificial Analysis key"
     },
     {
       "id": "plugin",
       "label": "Claude Code plugin",
       "state": "ok",
       "word": "ready",
-      "detail": "1.2.0"
+      "detail": "1.3.0"
     },
     {
       "id": "agents",
@@ -84,9 +107,9 @@
     {
       "id": "push",
       "label": "push to Claude Code",
-      "detail": "run catherd doctor from a Claude Code session to test push",
-      "state": "skip",
-      "word": "no session"
+      "detail": "a test message reached this session",
+      "state": "ok",
+      "word": "ready"
     },
     {
       "id": "locks",
@@ -113,9 +136,10 @@
     {
       "id": "access:opencode",
       "label": "opencode worker access",
-      "state": "skip",
-      "word": "not installed",
-      "detail": "opencode is not installed: no worker runs on it here"
+      "state": "warn",
+      "word": "blocked",
+      "detail": "in an unsandboxed shell (opencode has no sandbox), a worker cannot: docker version (failed to connect to the docker API at unix:///Users/dev/.orbstack/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /Users/dev/.orbstack/run/docker.sock: connect: no such file or directory)",
+      "fix": "docker version: start Docker: docker version fails"
     },
     {
       "id": "access:full",
@@ -130,6 +154,14 @@
       "state": "info",
       "word": "default",
       "detail": "the backend asks but cannot force: architect on claude (default), verifier on claude (default)"
+    },
+    {
+      "id": "ui-browser",
+      "label": "agent-browser",
+      "state": "warn",
+      "word": "missing",
+      "detail": "agent-browser is not on PATH, so ui-reviewer (default) cannot take screenshots",
+      "fix": "npm i -g agent-browser\nor turn the role off:\ncatherd profile set roles.ui-reviewer.enabled false --profile default"
     }
   ]
 }

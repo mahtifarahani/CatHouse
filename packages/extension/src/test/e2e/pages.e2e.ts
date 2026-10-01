@@ -41,7 +41,7 @@ suite("CatHouse pages (real catherd)", () => {
     };
     assert.strictEqual(ws.folders.length, 1);
     assert.strictEqual(ws.repo, ws.folders[0]?.path);
-    assert.strictEqual(ws.catherdVersion, "1.2.0");
+    assert.strictEqual(ws.catherdVersion, "1.3.0");
     const set = (await call("app.setRepo", { path: ws.repo })) as { repo: string };
     assert.strictEqual(set.repo, ws.repo);
   });

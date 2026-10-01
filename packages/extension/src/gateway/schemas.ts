@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-// Raw catherd 1.2.0 output shapes (docs/research/catherd-*-contract.md). Objects are loose so a
+// Raw catherd 1.3.0 output shapes (docs/research/catherd-*-contract.md). Objects are loose so a
 // newer catherd adding fields does not break parsing; only the fields CatHouse uses are checked.
 
 export const DoctorCheckSchema = z.looseObject({

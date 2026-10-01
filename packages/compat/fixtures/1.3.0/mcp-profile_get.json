@@ -60,7 +60,8 @@
       "opencode-go": "subscription",
       "opencode": "metered",
       "cursor": "metered",
-      "grok": "metered"
+      "grok": "metered",
+      "antigravity": "metered"
     },
     "jev": {
       "use": "off"
@@ -70,7 +71,8 @@
       "claude-code": false,
       "opencode": false,
       "cursor": false,
-      "grok": false
+      "grok": false,
+      "antigravity": false
     },
     "failover": {
       "codex:gpt-6-luna#high": "opencode:opencode-go/gpt-6-luna#high",

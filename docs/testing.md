@@ -2,7 +2,7 @@
 
 Status: unit, live-contract (opt-in) and e2e layers exist.
 
-- `CATHOUSE_CONTRACT=1 pnpm test` runs `packages/extension/src/gateway/contract.test.ts` against the real catherd on the machine; `CATHOUSE_RECORD=1` also refreshes `packages/compat/fixtures/1.2.0/`. `CATHOUSE_CONTRACT_RUN_REPO=<repo with a catherd run>` adds the real-run test (runs list, detail, reply). Run it from a shell without `CLAUDE_CODE_*` variables.
+- `CATHOUSE_CONTRACT=1 pnpm test` runs `packages/extension/src/gateway/contract.test.ts` against the real catherd on the machine; `CATHOUSE_RECORD=1` also refreshes `packages/compat/fixtures/1.3.0/`. `CATHOUSE_CONTRACT_RUN_REPO=<repo with a catherd run>` adds the real-run test (runs list, detail, reply). Run it from a shell without `CLAUDE_CODE_*` variables.
 - The spike harness (`packages/extension/scripts/spike.ts`, `node build.mjs --spike`) drives a real orchestrator session outside VS Code; see `docs/spikes/phase1.md`.
 
 | Command | Runs |
@@ -16,9 +16,9 @@ E2E env switches: `CATHOUSE_EXPECT_READY=1` (prepared machine), `CATHOUSE_EXPECT
 
 `CATHOUSE_E2E_WORKSPACE=<git repo with catherd runs>` enables `pages.e2e.ts` (runs, profiles, catalog through the real router via the hidden `cathouse._request` command).
 
-Current tests (2026-09-29, catherd 1.2.0): 95 unit (protocol including workspace-mutation methods, router, CSP, compat, gateway including profile-copy command, reply via `replyPath`, CLI cancel, runs-list sessions and inferred scores, event mapper including pushed turns, controller including `inbound` turns and the `peek` resume prompt, setup readiness persistence and doctor `info` rows, profile draft/rebase including role checkbox staging), 7 live contract, 5 e2e scenarios (Activity Bar activation; Setup on the real machine; pages: runs, workspace/repo selection, profiles/catalog). Adding/removing folders uses VS Code's native modal picker and changes the real workspace, so that mutation path is a manual VS Code check rather than an unattended e2e action.
+Current tests (2026-10-01, catherd 1.3.0; unchanged count since 2026-09-29): 95 unit (protocol including workspace-mutation methods, router, CSP, compat, gateway including profile-copy command, reply via `replyPath`, CLI cancel, runs-list sessions and inferred scores, event mapper including pushed turns, controller including `inbound` turns and the `peek` resume prompt, setup readiness persistence and doctor `info` rows, profile draft/rebase including role checkbox staging), 7 live contract, 5 e2e scenarios (Activity Bar activation; Setup on the real machine; pages: runs, workspace/repo selection, profiles/catalog). Adding/removing folders uses VS Code's native modal picker and changes the real workspace, so that mutation path is a manual VS Code check rather than an unattended e2e action.
 
-**E2E status (2026-09-29, catherd 1.2.0): green in VS Code 1.139 (macOS).** The default command has 2 passing and 3 pending because page tests require `CATHOUSE_E2E_WORKSPACE`. The prepared-workspace run (`CATHOUSE_EXPECT_READY=1 CATHOUSE_E2E_WORKSPACE=<the catherd 1.2 spike repo>`) has all 5 passing.
+**E2E status (2026-10-01, catherd 1.3.0): green in VS Code 1.139 (macOS).** The default command has 2 passing and 3 pending because page tests require `CATHOUSE_E2E_WORKSPACE`. The prepared-workspace run (`CATHOUSE_EXPECT_READY=1 CATHOUSE_E2E_WORKSPACE=<a repo with catherd runs>`) has all 5 passing.
 
 **Lint in an agent sandbox:** `npx biome …` (and so `pnpm lint`) can die with "Linter process terminated abnormally (possibly out of memory)". Calling the binary directly works: `node_modules/.bin/biome check .`.
 - Activation verifies that the contributed `cathouse.sidebar.focus` command opens the one full Activity Bar view and that the removed `cathouse.openDashboard` command is absent.
@@ -29,7 +29,7 @@ Current tests (2026-09-29, catherd 1.2.0): 95 unit (protocol including workspace
 | Layer | Tool | What | Needs network / catherd |
 |---|---|---|---|
 | Unit | vitest | gateway adapters (raw → protocol) on recorded fixtures; stderr error parser; SDK message → event mapper; profile draft reducer and patch diff; allowlist of MCP tools (forbidden tools rejected) | no |
-| Contract | vitest, tagged `contract` | real `catherd-cli@1.2.0` in an isolated env (`CATHERD_HOME`, `CLAUDE_CONFIG_DIR`, `CATHERD_CLAUDE_AGENTS_DIR` in temp dirs): `init --no-input` → `doctor --json` → MCP `profile_set` valid/invalid → `profile_validate` → `catalog_query` → `status`. Records fixtures to `packages/compat/fixtures/1.2.0/` | Bun + network on first run |
+| Contract | vitest, tagged `contract` | real `catherd-cli@1.3.0` in an isolated env (`CATHERD_HOME`, `CLAUDE_CONFIG_DIR`, `CATHERD_CLAUDE_AGENTS_DIR` in temp dirs): `init --no-input` → `doctor --json` → MCP `profile_set` valid/invalid → `profile_validate` → `catalog_query` → `status`. Records fixtures to `packages/compat/fixtures/1.3.0/` | Bun + network on first run |
 | E2E | `@vscode/test-electron` | fresh install (temp HOME) shows only Setup; old Bun / stale plugin / missing CLI / failed install each show a specific message and action; the full Activity Bar view opens directly | depends on scenario |
 | Manual E2E | human + checklist | a 3-lane task on a scratch repo from the UI; live roles; answer a question and a permission card; reload mid-run → Continue the same run (verify no duplicate with `catherd runs list --json`); cancel a role; edit a profile, treat-like, refresh models, see a doctor failure | real accounts |
 | Visual | manual screenshots | full Activity Bar view in Light, Dark, High Contrast | no |

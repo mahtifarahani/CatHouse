@@ -14,7 +14,7 @@ catherd still does the real work: Claude plans and verifies, Codex, opencode, or
 
 ## What CatHouse adds
 
-- **Guided Setup** — checks and installs Bun, `catherd-cli@1.2.0`, the catherd Claude plugin, login, and worker backends. Installers run only after you click.
+- **Guided Setup** — checks and installs Bun, `catherd-cli@1.3.0`, the catherd Claude plugin, login, and worker backends. Installers run only after you click.
 - **Chat** — starts `/catherd:catherd <task>` directly from the Activity Bar and streams the orchestration session into VS Code. Roles report back by themselves when they finish (catherd's push notices), so you can keep chatting while they run.
 - **Human-in-the-loop cards** — answers Claude questions and permission requests without leaving the editor, with notifications when a run needs attention.
 - **Runs** — follows live roles, budget, climbs, routes, landed milestones, replies, state, and debug output; live roles can be cancelled from the UI.
