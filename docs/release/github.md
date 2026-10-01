@@ -1,6 +1,6 @@
 # Distribution and GitHub Release artifacts
 
-Status: CatHouse `0.1.0` is available from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=cathouse.cathouse) and [Open VSX](https://open-vsx.org/extension/cathouse/cathouse). [`v0.1.0`](https://github.com/mahtifarahani/CatHouse/releases/tag/v0.1.0) also contains all four platform VSIX files and `SHA256SUMS` for manual or offline installation. The publisher id is `cathouse`; the manifest license remains `UNLICENSED` pending a final SPDX choice.
+Status: CatHouse `0.1.0` is available from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=cathouse.cathouse) and [Open VSX](https://open-vsx.org/extension/cathouse/cathouse); `0.3.0` is not published there yet. The latest GitHub Release, [`v0.3.0`](https://github.com/mahtifarahani/CatHouse/releases/tag/v0.3.0) (Actions run `36880233848`, 2026-10-01), contains all four platform VSIX files and `SHA256SUMS` for manual or offline installation. The publisher id is `cathouse`; the manifest license remains `UNLICENSED` pending a final SPDX choice.
 
 ## What this publishes
 
