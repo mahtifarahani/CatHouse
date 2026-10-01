@@ -4,6 +4,8 @@ GitHub Release notes are the version sections below. Keep unfinished work under 
 
 ## Unreleased
 
+- Release: stable version tags now publish all four platform VSIX files to the VS Code Marketplace and Open VSX as well as GitHub Releases. The workflow can also backfill an existing tag, skips duplicate store uploads, and keeps prerelease tags on GitHub only.
+
 ## [0.3.0] - 2026-10-01
 
 - **catherd 1.3.0.** CatHouse now pins `catherd-cli@1.3.0` and plugin `catherd@1.3.0`; Setup offers the upgrade on a 1.2 machine. 1.3 changes no shape CatHouse reads. Its new worker backends (Cursor, Grok Build, Antigravity) and doctor rows (`quota:antigravity`, `ui-browser`, the `budget.usd` warning) show up in Setup, Profiles and Models through catherd's own data. Fixtures were re-recorded against 1.3.0.

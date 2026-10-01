@@ -102,17 +102,18 @@ pnpm build
 | doctor `sandbox:codex` "not tested" | dead probe on Codex 0.157 (upstream bug) | ignore |
 | `bunx` seems hung on first run | resolving ~108 packages | wait ~30 s |
 | release workflow fails before packaging | tag, `packages/extension/package.json` `version`, or `docs/CHANGELOG.md` heading disagree | set all three to the same `X.Y.Z` and push a new tag; tags are immutable |
+| release finishes on GitHub but store publishing fails immediately | `VSCE_PAT` or `OVSX_PAT` is absent/expired | replace the matching GitHub Actions repository secret, then manually dispatch `Release` with the existing tag; uploads use `--skip-duplicate` |
 
 ## 6. Distribution and GitHub Release
 
-Normal user installation is [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=cathouse.cathouse) for VS Code and [Open VSX](https://open-vsx.org/extension/cathouse/cathouse) for Cursor. GitHub Releases remain the manual/offline source for platform VSIX files; artifacts never come from `dist/` in git (`dist/` is gitignored, and a Linux VSIX is over GitHub's 100 MB file limit). The GitHub artifact workflow is `.github/workflows/release.yml`. Full rules, traps, and install text: `docs/release/github.md`.
+Normal user installation is [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=cathouse.cathouse) for VS Code and [Open VSX](https://open-vsx.org/extension/cathouse/cathouse) for Cursor. GitHub Releases remain the manual/offline source for platform VSIX files; artifacts never come from `dist/` in git (`dist/` is gitignored, and a Linux VSIX is over GitHub's 100 MB file limit). The release workflow is `.github/workflows/release.yml`; stable tags publish the same four VSIX files to all three channels. It requires the GitHub Actions repository secrets `VSCE_PAT` and `OVSX_PAT`. Full rules, credential setup, traps, and install text: `docs/release/github.md`.
 
 ```bash
 # version in packages/extension/package.json is already X.Y.Z
 # docs/CHANGELOG.md has ## [X.Y.Z] - YYYY-MM-DD with the notes
-pnpm release:notes -- --tag vX.Y.Z
+pnpm release:notes --tag vX.Y.Z
 git tag vX.Y.Z
 git push origin vX.Y.Z
 ```
 
-The tag push builds `cathouse-<target>-<version>.vsix` for darwin-arm64, darwin-x64, linux-x64, and linux-arm64, writes `SHA256SUMS`, and publishes the release. A tag containing `-` is marked pre-release.
+The tag push builds `cathouse-<target>-<version>.vsix` for darwin-arm64, darwin-x64, linux-x64, and linux-arm64, writes `SHA256SUMS`, publishes the GitHub Release, then publishes all four packages to the VS Code Marketplace and Open VSX. A tag containing `-` is marked pre-release and is not sent to either store. To retry an existing stable tag, manually dispatch the `Release` workflow with that tag.

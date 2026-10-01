@@ -1,30 +1,40 @@
-# Publishes platform VSIX files as a GitHub Release.
-# Push a tag vX.Y.Z that matches packages/extension/package.json and a
-# "## [X.Y.Z]" section in docs/CHANGELOG.md. See docs/release/github.md.
+# Publishes platform VSIX files to GitHub Releases, the VS Code Marketplace,
+# and Open VSX. Push a stable tag vX.Y.Z that matches packages/extension/package.json
+# and a "## [X.Y.Z]" section in docs/CHANGELOG.md. See docs/release/github.md.
 name: Release
 
 on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing vX.Y.Z tag to build and publish
+        required: true
+        type: string
 
 permissions:
   contents: write
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: release-${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
   cancel-in-progress: false
 
 jobs:
   release:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_TAG }}
 
       - name: Check the tag against the changelog
-        run: node scripts/release-notes.mjs --tag "${GITHUB_REF_NAME}" --out release-notes.md
+        run: node scripts/release-notes.mjs --tag "${RELEASE_TAG}" --out release-notes.md
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
@@ -55,8 +65,41 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          args=(--title "CatHouse ${GITHUB_REF_NAME}" --notes-file release-notes.md)
-          if [[ "${GITHUB_REF_NAME}" == *-* ]]; then
+          if gh release view "${RELEASE_TAG}" >/dev/null 2>&1; then
+            echo "GitHub Release ${RELEASE_TAG} already exists; keeping its assets unchanged."
+            exit 0
+          fi
+          args=(--title "CatHouse ${RELEASE_TAG}" --notes-file release-notes.md)
+          if [[ "${RELEASE_TAG}" == *-* ]]; then
             args+=(--prerelease)
           fi
-          gh release create "${GITHUB_REF_NAME}" dist/*.vsix dist/SHA256SUMS "${args[@]}"
+          gh release create "${RELEASE_TAG}" dist/*.vsix dist/SHA256SUMS "${args[@]}"
+
+      - name: Check publisher credentials
+        if: ${{ !contains(env.RELEASE_TAG, '-') }}
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: |
+          set -euo pipefail
+          test -n "${VSCE_PAT:-}" || { echo "::error::Repository secret VSCE_PAT is missing"; exit 1; }
+          test -n "${OVSX_PAT:-}" || { echo "::error::Repository secret OVSX_PAT is missing"; exit 1; }
+
+      - name: Publish to the VS Code Marketplace
+        if: ${{ !contains(env.RELEASE_TAG, '-') }}
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          pnpm --filter cathouse exec vsce publish \
+            --packagePath "${GITHUB_WORKSPACE}"/dist/*.vsix \
+            --skip-duplicate \
+            --skip-license
+
+      - name: Publish to Open VSX
+        if: ${{ !contains(env.RELEASE_TAG, '-') }}
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: |
+          pnpm dlx ovsx@1.2.0 publish \
+            --packagePath dist/*.vsix \
+            --skip-duplicate

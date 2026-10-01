@@ -4,7 +4,7 @@ Last updated: 2026-10-01. Update this file at the end of every section.
 
 ## Current phase
 
-**Phase 5 (release prep): `0.1.0` is published on the VS Code Marketplace, Open VSX, and GitHub Releases; license and native gates remain.** GitHub contains four platform VSIX files plus `SHA256SUMS`. A remote runtime was not available. Store-install smoke tests, the final SPDX license, and native execution of non-arm64 artifacts remain.
+**Phase 5 (release prep): `0.1.0` is published on the VS Code Marketplace and Open VSX; GitHub Releases is at `0.3.0`; license and native gates remain.** Stable-tag store automation is implemented and needs the two repository publisher secrets plus a one-time `v0.3.0` backfill. A remote runtime was not available. Store-install smoke tests, the final SPDX license, and native execution of non-arm64 artifacts remain.
 
 ## Checklist
 
@@ -106,14 +106,15 @@ Prompt-placement follow-up: permission and question cards now stay in a fixed tr
 
 ## Exact next step (Phase 5)
 
-Release first: GitHub `v0.3.0` is published. Publish `0.3.0` to the VS Code Marketplace and Open VSX, which the workflow does not do.
+Release first: GitHub `v0.3.0` is published. Push the store-automation workflow commit, add GitHub Actions repository secrets `VSCE_PAT` and `OVSX_PAT`, then manually dispatch `Release` with tag `v0.3.0`. Future stable tag pushes publish GitHub plus both stores automatically; prereleases stay on GitHub.
 
-1. Owner chooses the final SPDX license, updates the manifest, and adds the license file. The published extension id is `cathouse.cathouse` and release version `0.1.0`.
+1. Owner chooses the final SPDX license, updates the manifest, and adds the license file. The published extension id is `cathouse.cathouse` and current release version is `0.3.0`.
 2. On an available SSH host or Dev Container, install the linux-x64 VSIX on the remote extension host and run Setup plus one short task. Docker is installed on this Mac but its daemon was not running; no SSH/Dev Container target was available, so remote remains explicitly untested.
 3. Execute the darwin-x64 and Linux VSIX artifacts on native target machines. They are build-verified only.
 4. After these gates, set Phase 5 to done and start the owner's bug/improvement backlog.
-5. Smoke-test the VS Code Marketplace install in VS Code and the Open VSX install in Cursor. GitHub Release `v0.1.0` remains the manual/offline fallback with four platform VSIX files and `SHA256SUMS`; future releases follow `docs/release/github.md`.
-6. catherd 1.2/1.3 follow-up: check the new Runs (session, parked questions, verifier), Profiles (stand-in note, Add (let catherd infer)) and "catherd reported back" transcript bits in the Extension Development Host, then pick from the 1.1/1.2 parity backlog in `docs/research/catherd-tui-parity.md` and the 1.3 backlog in `docs/research/catherd-1.3-upgrade.md` §5. The next CatHouse release should ship the 1.3.0 pin (it is under `## Unreleased` in `docs/CHANGELOG.md`).
+5. Smoke-test the VS Code Marketplace install in VS Code and the Open VSX install in Cursor. GitHub Release `v0.3.0` remains the manual/offline fallback with four platform VSIX files and `SHA256SUMS`; future releases follow `docs/release/github.md`.
+6. Migrate VS Code publishing from the retiring global Azure DevOps PAT to Microsoft Entra ID before 2026-12-01.
+7. catherd 1.2/1.3 follow-up: check the new Runs (session, parked questions, verifier), Profiles (stand-in note, Add (let catherd infer)) and "catherd reported back" transcript bits in the Extension Development Host, then pick from the 1.1/1.2 parity backlog in `docs/research/catherd-tui-parity.md` and the 1.3 backlog in `docs/research/catherd-1.3-upgrade.md` §5.
 
 ## Environment facts (planning machine, updated 2026-10-01)
 
@@ -166,3 +167,5 @@ Store distribution follow-up: `cathouse.cathouse` is now published for VS Code a
 Release `0.3.0` preparation (2026-10-01): `packages/extension/package.json` is `0.3.0`, and `docs/CHANGELOG.md` has a `## [0.3.0] - 2026-10-01` section with the catherd 1.3.0 pin and the store-docs change (versions 0.2.x were skipped on the owner's request). Verified: `node scripts/release-notes.mjs --tag v0.3.0` passes, release-notes tests 4/4, 95 unit tests, typecheck, Biome, and a local `pnpm package` (`dist/cathouse-darwin-arm64-0.3.0.vsix`, 95.94 MB). The tag `v0.3.0` is not pushed yet. Pushing it publishes the GitHub Release. The VS Code Marketplace and Open VSX are published separately.
 
 GitHub `v0.3.0` publication (2026-10-01): commit `d98364b` and tag `v0.3.0` were pushed. GitHub Actions run `36880233848` completed successfully. The API confirmed a public, non-draft, non-prerelease Release with `cathouse-darwin-arm64-0.3.0.vsix`, `cathouse-darwin-x64-0.3.0.vsix`, `cathouse-linux-arm64-0.3.0.vsix`, `cathouse-linux-x64-0.3.0.vsix` and `SHA256SUMS`, all uploaded. The VS Code Marketplace and Open VSX still list `0.1.0` until `0.3.0` is published there.
+
+Store-publishing automation (2026-10-01): `.github/workflows/release.yml` now publishes the four platform VSIX files for stable tags to the VS Code Marketplace (`@vscode/vsce@4.0.0`) and Open VSX (`ovsx@1.2.0`) after creating or finding the GitHub Release. Repository secrets are named `VSCE_PAT` and `OVSX_PAT`; their values are passed only as masked environment variables. `workflow_dispatch` can backfill an immutable existing tag, and both uploaders use `--skip-duplicate`, so retrying a partial publication is safe. Tags containing `-` remain GitHub-only prereleases. `v0.3.0` still needs the secrets and one manual dispatch after this workflow reaches the default branch. Microsoft retires global Azure DevOps PATs on 2026-12-01, so VS Code publishing must move to Entra ID before then. Report and commands: `docs/release/github.md`.
