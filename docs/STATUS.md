@@ -106,6 +106,8 @@ Prompt-placement follow-up: permission and question cards now stay in a fixed tr
 
 ## Exact next step (Phase 5)
 
+Release first: `0.3.0` is prepared locally. Run `git push origin main`, then `git tag v0.3.0 && git push origin v0.3.0` (the GitHub Release workflow), then publish `0.3.0` to the VS Code Marketplace and Open VSX.
+
 1. Owner chooses the final SPDX license, updates the manifest, and adds the license file. The published extension id is `cathouse.cathouse` and release version `0.1.0`.
 2. On an available SSH host or Dev Container, install the linux-x64 VSIX on the remote extension host and run Setup plus one short task. Docker is installed on this Mac but its daemon was not running; no SSH/Dev Container target was available, so remote remains explicitly untested.
 3. Execute the darwin-x64 and Linux VSIX artifacts on native target machines. They are build-verified only.
@@ -160,3 +162,5 @@ GitHub `0.1.0` release preparation: manifest and changelog were set to `0.1.0`; 
 GitHub `v0.1.0` publication: commit `f5c8615` and annotated tag `v0.1.0` were pushed. GitHub Actions run `36545374544` completed successfully, including four-platform packaging, checksums, and Release creation. The API confirmed a public, non-draft, non-prerelease Release containing `cathouse-darwin-arm64-0.1.0.vsix`, `cathouse-darwin-x64-0.1.0.vsix`, `cathouse-linux-arm64-0.1.0.vsix`, `cathouse-linux-x64-0.1.0.vsix`, and `SHA256SUMS`, all uploaded successfully. The released download path has not yet been installed back into VS Code or Cursor.
 
 Store distribution follow-up: `cathouse.cathouse` is now published for VS Code at `https://marketplace.visualstudio.com/items?itemName=cathouse.cathouse` and for Cursor at `https://open-vsx.org/extension/cathouse/cathouse`. The root README, extension README, release report, runbook, generated GitHub release notes, and status now use those stores as the primary install paths; GitHub VSIX files are documented as the manual/offline fallback. Store installation has not yet been smoke-tested locally.
+
+Release `0.3.0` preparation (2026-10-01): `packages/extension/package.json` is `0.3.0`, and `docs/CHANGELOG.md` has a `## [0.3.0] - 2026-10-01` section with the catherd 1.3.0 pin and the store-docs change (versions 0.2.x were skipped on the owner's request). Verified: `node scripts/release-notes.mjs --tag v0.3.0` passes, release-notes tests 4/4, 95 unit tests, typecheck, Biome, and a local `pnpm package` (`dist/cathouse-darwin-arm64-0.3.0.vsix`, 95.94 MB). The tag `v0.3.0` is not pushed yet. Pushing it publishes the GitHub Release. The VS Code Marketplace and Open VSX are published separately.
