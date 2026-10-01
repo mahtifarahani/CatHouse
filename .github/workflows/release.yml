@@ -1,5 +1,5 @@
-# Publishes platform VSIX files to GitHub Releases, the VS Code Marketplace,
-# and Open VSX. Push a stable tag vX.Y.Z that matches packages/extension/package.json
+# Publishes platform VSIX files to GitHub Releases and Open VSX. Push a stable
+# tag vX.Y.Z that matches packages/extension/package.json
 # and a "## [X.Y.Z]" section in docs/CHANGELOG.md. See docs/release/github.md.
 name: Release
 
@@ -75,25 +75,13 @@ jobs:
           fi
           gh release create "${RELEASE_TAG}" dist/*.vsix dist/SHA256SUMS "${args[@]}"
 
-      - name: Check publisher credentials
+      - name: Check Open VSX credentials
         if: ${{ !contains(env.RELEASE_TAG, '-') }}
         env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
         run: |
           set -euo pipefail
-          test -n "${VSCE_PAT:-}" || { echo "::error::Repository secret VSCE_PAT is missing"; exit 1; }
           test -n "${OVSX_PAT:-}" || { echo "::error::Repository secret OVSX_PAT is missing"; exit 1; }
-
-      - name: Publish to the VS Code Marketplace
-        if: ${{ !contains(env.RELEASE_TAG, '-') }}
-        env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
-        run: |
-          pnpm --filter cathouse exec vsce publish \
-            --packagePath "${GITHUB_WORKSPACE}"/dist/*.vsix \
-            --skip-duplicate \
-            --skip-license
 
       - name: Publish to Open VSX
         if: ${{ !contains(env.RELEASE_TAG, '-') }}

@@ -4,7 +4,7 @@ GitHub Release notes are the version sections below. Keep unfinished work under 
 
 ## Unreleased
 
-- Release: stable version tags now publish all four platform VSIX files to the VS Code Marketplace and Open VSX as well as GitHub Releases. The workflow can also backfill an existing tag, skips duplicate store uploads, and keeps prerelease tags on GitHub only.
+- Release: stable version tags now publish all four platform VSIX files to Open VSX as well as GitHub Releases. The workflow can also backfill an existing tag, skips duplicate Open VSX uploads, and keeps prerelease tags on GitHub only. VS Code Marketplace publishing remains manual and is intentionally not part of the workflow.
 
 ## [0.3.0] - 2026-10-01
 
