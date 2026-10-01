@@ -1,6 +1,6 @@
 # Distribution and GitHub Release artifacts
 
-Status: CatHouse `0.1.0` is available from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=cathouse.cathouse) and [Open VSX](https://open-vsx.org/extension/cathouse/cathouse); `0.3.0` is not published to Open VSX yet. The latest GitHub Release, [`v0.3.0`](https://github.com/mahtifarahani/CatHouse/releases/tag/v0.3.0) (Actions run `36880233848`, 2026-10-01), contains all four platform VSIX files and `SHA256SUMS` for manual or offline installation. The workflow now publishes stable releases to Open VSX too; it needs `OVSX_PAT` and a one-time manual dispatch for the already-existing `v0.3.0` tag. VS Code Marketplace publishing remains manual and its existing `0.1.0` listing is not removed. The publisher id is `cathouse`; the manifest license remains `UNLICENSED` pending a final SPDX choice.
+Status: CatHouse `0.1.0` is available from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=cathouse.cathouse) and [Open VSX](https://open-vsx.org/extension/cathouse/cathouse). The latest GitHub Release, [`v0.3.0`](https://github.com/mahtifarahani/CatHouse/releases/tag/v0.3.0) (Actions run `36880233848`, 2026-10-01), contains all four platform VSIX files and `SHA256SUMS` for manual or offline installation. Open VSX backfill run `36884876884` uploaded all four `0.3.0` targets, but the registry keeps them inactive and invisible until the owner signs the one-time Publisher Agreement. VS Code Marketplace publishing remains manual. The publisher id is `cathouse`; the manifest license remains `UNLICENSED` pending a final SPDX choice.
 
 ## What this publishes
 
@@ -71,6 +71,8 @@ The values only enter the publisher processes as masked environment variables; t
 gh secret set OVSX_PAT
 ```
 
+Before the first visible Open VSX publication, the account must also complete the registry's one-time legal step: sign in to Open VSX, connect the matching Eclipse account, open **Show Publisher Agreement**, read it, and select **Agree**. A token can upload an extension before this is done, but the version remains inactive and invisible. Accepting the agreement activates already-uploaded versions; do not create a replacement tag.
+
 Open VSX also supports OIDC trusted publishing, but this workflow uses the publisher token. VS Code Marketplace automation is deliberately omitted; publishing there, if desired later, is a separate manual operation.
 
 ## Cut a release
@@ -102,7 +104,7 @@ The Actions UI offers the same **Run workflow** input. Do not create or move ano
 - The changelog check uses Node only. It does not need `pnpm install`, so a bad tag fails in seconds.
 - `release-notes.md` is generated in CI and gitignored. Do not commit it.
 - Other platforms' Claude binaries are fetched with `npm pack` during `pnpm package:all` (`packages/extension/scripts/package.mjs:83-96`). The workflow needs network access to the npm registry.
-- Open VSX uploads are idempotent: `--skip-duplicate` means a manual retry does not fail on a target that already succeeded.
+- Open VSX uploads are idempotent for active duplicates: `--skip-duplicate` lets a manual retry continue past a target that already succeeded. An already-uploaded but inactive version still fails with `currently isn't active and therefore not visible`; sign the Publisher Agreement instead of retrying the upload.
 - Publisher credentials are required only for stable tags. Prerelease tags never reach Open VSX.
 - The workflow never publishes to or removes the VS Code Marketplace listing.
 - The workflow does not run `catherd doctor`.
@@ -120,11 +122,11 @@ Release preparation for `0.1.0` passed the release-notes tests (4), full unit su
 
 ## Remaining work
 
-1. Manually dispatch `v0.3.0` and confirm all four targets appear as version `0.3.0` in Open VSX.
+1. Sign the Open VSX Publisher Agreement, then confirm all four already-uploaded targets appear as version `0.3.0`.
 2. Smoke-test installation from Open VSX in Cursor and the GitHub VSIX in VS Code.
 3. Choose the final SPDX license; the publisher id is now fixed as `cathouse`.
 4. Remote and native execution of the non-arm64 artifacts stay open (`docs/release/phase5.md`).
 
 ## Next step
 
-Push the workflow commit, dispatch `Release` for `v0.3.0`, and then smoke-test Open VSX and the GitHub VSIX path.
+Sign the one-time Open VSX Publisher Agreement, confirm the public API reports `0.3.0`, and then smoke-test Open VSX and the GitHub VSIX path.

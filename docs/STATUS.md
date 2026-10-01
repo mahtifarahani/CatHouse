@@ -4,7 +4,7 @@ Last updated: 2026-10-01. Update this file at the end of every section.
 
 ## Current phase
 
-**Phase 5 (release prep): `0.1.0` is published on the VS Code Marketplace and Open VSX; GitHub Releases is at `0.3.0`; license and native gates remain.** Stable tags now automate GitHub Releases and Open VSX only; `OVSX_PAT` is configured and `v0.3.0` needs a one-time backfill. VS Code Marketplace automation was removed at the owner's request. A remote runtime was not available. Store-install smoke tests, the final SPDX license, and native execution of non-arm64 artifacts remain.
+**Phase 5 (release prep): `0.1.0` is published on the VS Code Marketplace and Open VSX; GitHub Releases is at `0.3.0`; license and native gates remain.** Stable tags now automate GitHub Releases and Open VSX only. `OVSX_PAT` is configured and the four `0.3.0` packages reached Open VSX, but the registry keeps them inactive until the owner signs the one-time Open VSX Publisher Agreement. VS Code Marketplace automation was removed at the owner's request. A remote runtime was not available. Store-install smoke tests, the final SPDX license, and native execution of non-arm64 artifacts remain.
 
 ## Checklist
 
@@ -106,7 +106,7 @@ Prompt-placement follow-up: permission and question cards now stay in a fixed tr
 
 ## Exact next step (Phase 5)
 
-Release first: GitHub `v0.3.0` is published. Push the Open VSX automation workflow commit, then manually dispatch `Release` with tag `v0.3.0`. Future stable tag pushes publish GitHub plus Open VSX automatically; prereleases stay on GitHub. VS Code Marketplace stays manual and at `0.1.0` unless the owner explicitly publishes there later.
+Release first: GitHub `v0.3.0` is published and the Open VSX backfill uploaded all four target packages. The owner must now log in to Open VSX with Eclipse, open **Show Publisher Agreement**, read it, and select **Agree**. Open VSX activates the already-uploaded `0.3.0` packages after that one-time legal step; do not republish or move the tag. Future stable tag pushes publish GitHub plus Open VSX automatically; prereleases stay on GitHub. VS Code Marketplace stays manual.
 
 1. Owner chooses the final SPDX license, updates the manifest, and adds the license file. The published extension id is `cathouse.cathouse` and current release version is `0.3.0`.
 2. On an available SSH host or Dev Container, install the linux-x64 VSIX on the remote extension host and run Setup plus one short task. Docker is installed on this Mac but its daemon was not running; no SSH/Dev Container target was available, so remote remains explicitly untested.
@@ -168,3 +168,5 @@ Release `0.3.0` preparation (2026-10-01): `packages/extension/package.json` is `
 GitHub `v0.3.0` publication (2026-10-01): commit `d98364b` and tag `v0.3.0` were pushed. GitHub Actions run `36880233848` completed successfully. The API confirmed a public, non-draft, non-prerelease Release with `cathouse-darwin-arm64-0.3.0.vsix`, `cathouse-darwin-x64-0.3.0.vsix`, `cathouse-linux-arm64-0.3.0.vsix`, `cathouse-linux-x64-0.3.0.vsix` and `SHA256SUMS`, all uploaded. The VS Code Marketplace and Open VSX still list `0.1.0` until `0.3.0` is published there.
 
 Store-publishing automation (2026-10-01): `.github/workflows/release.yml` publishes the four platform VSIX files for stable tags to Open VSX (`ovsx@1.2.0`) after creating or finding the GitHub Release. `OVSX_PAT` is passed only as a masked environment variable. `workflow_dispatch` can backfill an immutable existing tag, and `--skip-duplicate` makes retrying a partial publication safe. Tags containing `-` remain GitHub-only prereleases. VS Code Marketplace automation and its Azure credential requirement were removed at the owner's request; the existing `0.1.0` listing is left untouched. `v0.3.0` needs one manual dispatch after this workflow reaches the default branch. Report and commands: `docs/release/github.md`.
+
+Open VSX `0.3.0` backfill (2026-10-01): manual Actions run `36884876884` checked out tag `v0.3.0`, rebuilt the four platform VSIX files, retained the existing GitHub Release, and authenticated with `OVSX_PAT`. Open VSX reported every `0.3.0` target as already published but inactive and therefore invisible, so the job concluded failure. The public API still returns `0.1.0`. Per the Open VSX publishing guide, this is the unsigned Publisher Agreement state: the owner must connect the matching Eclipse account and accept the agreement in the browser. Signing activates the already-uploaded versions automatically; no new tag or upload is required.

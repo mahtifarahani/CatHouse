@@ -103,6 +103,7 @@ pnpm build
 | `bunx` seems hung on first run | resolving ~108 packages | wait ~30 s |
 | release workflow fails before packaging | tag, `packages/extension/package.json` `version`, or `docs/CHANGELOG.md` heading disagree | set all three to the same `X.Y.Z` and push a new tag; tags are immutable |
 | release finishes on GitHub but Open VSX publishing fails immediately | `OVSX_PAT` is absent/expired | replace the GitHub Actions repository secret, then manually dispatch `Release` with the existing tag; uploads use `--skip-duplicate` |
+| Open VSX says a version is already published but inactive and invisible | the publisher account has not signed the Open VSX Publisher Agreement | in the Open VSX profile, connect the matching Eclipse account, open **Show Publisher Agreement**, read it, and select **Agree**; the uploaded version activates automatically, so do not move the tag or upload it again |
 
 ## 6. Distribution and GitHub Release
 
