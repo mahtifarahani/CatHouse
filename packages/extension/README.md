@@ -7,7 +7,7 @@ CatHouse brings [catherd](https://github.com/47vigen/catherd) into VS Code, with
 catherd runs autopilot builds from your own Claude Code session. You describe a task with `/catherd`, and it splits the work between models:
 
 - **Claude plans and verifies.** An architect role breaks the task into milestones and lanes. An independent verifier runs each milestone and gives it PASS or FAIL, so "done" means tested, not just written.
-- **Cheaper workers write the code.** Codex, opencode or headless Claude Code workers take one lane each. Your Claude session stays on planning and review instead of spending tokens on every line.
+- **Cheaper workers write the code.** Codex, opencode, headless Claude Code, Cursor, Grok Build or Antigravity workers take one lane each. Your Claude session stays on planning and review instead of spending tokens on every line.
 - **Models climb only when needed.** Each lane starts on the lowest model and effort that can handle it, and moves up one rung only when it fails. Budgets, failover and access rules come from a profile you control.
 - **Runs survive restarts.** Workers are detached processes that write to disk, so a long build isn't lost when a window closes.
 
@@ -26,7 +26,7 @@ With catherd alone, you install Bun, the catherd CLI, the Claude plugin and each
 
 The views in detail:
 
-- **Setup** installs and checks everything catherd needs: Bun, catherd 1.3.0, the catherd Claude plugin, your Claude login, and your worker backends. Nothing is installed until you click.
+- **Setup** installs and checks everything catherd needs: Bun, catherd 1.4.0, the catherd Claude plugin, your Claude login, and your worker backends. Nothing is installed until you click.
 - **Chat** runs `/catherd` on a task directly from the CatHouse Activity Bar view. Questions and permission requests appear as cards, and you get a notification when the orchestrator is waiting for you. A run continues after a window reload.
 - **Runs** shows live roles, budget, climbs, routes, landed milestones, each role's reply and debug output, and `state.md`. You can cancel a live role.
 - **Profiles** edits catherd profiles: rungs per role, access, failover, budget, isolation and more. Edits are staged with undo/redo, and you see a diff before saving.
@@ -41,7 +41,7 @@ catherd stays the source of truth: CatHouse only uses catherd's CLI and MCP serv
 - macOS or Linux (Windows is not supported yet).
 - A trusted workspace that is a git repository.
 - A Claude account (Setup can open the login).
-- At least one worker backend: Codex CLI (the default profile), opencode v2, or the claude CLI for `claude-code:` rungs. Setup shows what's missing and how to fix it.
+- At least one worker backend: Codex CLI (the default profile), opencode v2, the claude CLI for `claude-code:` rungs, Cursor's `cursor-agent` for `cursor:` rungs, xAI's `grok` CLI for `grok:` rungs, or Google's `agy` for `antigravity:` rungs. Setup shows what's missing and how to fix it.
 
 The Claude Code runtime ships inside this extension (the build is platform-specific), so you don't need a separate `claude` install unless your profile uses `claude-code:` rungs.
 

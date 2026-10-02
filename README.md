@@ -8,13 +8,13 @@
 
 **CatHouse brings [catherd](https://github.com/47vigen/catherd) into VS Code.** It turns catherd's agent orchestration, terminal dashboard, setup flow, and run controls into a complete graphical interface in the Activity Bar.
 
-catherd still does the real work: Claude plans and verifies, Codex, opencode, or headless Claude Code workers write the code, and Jev can choose the model and effort for each job. CatHouse gives that workflow a home inside the editor—without reimplementing the orchestrator or taking ownership of its data.
+catherd still does the real work: Claude plans and verifies, Codex, opencode, headless Claude Code, Cursor, Grok Build, or Antigravity workers write the code, and Jev can choose the model and effort for each job. CatHouse gives that workflow a home inside the editor—without reimplementing the orchestrator or taking ownership of its data.
 
 > Install CatHouse from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=cathouse.cathouse) or, in Cursor, from [Open VSX](https://open-vsx.org/extension/cathouse/cathouse). Platform VSIX files remain available on [GitHub Releases](https://github.com/mahtifarahani/CatHouse/releases) for manual or offline installation.
 
 ## What CatHouse adds
 
-- **Guided Setup** — checks and installs Bun, `catherd-cli@1.3.0`, the catherd Claude plugin, login, and worker backends. Installers run only after you click.
+- **Guided Setup** — checks and installs Bun, `catherd-cli@1.4.0`, the catherd Claude plugin, login, and worker backends. Installers run only after you click.
 - **Chat** — starts `/catherd:catherd <task>` directly from the Activity Bar and streams the orchestration session into VS Code. Roles report back by themselves when they finish (catherd's push notices), so you can keep chatting while they run.
 - **Human-in-the-loop cards** — answers Claude questions and permission requests without leaving the editor, with notifications when a run needs attention.
 - **Runs** — follows live roles, budget, climbs, routes, landed milestones, replies, state, and debug output; live roles can be cancelled from the UI.
@@ -53,6 +53,9 @@ VS Code extension host
   - [Codex CLI](https://github.com/openai/codex) 0.157.0 or newer (the default)
   - [opencode](https://opencode.ai/) v2.0.16 or newer
   - Claude Code CLI 2.1.282 or newer for `claude-code:` rungs
+  - Cursor's `cursor-agent` 2026.09.28 or newer for `cursor:` rungs
+  - xAI's `grok` CLI (Grok Build) for `grok:` rungs
+  - Google's `agy` (Antigravity) 1.2.13 or newer for `antigravity:` rungs
 
 CatHouse ships its orchestration-time Claude Code runtime inside each platform-specific extension build. A standalone `claude` installation is needed only when the active catherd profile uses `claude-code:` workers.
 

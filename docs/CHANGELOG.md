@@ -6,6 +6,11 @@ GitHub Release notes are the version sections below. Keep unfinished work under 
 
 - Release: stable version tags now publish all four platform VSIX files to Open VSX as well as GitHub Releases. The workflow can also backfill an existing tag, skips duplicate Open VSX uploads, and keeps prerelease tags on GitHub only. VS Code Marketplace publishing remains manual and is intentionally not part of the workflow.
 
+## [0.4.0] - 2026-10-02
+
+- **catherd 1.4.0.** CatHouse now pins `catherd-cli@1.4.0` and plugin `catherd@1.4.0`; Setup offers the upgrade on a 1.3 machine. catherd 1.4 resolves the architect and verifier defaults from the orchestration host, so CatHouse now declares itself a Claude Code host (`CATHERD_ORCHESTRATION_HOST=claude-code`) for every process it starts; without it, profiles created by catherd 1.4 failed to load. The new `status`, `doctor` and `profile_get` fields are additive. Fixtures were re-recorded against 1.4.0.
+- **Cursor, Grok Build and Antigravity workers.** The extension description, keywords and READMEs now list catherd's Cursor (`cursor:`), Grok Build (`grok:`) and Antigravity (`antigravity:`) worker backends next to Codex, opencode and headless Claude Code. Setup, Profiles and Models already show them through catherd's own data.
+
 ## [0.3.0] - 2026-10-01
 
 - **catherd 1.3.0.** CatHouse now pins `catherd-cli@1.3.0` and plugin `catherd@1.3.0`; Setup offers the upgrade on a 1.2 machine. 1.3 changes no shape CatHouse reads. Its new worker backends (Cursor, Grok Build, Antigravity) and doctor rows (`quota:antigravity`, `ui-browser`, the `budget.usd` warning) show up in Setup, Profiles and Models through catherd's own data. Fixtures were re-recorded against 1.3.0.
