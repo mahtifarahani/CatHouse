@@ -255,7 +255,7 @@ function Row({
         </div>
       )}
       {log !== undefined && log.length > 0 && (
-        <pre className="m-0 ms-6 max-h-56 overflow-auto rounded-md bg-background/60 p-2 font-mono text-xs whitespace-pre-wrap wrap-anywhere">
+        <pre className="m-0 ms-6 min-w-0 overflow-x-hidden rounded-md bg-background/60 p-2 font-mono text-xs whitespace-pre-wrap wrap-anywhere">
           {log}
         </pre>
       )}

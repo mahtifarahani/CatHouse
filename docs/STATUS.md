@@ -25,6 +25,8 @@ Last updated: 2026-10-02. Update this file at the end of every section.
 
 ## UI/UX rebuild (2026-10-02)
 
+Setup scroll follow-up (2026-10-02): the webview root is height-bound with no document scrolling, and Setup install output now grows in the page instead of opening an inner vertical scrollbar. The active tab panel is the sole page scroller. See `docs/architecture/webview.md` §Styling. Verify visually in the Extension Development Host with a long install log; other release gates remain unchanged.
+
 Pointer cursor follow-up (2026-10-02): clickable webview controls, including top tabs and buttons, now use a pointer cursor through the base stylesheet. Disabled controls are excluded. See `docs/architecture/webview.md` §Styling. Owner visual confirmation in VS Code remains pending.
 
 Composer focus follow-up (2026-10-02): the first pass moved the coloured focus border to the rounded wrapper, but the owner wanted no active border colour, and VS Code still drew a focused outline around the textarea. The wrapper now keeps its neutral border and a scoped webview rule suppresses the injected textarea focus outline/shadow (`docs/architecture/webview.md` §Styling). Owner visual confirmation in VS Code remains pending.

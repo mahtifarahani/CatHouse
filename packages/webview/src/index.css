@@ -3,6 +3,19 @@
 
 @source "../../ui/src";
 
+/* Keep the tab panel as the only page scroller inside VS Code's webview. */
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
 /* VS Code's webview reset leaves clickable controls with the text cursor. */
 button:not(:disabled),
 select:not(:disabled),
