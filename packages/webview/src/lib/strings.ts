@@ -1,20 +1,35 @@
 // User-facing strings live here (ADR 0004). Replace with @vscode/l10n bundles when a second
 // locale is added; call sites keep using t().
-import * as common from "./strings/common";
-import * as chat from "./strings/chat";
-import * as repo from "./strings/repo";
-import * as transcript from "./strings/transcript";
-import * as activity from "./strings/activity";
-import * as runs from "./strings/runs";
-import * as runDetail from "./strings/runDetail";
-import * as setup from "./strings/setup";
-import * as profiles from "./strings/profiles";
-import * as roles from "./strings/roles";
-import * as profileSettings from "./strings/profileSettings";
-import * as models from "./strings/models";
-import * as prompt from "./strings/prompt";
 
-export const AREAS = { common, chat, repo, transcript, activity, runs, runDetail, setup, profiles, roles, profileSettings, models, prompt } as const;
+import * as activity from "./strings/activity";
+import * as chat from "./strings/chat";
+import * as common from "./strings/common";
+import * as models from "./strings/models";
+import * as profileSettings from "./strings/profileSettings";
+import * as profiles from "./strings/profiles";
+import * as prompt from "./strings/prompt";
+import * as repo from "./strings/repo";
+import * as roles from "./strings/roles";
+import * as runDetail from "./strings/runDetail";
+import * as runs from "./strings/runs";
+import * as setup from "./strings/setup";
+import * as transcript from "./strings/transcript";
+
+export const AREAS = {
+  common,
+  chat,
+  repo,
+  transcript,
+  activity,
+  runs,
+  runDetail,
+  setup,
+  profiles,
+  roles,
+  profileSettings,
+  models,
+  prompt,
+} as const;
 
 const en = {
   ...common.STRINGS,

@@ -109,10 +109,7 @@ export interface SessionPageProps {
   onGoProfiles?: (() => void) | undefined;
 }
 
-export function SessionPage({
-  canStart,
-  blockedReason,
-}: SessionPageProps) {
+export function SessionPage({ canStart, blockedReason }: SessionPageProps) {
   const s = useSession();
   // One draft for both "new task" and "follow-up"; it lives in webview state so switching tabs
   // or hiding the view keeps it.

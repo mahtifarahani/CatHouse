@@ -143,8 +143,8 @@ export function MenuButton({
           {entries.map((entry, index) => {
             if (!isItem(entry))
               return entry.kind === "separator" ? (
-                // biome-ignore lint/suspicious/noArrayIndexKey: menu entries have no stable ids
-                <hr key={index} className="my-1 h-px border-0 bg-surface-strong" />
+                // biome-ignore lint/a11y/useSemanticElements lint/suspicious/noArrayIndexKey: spacing separator uses a tinted block; menu entries have no stable ids
+                <div key={index} role="separator" className="my-1 h-px bg-surface-strong" />
               ) : (
                 // biome-ignore lint/suspicious/noArrayIndexKey: menu entries have no stable ids
                 <div key={index} className="px-2 py-1 text-xs text-muted-foreground">

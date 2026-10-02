@@ -249,7 +249,7 @@ export function Menu({
           tabIndex={-1}
           onKeyDown={onKey}
           className={cn(
-            "absolute z-30 flex w-max min-w-44 max-w-[calc(100vw-1.5rem)] flex-col rounded-md bg-[var(--vscode-menu-background,var(--vscode-editorWidget-background))] p-1 text-[var(--vscode-menu-foreground,var(--vscode-foreground))] shadow-lg ring-1 ring-[var(--vscode-menu-border,var(--vscode-widget-border,transparent))]",
+            "absolute z-30 flex w-max min-w-44 max-w-[calc(100vw-1.5rem)] flex-col rounded-md bg-popover p-1 text-popover-foreground shadow-lg outline outline-1 -outline-offset-1 outline-outline",
             side === "top" ? "bottom-full mb-1" : "top-full mt-1",
             align === "end" ? "end-0" : "start-0",
           )}
@@ -301,7 +301,8 @@ export function MenuItem({
 }
 
 export function MenuSeparator() {
-  return <hr className="my-1 h-px border-0 bg-surface-hover" />;
+  // biome-ignore lint/a11y/useSemanticElements: spacing separator uses a tinted block instead of the native hr border
+  return <div role="separator" className="my-1 h-px bg-surface-strong" />;
 }
 
 /** An on/off switch (a checkbox underneath, so forms and screen readers treat it as one). */

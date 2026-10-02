@@ -7,7 +7,10 @@ describe("string areas", () => {
     for (const area of Object.values(AREAS)) {
       for (const key of Object.keys(area.STRINGS)) {
         expect(keys.has(key), `duplicate key: ${key}`).toBe(false);
-        expect(area.PREFIXES.some((prefix) => key.startsWith(prefix)), key).toBe(true);
+        expect(
+          area.PREFIXES.some((prefix) => key.startsWith(prefix)),
+          key,
+        ).toBe(true);
         keys.add(key);
       }
     }

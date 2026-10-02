@@ -1,4 +1,12 @@
-export const PREFIXES = ["common.", "tabs.", "status.", "app.", "settings.", "time.", "shell."] as const;
+export const PREFIXES = [
+  "common.",
+  "tabs.",
+  "status.",
+  "app.",
+  "settings.",
+  "time.",
+  "shell.",
+] as const;
 
 export const STRINGS = {
   "settings.open": "CatHouse settings",
