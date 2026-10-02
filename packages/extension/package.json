@@ -2,7 +2,7 @@
   "name": "cathouse",
   "displayName": "CatHouse",
   "description": "%cathouse.description%",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "publisher": "cathouse",
   "icon": "media/icon.png",
   "private": true,

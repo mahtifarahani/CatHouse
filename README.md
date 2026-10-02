@@ -21,6 +21,7 @@ catherd still does the real work: Claude plans and verifies, Codex, opencode, he
 - **Profile** — pick the active profile in one step and edit roles, model ladders, access, isolation, budget, routing and failover; every change is validated by catherd and saves itself, with Undo.
 - **Models** — searches and refreshes catherd's model catalog and supports `treat-like` mappings for unscored rungs.
 - **Setup** also holds diagnostics: `catherd doctor` results with their fixes, catherd's logs, and its machine-wide command lock.
+- **Languages** — fully translated into English, Chinese (中文), Hindi (हिन्दी), Spanish (Español), French (Français), and Persian (فارسی). Persian natively supports RTL layout. You can change the language dynamically from the app's Settings menu.
 - **Resume after reload** — reconnects a saved Claude session to the same catherd run instead of creating a duplicate.
 
 Everything lives in one VS Code Activity Bar view and follows the active Light, Dark, or High Contrast theme.
@@ -85,12 +86,12 @@ cursor --install-extension cathouse.cathouse
 
 GitHub Releases also provides a platform-specific VSIX and `SHA256SUMS`. Download the file that matches your machine; `<version>` is the release number, for example `0.1.0`.
 
-| Machine | File |
-|---|---|
+| Machine                                         | File                                   |
+| ----------------------------------------------- | -------------------------------------- |
 | macOS Apple Silicon (`uname -m` prints `arm64`) | `cathouse-darwin-arm64-<version>.vsix` |
-| macOS Intel (`uname -m` prints `x86_64`) | `cathouse-darwin-x64-<version>.vsix` |
-| Linux x64 | `cathouse-linux-x64-<version>.vsix` |
-| Linux ARM64 | `cathouse-linux-arm64-<version>.vsix` |
+| macOS Intel (`uname -m` prints `x86_64`)        | `cathouse-darwin-x64-<version>.vsix`   |
+| Linux x64                                       | `cathouse-linux-x64-<version>.vsix`    |
+| Linux ARM64                                     | `cathouse-linux-arm64-<version>.vsix`  |
 
 Check the download, then use **Extensions → … → Install from VSIX...** in either editor:
 
@@ -122,13 +123,13 @@ The checklist for cutting a release is in [docs/release/github.md](docs/release/
 
 CatHouse is a pnpm TypeScript monorepo:
 
-| Package | Responsibility |
-|---|---|
-| `packages/protocol` | Versioned, zod-validated webview ↔ extension contracts |
-| `packages/ui` | Shared components and VS Code theme tokens |
-| `packages/webview` | React 19 dashboard |
+| Package              | Responsibility                                                  |
+| -------------------- | --------------------------------------------------------------- |
+| `packages/protocol`  | Versioned, zod-validated webview ↔ extension contracts          |
+| `packages/ui`        | Shared components and VS Code theme tokens                      |
+| `packages/webview`   | React 19 dashboard                                              |
 | `packages/extension` | Setup, catherd gateway, Claude session, state, and VS Code host |
-| `packages/compat` | Supported version matrix and catherd contract fixtures |
+| `packages/compat`    | Supported version matrix and catherd contract fixtures          |
 
 Common commands:
 

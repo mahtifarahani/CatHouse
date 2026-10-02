@@ -19,6 +19,8 @@ export const STRINGS = {
   "settings.preview": "The quick brown fox · Aa 123",
   "settings.apply": "Apply",
   "settings.cancel": "Cancel",
+  "settings.language": "Language",
+  "settings.languageHelp": "Sets the language for the CatHouse interface.",
   "tabs.setup": "Setup",
   "tabs.session": "Chat",
   "tabs.runs": "Runs",

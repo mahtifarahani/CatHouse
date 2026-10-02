@@ -49,6 +49,15 @@ const en = {
 
 export type StringKey = keyof typeof en;
 
+let currentDict: Record<StringKey, string> = en;
+
+export function setLocale(_localeId: string, dict: Partial<Record<StringKey, string>>) {
+  currentDict = { ...en, ...dict };
+  window.dispatchEvent(new Event("cathouse-locale-changed"));
+}
+
 export function t(key: StringKey, vars: Record<string, string | number> = {}): string {
-  return en[key].replace(/\{(\w+)\}/g, (_, name: string) => String(vars[name] ?? `{${name}}`));
+  const template = currentDict[key] ?? en[key];
+  if (!template) return key;
+  return template.replace(/\{(\w+)\}/g, (_, name: string) => String(vars[name] ?? `{${name}}`));
 }

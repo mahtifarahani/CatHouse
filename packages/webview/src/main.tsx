@@ -2,10 +2,10 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App";
 import "./index.css";
-import { applyStoredFontScale } from "./lib/settings";
+import { applyStoredFontScale, applyStoredLanguage } from "./lib/settings";
 
 applyStoredFontScale();
-
+applyStoredLanguage();
 const root = document.getElementById("root");
 if (!root) throw new Error("CatHouse: #root is missing from the webview HTML");
 

@@ -15,14 +15,14 @@ catherd runs autopilot builds from your own Claude Code session. You describe a 
 
 With catherd alone, you install Bun, the catherd CLI, the Claude plugin and each worker backend by hand in the terminal, edit profile JSON files with no validation or diff, and follow a run through a terminal dashboard, logs and run files. CatHouse replaces that with one VS Code view:
 
-| With catherd in the terminal | With CatHouse |
-|---|---|
-| Install and check each requirement with separate commands | **Setup** lists what's missing and installs each item with a click |
-| Start `/catherd` in a Claude Code terminal | **Chat** starts the task from the Activity Bar and streams it into the editor |
-| Watch the terminal for questions and permission prompts | Questions and permissions appear as cards, and you get a notification when a run needs you |
-| Read the TUI, logs and `state.md` to see progress | **Runs** shows live roles, budget, climbs, milestones and each role's reply, and can cancel a role |
-| Edit profile JSON by hand | **Profile** is a form that catherd validates and that saves each change, with Undo |
-| Run `catherd doctor` and read the output | **Setup** shows only what needs fixing, each with one button |
+| With catherd in the terminal                              | With CatHouse                                                                                      |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Install and check each requirement with separate commands | **Setup** lists what's missing and installs each item with a click                                 |
+| Start `/catherd` in a Claude Code terminal                | **Chat** starts the task from the Activity Bar and streams it into the editor                      |
+| Watch the terminal for questions and permission prompts   | Questions and permissions appear as cards, and you get a notification when a run needs you         |
+| Read the TUI, logs and `state.md` to see progress         | **Runs** shows live roles, budget, climbs, milestones and each role's reply, and can cancel a role |
+| Edit profile JSON by hand                                 | **Profile** is a form that catherd validates and that saves each change, with Undo                 |
+| Run `catherd doctor` and read the output                  | **Setup** shows only what needs fixing, each with one button                                       |
 
 The views in detail:
 
@@ -31,6 +31,7 @@ The views in detail:
 - **Runs** shows live roles, budget, climbs, routes, landed milestones, each role's reply and debug output, and `state.md`. You can cancel a live role.
 - **Profile** edits catherd profiles: rungs per role, access, failover, budget, isolation and more. Picking a profile makes it active; each change saves itself, with Undo.
 - **Models** browses the model catalog, refreshes listings, and maps unscored rungs with treat-like.
+- **Languages** — fully translated into English, Chinese (中文), Hindi (हिन्दी), Spanish (Español), French (Français), and Persian (فارسی). Persian natively supports RTL layout. You can change the language dynamically from the app's Settings menu.
 - **Setup** also shows catherd doctor, opens catherd's logs, and runs heavy commands behind catherd's lock.
 
 catherd stays the source of truth: CatHouse only uses catherd's CLI and MCP server, and never edits its files.

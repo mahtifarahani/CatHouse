@@ -1,7 +1,8 @@
 import { Button, cn, Icon } from "@cathouse/ui";
 import { useEffect, useId, useRef, useState } from "react";
+import { LANGUAGES, type LanguageId, LOCALES } from "./locales";
 import { viewState } from "./rpc";
-import { t } from "./strings";
+import { setLocale, t } from "./strings";
 
 // Webview-only preferences. They change presentation, never catherd data, so they live in the
 // view's own state (plus localStorage as a second copy that survives a disposed view).
@@ -50,23 +51,65 @@ export function useFontScale() {
   return [scale, (next: number) => setScale(clampScale(next))] as const;
 }
 
+const LANG_KEY = "cathouse.language";
+
+function readLanguage(): LanguageId {
+  const fromView = viewState.get<Record<string, unknown>>()?.[LANG_KEY];
+  if (typeof fromView === "string" && LANGUAGES.some((l) => l.id === fromView))
+    return fromView as LanguageId;
+  try {
+    const raw = window.localStorage.getItem(LANG_KEY);
+    if (raw && LANGUAGES.some((l) => l.id === raw)) return raw as LanguageId;
+  } catch {}
+  return "en";
+}
+
+function applyLanguage(langId: LanguageId) {
+  const lang = LANGUAGES.find((l) => l.id === langId) || LANGUAGES[0];
+  document.documentElement.dir = lang.dir;
+  document.documentElement.lang = lang.id;
+  setLocale(langId, LOCALES[langId] || {});
+}
+
+export function applyStoredLanguage() {
+  applyLanguage(readLanguage());
+}
+
+export function useLanguage() {
+  const [lang, setLang] = useState(readLanguage);
+  useEffect(() => {
+    applyLanguage(lang);
+    viewState.update({ [LANG_KEY]: lang });
+    try {
+      window.localStorage.setItem(LANG_KEY, lang);
+    } catch {}
+  }, [lang]);
+  return [lang, setLang] as const;
+}
+
 /** The gear button beside the catherd version and its small settings popover. */
 export function SettingsMenu() {
   const [open, setOpen] = useState(false);
   const [scale, setScale] = useFontScale();
+  const [lang, setLang] = useLanguage();
   // The slider edits a draft; the view only rescales on Apply, so the popover (and the slider
   // under the pointer) does not move while dragging.
   const [draft, setDraft] = useState(scale);
+  const [draftLang, setDraftLang] = useState(lang);
   const button = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
   const id = useId();
 
   const toggle = () => {
-    if (!open) setDraft(scale);
+    if (!open) {
+      setDraft(scale);
+      setDraftLang(lang);
+    }
     setOpen((o) => !o);
   };
   const apply = () => {
     setScale(draft);
+    setLang(draftLang);
     setOpen(false);
     button.current?.focus();
   };
@@ -199,11 +242,30 @@ export function SettingsMenu() {
             <p className="m-0 text-xs text-muted-foreground">{t("settings.fontSizeHelp")}</p>
           </div>
 
+          <div className="flex flex-col gap-2">
+            <label htmlFor={`${id}-lang`} className="text-xs font-semibold">
+              {t("settings.language")}
+            </label>
+            <select
+              id={`${id}-lang`}
+              value={draftLang}
+              onChange={(e) => setDraftLang(e.target.value as LanguageId)}
+              className="w-full rounded-md border border-[var(--vscode-input-border,transparent)] bg-[var(--vscode-input-background,transparent)] text-[var(--vscode-input-foreground,inherit)] px-2 py-1 text-xs"
+            >
+              {LANGUAGES.map((l) => (
+                <option key={l.id} value={l.id}>
+                  {l.label}
+                </option>
+              ))}
+            </select>
+            <p className="m-0 text-xs text-muted-foreground">{t("settings.languageHelp")}</p>
+          </div>
+
           <div className="flex justify-end gap-2">
             <Button variant="secondary" onClick={() => setOpen(false)}>
               {t("settings.cancel")}
             </Button>
-            <Button onClick={apply} disabled={draft === scale}>
+            <Button onClick={apply} disabled={draft === scale && draftLang === lang}>
               {t("settings.apply")}
             </Button>
           </div>

@@ -21,6 +21,13 @@ const TAB: Record<Tab, { label: StringKey; icon: IconName }> = {
 };
 
 export function App() {
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const handle = () => setTick((t) => t + 1);
+    window.addEventListener("cathouse-locale-changed", handle);
+    return () => window.removeEventListener("cathouse-locale-changed", handle);
+  }, []);
+
   return (
     <main className="@container flex h-screen min-h-0 flex-col overflow-hidden">
       <Dashboard />

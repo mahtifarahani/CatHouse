@@ -4,6 +4,10 @@ GitHub Release notes are the version sections below. Keep unfinished work under 
 
 ## Unreleased
 
+## [0.4.2] - 2026-10-02
+
+- **Languages.** The CatHouse UI is now fully translated into English, Chinese (中文), Hindi (हिन्दी), Spanish (Español), French (Français), and Persian (فارسی). You can change the language dynamically from the new Settings menu. Persian natively supports an RTL layout which flips all layout and animation directions.
+
 ## [0.4.1] - 2026-10-02
 
 - **New UI.** CatHouse was rebuilt around five tabs: Chat, Runs, Profile, Models and Setup. Overview is part of Runs, the Repos tab became a repo menu above the chat input, and Diagnostics is part of Setup. The look is calmer: soft surfaces instead of borders everywhere, icon-only tabs and buttons in a narrow sidebar, and nothing scrolls sideways.
