@@ -12,7 +12,7 @@
 | [`release/github.md`](release/github.md) | Distribution: VS Code Marketplace, Open VSX for Cursor, GitHub Release artifacts, version tags and changelog notes |
 | **research/** | The catherd docs below describe the **1.0.0 baseline**; CatHouse pins **1.4.0**, and the upgrade docs list every change that matters |
 | [`research/catherd-1.2-upgrade.md`](research/catherd-1.2-upgrade.md) | **catherd 1.0.0 → 1.2.0 for CatHouse:** push instead of `wait`, read/ownership rules, new tools and JSON fields, install changes, parity backlog |
-| [`research/catherd-1.4-upgrade.md`](research/catherd-1.4-upgrade.md) | **catherd 1.3.0 → 1.4.0 for CatHouse:** orchestration host (CatHouse sets `CATHERD_ORCHESTRATION_HOST=claude-code`), additive `status`/`doctor`/`profile_get` fields, Codex-as-orchestrator out of scope, backlog, traps |
+| [`research/catherd-1.4-upgrade.md`](research/catherd-1.4-upgrade.md) | **catherd 1.3.0 → 1.4.0 for CatHouse:** orchestration host and additive `status`/`doctor`/`profile_get` fields; ADR 0009 later added native Codex hosting |
 | [`research/catherd-1.3-upgrade.md`](research/catherd-1.3-upgrade.md) | **catherd 1.2.0 → 1.3.0 for CatHouse:** no contract change; new backends (Cursor, Grok, Antigravity), new doctor rows and how Setup shows them, `knowledge` CLI, backlog |
 | [`research/catherd-overview.md`](research/catherd-overview.md) | What catherd is: roles, rungs, ladders, Jev, the skill's sequence, surfaces |
 | [`research/catherd-mcp-contract.md`](research/catherd-mcp-contract.md) | The 21 MCP tools of 1.0.0: inputs, outputs, error envelope, codes, `wait` single-delivery rule (superseded in 1.1: see the upgrade doc) |

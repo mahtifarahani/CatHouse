@@ -1,10 +1,11 @@
 import type { SessionEvent } from "@cathouse/protocol";
-import { Badge, cn, Icon, type IconName } from "@cathouse/ui";
+import { Badge, Button, cn, Icon, type IconName } from "@cathouse/ui";
 import { type ReactNode, useMemo, useState } from "react";
 import { t } from "../lib/strings";
 import { type Block, type ToolItem, toBlocks } from "./blocks";
 import { mmss, oneLine, toolParts } from "./format";
 import { MarkdownText } from "./MarkdownText";
+import { isClaudeSessionLimit } from "./quota";
 import { type TranscriptItem, toTranscript } from "./useSession";
 
 const isAssistant = (b: Block) =>
@@ -13,12 +14,25 @@ const isAssistant = (b: Block) =>
 export function Transcript({
   events,
   model,
+  onSwitchToCodex,
+  switchingHost = false,
 }: {
   events: SessionEvent[];
   model?: string | undefined;
   onOpenRun?: ((id: string) => void) | undefined;
+  onSwitchToCodex?: (() => void) | undefined;
+  switchingHost?: boolean | undefined;
 }) {
   const blocks = useMemo(() => toBlocks(toTranscript(events)), [events]);
+  const transcriptHost = events.findLast((event) => event.kind === "init");
+  const isClaudeChat = transcriptHost?.kind !== "init" || transcriptHost.host !== "codex";
+  const quotaIndex = blocks.findLastIndex(
+    (block) =>
+      isClaudeChat &&
+      block.kind === "item" &&
+      (block.item.type === "text" || block.item.type === "result") &&
+      isClaudeSessionLimit(block.item.text),
+  );
   let speaker: "user" | "assistant" | undefined;
   return (
     <ol
@@ -38,6 +52,22 @@ export function Transcript({
               <StepGroup items={b.items} nested={b.nested} />
             ) : (
               <Item it={b.item} />
+            )}
+            {onSwitchToCodex && i === quotaIndex && (
+              <div className="ms-7 flex flex-wrap items-center gap-2 rounded-md bg-surface px-2.5 py-2 text-xs">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={switchingHost}
+                  onClick={onSwitchToCodex}
+                >
+                  <Icon name="cpu" />
+                  {t("session.switchToCodex")}
+                </Button>
+                <span className="min-w-0 text-muted-foreground">
+                  {t("session.switchToCodexHint")}
+                </span>
+              </div>
             )}
           </li>
         );

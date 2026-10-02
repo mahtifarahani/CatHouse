@@ -8,21 +8,21 @@
 
 **CatHouse brings [catherd](https://github.com/47vigen/catherd) into VS Code.** It turns catherd's agent orchestration, terminal dashboard, setup flow, and run controls into a complete graphical interface in the Activity Bar.
 
-catherd still does the real work: Claude plans and verifies, Codex, opencode, headless Claude Code, Cursor, Grok Build, or Antigravity workers write the code, and Jev can choose the model and effort for each job. CatHouse gives that workflow a home inside the editor—without reimplementing the orchestrator or taking ownership of its data.
+catherd still does the real work: the selected Claude Code or Codex host orchestrates the task, while Codex, opencode, headless Claude Code, Cursor, Grok Build, or Antigravity workers can write the code. Jev can choose the model and effort for each job. CatHouse gives that workflow a home inside the editor—without reimplementing the orchestrator or taking ownership of its data.
 
 > Install CatHouse from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=cathouse.cathouse) or, in Cursor, from [Open VSX](https://open-vsx.org/extension/cathouse/cathouse). Platform VSIX files remain available on [GitHub Releases](https://github.com/mahtifarahani/CatHouse/releases) for manual or offline installation.
 
 ## What CatHouse adds
 
-- **Guided Setup** — checks and installs Bun, `catherd-cli@1.4.0`, the catherd Claude plugin, login, and worker backends. Installers run only after you click.
-- **Chat** — starts `/catherd:catherd <task>` directly from the Activity Bar and streams the orchestration session into VS Code. Roles report back by themselves when they finish (catherd's push notices), so you can keep chatting while they run.
-- **Human-in-the-loop cards** — answers Claude questions and permission requests without leaving the editor, with notifications when a run needs attention.
+- **Guided Setup** — checks Bun, `catherd-cli@1.4.0`, the selected host's plugin and login, and worker backends. For Codex hosting it also checks the app-server daemon. Installers and daemon startup run only after you click.
+- **Chat** — starts a catherd task through the selected Claude Code or Codex host in the Activity Bar. If Claude hits its session limit, the transcript offers a switch to Codex for new tasks. Role completion notices return to the active host's chat.
+- **Human-in-the-loop cards** — answers orchestrator questions and permission requests without leaving the editor, with notifications when a run needs attention.
 - **Runs** — follows live roles, budget, climbs, routes, landed milestones, replies, state, and debug output; live roles can be cancelled from the UI.
-- **Profile** — pick the active profile in one step and edit roles, model ladders, access, isolation, budget, routing and failover; every change is validated by catherd and saves itself, with Undo.
+- **Profile** — switch the chat orchestrator between Claude Code and Codex, pick the active catherd profile, and edit roles, model ladders, access, isolation, budget, routing and failover. catherd validates and saves profile edits, with Undo.
 - **Models** — searches and refreshes catherd's model catalog and supports `treat-like` mappings for unscored rungs.
 - **Setup** also holds diagnostics: `catherd doctor` results with their fixes, catherd's logs, and its machine-wide command lock.
 - **Languages** — fully translated into English, Chinese (中文), Hindi (हिन्दी), Spanish (Español), French (Français), and Persian (فارسی). Persian natively supports RTL layout. You can change the language dynamically from the app's Settings menu.
-- **Resume after reload** — reconnects a saved Claude session to the same catherd run instead of creating a duplicate.
+- **Resume after reload** — reconnects a saved session to the same catherd run. Claude and Codex keep separate saved chat links for each repository.
 
 Everything lives in one VS Code Activity Bar view and follows the active Light, Dark, or High Contrast theme.
 
@@ -41,7 +41,7 @@ CatHouse webview
       ▼
 VS Code extension host
       ├── catherd CLI / MCP ──► profiles, models, diagnostics, and runs
-      └── Claude Agent SDK ───► /catherd:catherd ──► coding agents
+      └── selected host ──────► Claude Agent SDK or Codex app-server ──► catherd task
 ```
 
 ## Requirements
@@ -49,7 +49,7 @@ VS Code extension host
 - VS Code 1.100 or newer, or Cursor
 - macOS or Linux (Windows is not supported yet)
 - A trusted workspace containing a Git repository
-- A Claude account
+- A Claude or Codex account for the selected orchestration host
 - At least one logged-in worker backend:
   - [Codex CLI](https://github.com/openai/codex) 0.157.0 or newer (the default)
   - [opencode](https://opencode.ai/) v2.0.16 or newer
@@ -60,7 +60,7 @@ VS Code extension host
 
 CatHouse ships its orchestration-time Claude Code runtime inside each platform-specific extension build. A standalone `claude` installation is needed only when the active catherd profile uses `claude-code:` workers.
 
-Bun, catherd, and the catherd Claude plugin are mandatory, but you do not need to prepare them manually: CatHouse's Setup page detects what is missing and offers each installation step explicitly.
+Bun, catherd, and the selected host's catherd plugin are mandatory, but you do not need to prepare them manually: CatHouse's Setup page detects what is missing and offers each installation step explicitly. Codex as the orchestration host needs Codex CLI 0.159.2 or newer and its managed app-server daemon. The worker-only Codex minimum is 0.157.0.
 
 ## Install
 
@@ -84,7 +84,7 @@ cursor --install-extension cathouse.cathouse
 
 ### Manual or offline install
 
-GitHub Releases also provides a platform-specific VSIX and `SHA256SUMS`. Download the file that matches your machine; `<version>` is the release number, for example `0.1.0`.
+GitHub Releases also provides a platform-specific VSIX and `SHA256SUMS`. Download the file that matches your machine; `<version>` is the release number, for example `0.4.3` when that release is published.
 
 | Machine                                         | File                                   |
 | ----------------------------------------------- | -------------------------------------- |

@@ -338,7 +338,7 @@ export class CodexSession {
       });
     });
     await this.request("initialize", {
-      clientInfo: { name: "cathouse", title: "CatHouse", version: "0.4.2" },
+      clientInfo: { name: "cathouse", title: "CatHouse", version: "0.4.3" },
       capabilities: null,
     });
     this.write({ method: "initialized" });

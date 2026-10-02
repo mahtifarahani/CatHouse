@@ -62,7 +62,7 @@ export type TranscriptItem =
       /** Set when the sub-agent is one of catherd's native role agents. */
       agent?: { role: string; model: string; effort?: string };
     }
-  | { type: "result"; subtype: string; isError: boolean; costUsd?: number }
+  | { type: "result"; subtype: string; isError: boolean; costUsd?: number; text?: string }
   | { type: "init"; ok: boolean; detail: string }
   | { type: "compacted" }
   | { type: "inbound" };
@@ -146,6 +146,7 @@ export function toTranscript(events: SessionEvent[]): TranscriptItem[] {
           subtype: e.subtype,
           isError: e.isError,
           ...(e.costUsd === undefined ? {} : { costUsd: e.costUsd }),
+          ...(e.text ? { text: e.text } : {}),
         });
         break;
       case "inbound":

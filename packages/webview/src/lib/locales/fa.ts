@@ -244,6 +244,9 @@ export const fa: Partial<Record<StringKey, string>> = {
   "session.runStartedTitle": "اجرا شروع شد",
   "session.turnDone": "نوبت کامل شد",
   "session.turnFailed": "نوبت پایان یافت: {subtype}",
+  "session.switchToCodex": "تغییر به Codex",
+  "session.switchToCodexHint":
+    "این گفت‌وگوی Claude پایان می‌یابد. پس از تکمیل Setup، کارهای جدید با Codex شروع می‌شوند؛ این گفت‌وگو نزد Claude می‌ماند.",
   "session.mode": "مجوزها",
   "session.modeHelp":
     "ابزارهای خود catherd همیشه مجاز هستند؛ این تنظیم می‌کند که چگونه تماس‌های سایر ابزارها مدیریت شوند.",

@@ -21,7 +21,7 @@ One VSIX per platform (ADR 0008), attached to a GitHub Release:
 
 Semantic versioning. Three places must name the same version:
 
-1. `packages/extension/package.json` field `version` (currently `0.4.1`, `packages/extension/package.json:5`). The packager puts this number in the filename (`packages/extension/scripts/package.mjs:101`).
+1. `packages/extension/package.json` field `version` (prepared as `0.4.3`, `packages/extension/package.json:5`). The packager puts this number in the filename (`packages/extension/scripts/package.mjs:101`).
 2. A changelog heading `## [X.Y.Z] - YYYY-MM-DD` in `docs/CHANGELOG.md`. Notes stay under `## Unreleased` until the release commit. The extractor accepts only an exact heading (`scripts/release-notes.mjs:12`, `scripts/release-notes.mjs:28-46`), so `## [0.1.0-rc.1]` is not treated as `0.1.0`.
 3. An annotated or lightweight Git tag `vX.Y.Z`. `v0.1.0-rc.1` is valid. The workflow treats any tag containing `-` as a GitHub-only pre-release.
 
@@ -113,10 +113,12 @@ The Actions UI offers the same **Run workflow** input. Do not create or move ano
 
 ```bash
 pnpm exec vitest run scripts/release-notes.test.mjs
-node scripts/release-notes.mjs --tag v0.4.1
+node scripts/release-notes.mjs --tag v0.4.3
 ```
 
-The vitest file checks tag parsing, exact changelog sections, a manifest mismatch, and that the body names all four assets plus both editors. The tag being prepared (now `v0.4.1`) must pass before it is pushed.
+The vitest file checks tag parsing, exact changelog sections, a manifest mismatch, and that the body names all four assets plus both editors. The tag being prepared (now `v0.4.3`) must pass before it is pushed. The 0.4.3 section describes the Profile host switch and the action beside a Claude session limit; no tag or publishing action is part of version preparation.
+
+The local darwin-arm64 package check for 0.4.3 produced `dist/cathouse-darwin-arm64-0.4.3.vsix`. Its staged manifest reports version `0.4.3`, and the staged Marketplace description and README contain the new host-switch text. The other three platform artifacts are built by the tagged workflow and have not been packaged for this preparation.
 
 Release preparation for `0.1.0` passed the release-notes tests (4), full unit suite (95 passed, 7 opt-in/live skipped), typecheck, production build, and local darwin-arm64 packaging. The local artifact is `dist/cathouse-darwin-arm64-0.1.0.vsix` (95.94 MB). GitHub Actions run `36545374544` completed successfully: tag/changelog validation, dependency install, four-platform packaging, checksums, and Release publication all passed. The GitHub API confirmed a non-draft, non-prerelease Release with the four expected VSIX assets and `SHA256SUMS`, all in `uploaded` state.
 

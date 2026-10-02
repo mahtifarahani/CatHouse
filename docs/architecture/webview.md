@@ -4,6 +4,8 @@ Status: **UI rebuilt on 2026-10-02** into five tabs: Chat, Runs, Profile, Models
 
 Profile now begins with a CatHouse-level orchestrator selector (Claude Code or Codex). It applies immediately to new chats, disables during an active session, and asks Setup to recheck the selected host. If Setup's gate closes because the new host needs installation, Profile and Setup remain reachable so the user can switch back or finish Setup. The selector is global CatHouse state, not a catherd profile patch. Details: ADR 0009.
 
+Chat offers the same change at the point of a Claude session-limit response. The transcript identifies that specific assistant message, renders one **Switch to Codex** action beside the latest matching message, and explains that the current Claude chat ends and stays with Claude. The action calls `session.stop` for an active chat, then `app.setHost(codex)`; the existing Profile/Setup gate handles unmet Codex prerequisites. Other errors and Codex-hosted chats do not show the action. The message and action are translated in all six UI languages.
+
 ## One Activity Bar surface
 
 The complete application is one `WebviewView` in the `cathouse` Activity Bar container (`cathouse.sidebar`, `packages/extension/src/panel/sidebar.ts`). There is no intermediary status-only sidebar, Open Dashboard button, or separate editor `WebviewPanel`.

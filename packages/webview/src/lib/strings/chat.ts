@@ -31,6 +31,9 @@ export const STRINGS = {
   "session.runStartedTitle": "Run started",
   "session.turnDone": "Turn complete",
   "session.turnFailed": "Turn ended: {subtype}",
+  "session.switchToCodex": "Switch to Codex",
+  "session.switchToCodexHint":
+    "Ends this Claude chat. New tasks use Codex after its Setup checks pass; this chat stays with Claude.",
   "session.mode": "Permissions",
   "session.modeHelp":
     "catherd's own tools are always allowed; this sets how other tool calls are handled.",
