@@ -4,6 +4,8 @@ GitHub Release notes are the version sections below. Keep unfinished work under 
 
 ## Unreleased
 
+## [0.4.1] - 2026-10-02
+
 - **New UI.** CatHouse was rebuilt around five tabs: Chat, Runs, Profile, Models and Setup. Overview is part of Runs, the Repos tab became a repo menu above the chat input, and Diagnostics is part of Setup. The look is calmer: soft surfaces instead of borders everywhere, icon-only tabs and buttons in a narrow sidebar, and nothing scrolls sideways.
 - **Chat.** Your messages sit on the right; catherd's answers sit on the left under its avatar with the orchestrator's model. A strip above the input shows which roles are working right now, with their model and time. One round button starts a task, sends a follow-up or stops the running turn; End session and Resume moved into a `⋯` menu.
 - **Profile.** Choosing a profile makes it active in one step, and every change saves itself (with Undo). Roles are compact rows that open in place; models are added from a searchable list.

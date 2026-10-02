@@ -21,6 +21,7 @@ Last updated: 2026-10-02. Update this file at the end of every section.
 | — | Upgrade to catherd 1.3.0 (pin, fixtures; no contract change) | ✅ done (2026-10-01) | `docs/research/catherd-1.3-upgrade.md` |
 | — | Upgrade to catherd 1.4.0 (pin, orchestration host, fixtures) + release prep `0.4.0` | ✅ done (2026-10-02), not tagged | `docs/research/catherd-1.4-upgrade.md` |
 | — | UI/UX rebuild (five tabs, chat, one-step profile with auto-save, Setup + diagnostics) | ✅ built (2026-10-02), owner check in VS Code pending | `docs/architecture/webview.md` |
+| — | Prepare extension version `0.4.1` for the UI rebuild | ✅ version and release notes updated (2026-10-02), not tagged | `docs/CHANGELOG.md`, `docs/release/github.md` |
 
 ## UI/UX rebuild (2026-10-02)
 
@@ -132,9 +133,9 @@ Prompt-placement follow-up: permission and question cards now stay in a fixed tr
 
 UI rebuild: the owner checks the new UI in the Extension Development Host (F5 "Run CatHouse") at a narrow and a wide sidebar, starts one short task to see the model header and live roles strip, and approves the commit. Then the release steps below.
 
-Release first: `0.4.0` is committed but not tagged; push `v0.4.0` when the owner approves (`docs/release/github.md`). GitHub `v0.3.0` is published and the Open VSX backfill uploaded all four target packages. The owner must now log in to Open VSX with Eclipse, open **Show Publisher Agreement**, read it, and select **Agree**. Open VSX activates the already-uploaded `0.3.0` packages after that one-time legal step; do not republish or move the tag. Future stable tag pushes publish GitHub plus Open VSX automatically; prereleases stay on GitHub. VS Code Marketplace stays manual.
+Release first: `0.4.1` is prepared but not committed or tagged; run `node scripts/release-notes.mjs --tag v0.4.1`, commit the release contents, then tag and push only when the owner approves (`docs/release/github.md`). GitHub `v0.3.0` is published and the Open VSX backfill uploaded all four target packages. The owner must now log in to Open VSX with Eclipse, open **Show Publisher Agreement**, read it, and select **Agree**. Open VSX activates the already-uploaded `0.3.0` packages after that one-time legal step; do not republish or move the tag. Future stable tag pushes publish GitHub plus Open VSX automatically; prereleases stay on GitHub. VS Code Marketplace stays manual.
 
-1. Owner chooses the final SPDX license, updates the manifest, and adds the license file. The published extension id is `cathouse.cathouse` and current release version is `0.4.0` (prepared, not tagged).
+1. Owner chooses the final SPDX license, updates the manifest, and adds the license file. The published extension id is `cathouse.cathouse` and current release version is `0.4.1` (prepared, not tagged).
 2. On an available SSH host or Dev Container, install the linux-x64 VSIX on the remote extension host and run Setup plus one short task. Docker is installed on this Mac but its daemon was not running; no SSH/Dev Container target was available, so remote remains explicitly untested.
 3. Execute the darwin-x64 and Linux VSIX artifacts on native target machines. They are build-verified only.
 4. After these gates, set Phase 5 to done and start the owner's bug/improvement backlog.
