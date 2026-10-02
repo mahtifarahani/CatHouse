@@ -19,6 +19,7 @@ export function styleViolations(source: string): StyleViolation[] {
   const violations: StyleViolation[] = [];
   for (const [index, text] of source.split(/\r?\n/).entries()) {
     if (text.includes("style-allow")) continue;
+    if (/^\s*(?:\/\/|\/\*|\*)/.test(text)) continue;
     const tokens = Array.from(text.matchAll(utility), (match) => match[1]);
     if (
       tokens.includes("border-border") ||

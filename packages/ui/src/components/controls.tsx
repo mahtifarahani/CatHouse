@@ -23,13 +23,13 @@ export function IconButton({
   return (
     <Button
       variant={variant ?? (tone === "danger" ? "danger" : "ghost")}
-      size="iconSm"
+      size={labelClassName ? "sm" : "iconSm"}
       aria-label={label}
       title={label}
       {...props}
       className={cn(
-        labelClassName ? "min-h-7 min-w-7 px-1.5" : "size-7",
-        small && "size-7",
+        labelClassName ? "min-w-7" : "size-7",
+        small && !labelClassName && "size-7",
         className,
       )}
     >
