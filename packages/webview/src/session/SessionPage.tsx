@@ -364,10 +364,16 @@ export function SessionPage({
             placeholder={active ? t("session.followUp") : t("session.taskPlaceholder")}
             footer={
               <>
-                <label className="min-w-0 shrink" title={t("session.modeHelp")}>
+                <label
+                  className="relative flex min-h-7 min-w-0 shrink items-center gap-1 rounded-md px-1.5 text-xs text-muted-foreground hover:bg-surface-hover hover:text-foreground focus-within:outline focus-within:outline-1 focus-within:outline-focus"
+                  title={t("session.modeHelp")}
+                >
                   <span className="sr-only">{t("session.mode")}</span>
+                  <span aria-hidden="true" className="truncate">
+                    {t(`session.mode.${mode}`)}
+                  </span>
                   <select
-                    className="min-h-7 max-w-full min-w-0 cursor-pointer truncate rounded-md bg-transparent px-1.5 text-xs text-muted-foreground hover:bg-surface-hover hover:text-foreground"
+                    className="absolute inset-0 size-full cursor-pointer opacity-0"
                     value={mode}
                     onChange={(e) => {
                       const next = e.target.value as Mode;
@@ -381,6 +387,7 @@ export function SessionPage({
                       </option>
                     ))}
                   </select>
+                  <Icon name="chevronDown" className="pointer-events-none size-3 shrink-0" />
                 </label>
                 <span className="ms-auto flex shrink-0 items-center gap-1">
                   <AttachButton onAttachments={setFiles} onError={setError} />
