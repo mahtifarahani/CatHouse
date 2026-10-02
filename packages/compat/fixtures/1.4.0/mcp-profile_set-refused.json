@@ -1,0 +1,30 @@
+{
+  "saved": false,
+  "errors": [
+    {
+      "path": "roles.worker.enabled",
+      "message": "the worker cannot be disabled",
+      "fix": "catherd profile set roles.worker.enabled true"
+    }
+  ],
+  "warnings": [
+    {
+      "path": "failover.codex:gpt-6-sol#xhigh",
+      "message": "codex:gpt-6-sol#xhigh is on no enabled role's ladder, so this never runs"
+    },
+    {
+      "path": "failover.codex:gpt-6-sol#high",
+      "message": "stand-in to confirm: claude-sonnet-5-5#high has no repo_code, terminal, honesty or agentic value of its own; routing uses gpt-6-sol#high's repo_code, gpt-6-sol#high's terminal, gpt-6-sol#high's honesty, gpt-6-sol#high's agentic (inferred)",
+      "fix": "confirm or replace it: catherd catalog treat-like --suggest claude-code:claude-sonnet-5-5#high, then catherd catalog treat-like claude-code:claude-sonnet-5-5#high <a rung>"
+    },
+    {
+      "path": "failover.codex:gpt-6-sol#xhigh",
+      "message": "stand-in to confirm: claude-sonnet-5-5#xhigh has no repo_code, terminal, honesty or agentic value of its own; routing uses claude-opus-5-5#xhigh's repo_code, claude-opus-5-5#xhigh's terminal, gpt-6-sol#xhigh's honesty, claude-opus-5-5#xhigh's agentic (inferred)",
+      "fix": "confirm or replace it: catherd catalog treat-like --suggest claude-code:claude-sonnet-5-5#xhigh, then catherd catalog treat-like claude-code:claude-sonnet-5-5#xhigh <a rung>"
+    }
+  ],
+  "diff": [],
+  "linked": [],
+  "pruned": [],
+  "newSessionNeededFor": []
+}

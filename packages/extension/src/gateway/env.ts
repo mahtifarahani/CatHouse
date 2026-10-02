@@ -69,5 +69,9 @@ export async function processEnv(
     if (v !== undefined && !STRIPPED_PREFIXES.some((p) => k.startsWith(p))) env[k] = v;
   }
   env.PATH = mergePath(await loginPath, process.env.PATH ?? "", WELL_KNOWN.join(delimiter));
+  // catherd 1.4 resolves omitted architect/verifier rungs from the orchestration host. CatHouse's
+  // gateway client is neither Codex nor Claude Code by name, so without this a host-default profile
+  // fails with E_CONFIG_INVALID. CatHouse orchestrates through Claude Code (docs/research/catherd-1.4-upgrade.md).
+  env.CATHERD_ORCHESTRATION_HOST = "claude-code";
   return { ...env, ...extra };
 }

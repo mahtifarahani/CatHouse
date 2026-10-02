@@ -1,6 +1,13 @@
 {
+  "host": {
+    "host": "claude-code",
+    "conflict": null,
+    "session": null
+  },
+  "queue": null,
+  "push": null,
   "ready": true,
-  "version": "1.3.0",
+  "version": "1.4.0",
   "checks": [
     {
       "id": "bun",
@@ -21,37 +28,36 @@
       "label": "profile default",
       "state": "warn",
       "word": "warning",
-      "detail": "failover.codex:gpt-6-sol#high: downgrade: opencode:opencode-go/kimi-k3#max stands in for codex:gpt-6-sol#high, scoring below it on repo_code (and more)",
-      "fix": "catherd profile set --profile default failover.codex:gpt-6-sol#high claude-code:claude-sonnet-5-5#high"
+      "detail": "failover.codex:gpt-6-sol#high: stand-in to confirm: claude-sonnet-5-5#high has no repo_code, terminal, honesty or agentic value of its own; routing uses gpt-6-sol#high's repo_code, gpt-6-sol#high's terminal, gpt-6-sol#high's honesty, gpt-6-sol#high's agentic (inferred) (and more)",
+      "fix": "confirm or replace it: catherd catalog treat-like --suggest claude-code:claude-sonnet-5-5#high, then catherd catalog treat-like claude-code:claude-sonnet-5-5#high <a rung>"
     },
     {
       "id": "backend:codex",
       "label": "codex",
       "state": "ok",
       "word": "ready",
-      "detail": "0.158.0 \u00b7 ChatGPT login \u00b7 7 models"
+      "detail": "0.158.0 · ChatGPT login · 7 models"
     },
     {
       "id": "backend:claude-code",
       "label": "claude-code",
       "state": "ok",
       "word": "ready",
-      "detail": "2.1.283 \u00b7 5 models"
+      "detail": "2.1.283 · 5 models"
     },
     {
       "id": "backend:opencode",
       "label": "opencode",
       "state": "ok",
       "word": "ready",
-      "detail": "2.0.18 \u00b7 8 models"
+      "detail": "2.0.18 · 9 models"
     },
     {
       "id": "backend:cursor",
       "label": "cursor",
-      "state": "skip",
-      "word": "too old",
-      "detail": "cursor-agent 2026.06.04 is older than 2026.09.28 (no profile uses it)",
-      "fix": "cursor-agent update"
+      "state": "ok",
+      "word": "ready",
+      "detail": "2026.09.28 · Cursor login · 131 models"
     },
     {
       "id": "backend:grok",
@@ -81,14 +87,14 @@
       "label": "sources",
       "state": "ok",
       "word": "fresh",
-      "detail": "models-dev 7 h, openrouter-models 7 h, openrouter-endpoints 7 h, litellm 7 h, arena 7 h, vectara 7 h, epoch 7 h; no Artificial Analysis key"
+      "detail": "models-dev 6 min, openrouter-models 6 min, openrouter-endpoints 6 min, litellm 6 min, arena 6 min, vectara 6 min, epoch 6 min; no Artificial Analysis key; stand-ins to confirm: claude-sonnet-5-5#high (repo_code, terminal, honesty, agentic), claude-sonnet-5-5#xhigh (repo_code, terminal, honesty, agentic)"
     },
     {
       "id": "plugin",
       "label": "Claude Code plugin",
       "state": "ok",
       "word": "ready",
-      "detail": "1.3.0"
+      "detail": "1.4.0"
     },
     {
       "id": "agents",
@@ -103,13 +109,6 @@
       "state": "ok",
       "word": "ready",
       "detail": "answers tools/list with 26 tools"
-    },
-    {
-      "id": "push",
-      "label": "push to Claude Code",
-      "detail": "a test message reached this session",
-      "state": "ok",
-      "word": "ready"
     },
     {
       "id": "locks",
@@ -128,18 +127,23 @@
     {
       "id": "access:codex",
       "label": "codex worker access",
-      "state": "warn",
-      "word": "blocked",
-      "detail": "in codex sandbox, a worker cannot: docker version (failed to connect to the docker API at unix:///Users/dev/.orbstack/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /Users/dev/.orbstack/run/docker.sock: connect: no such file or directory)",
-      "fix": "docker version: the Codex sandbox cannot reach the Docker socket here: run the Docker checks in the verifier (full access), or give the role full access"
+      "state": "ok",
+      "word": "ready",
+      "detail": "lock-dir write, temp write, loopback bind, outbound HTTPS, docker version in codex sandbox"
     },
     {
       "id": "access:opencode",
       "label": "opencode worker access",
-      "state": "warn",
-      "word": "blocked",
-      "detail": "in an unsandboxed shell (opencode has no sandbox), a worker cannot: docker version (failed to connect to the docker API at unix:///Users/dev/.orbstack/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /Users/dev/.orbstack/run/docker.sock: connect: no such file or directory)",
-      "fix": "docker version: start Docker: docker version fails"
+      "state": "ok",
+      "word": "ready",
+      "detail": "lock-dir write, temp write, loopback bind, outbound HTTPS, docker version in an unsandboxed shell (opencode has no sandbox)"
+    },
+    {
+      "id": "access:claude-code",
+      "label": "claude-code worker access",
+      "state": "ok",
+      "word": "ready",
+      "detail": "lock-dir write, temp write, loopback bind, outbound HTTPS, docker version in an unsandboxed shell (Claude Code's sandbox is off)"
     },
     {
       "id": "access:full",
@@ -154,14 +158,6 @@
       "state": "info",
       "word": "default",
       "detail": "the backend asks but cannot force: architect on claude (default), verifier on claude (default)"
-    },
-    {
-      "id": "ui-browser",
-      "label": "agent-browser",
-      "state": "warn",
-      "word": "missing",
-      "detail": "agent-browser is not on PATH, so ui-reviewer (default) cannot take screenshots",
-      "fix": "npm i -g agent-browser\nor turn the role off:\ncatherd profile set roles.ui-reviewer.enabled false --profile default"
     }
   ]
 }

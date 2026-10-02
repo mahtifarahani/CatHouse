@@ -1,13 +1,29 @@
 {
-  "version": "1.3.0",
+  "host": {
+    "host": "claude-code",
+    "conflict": null,
+    "session": null
+  },
+  "queue": null,
+  "version": "1.4.0",
   "runs": [
     {
+      "delivery": [
+        {
+          "name": "writer-M1.L1",
+          "dispatchId": "01M3P8E4KEXGKVQRG3NMNY3KK9",
+          "eventId": "[\"20260929-093706-remove-code-comments\",\"01M3P8E4KEXGKVQRG3NMNY3KK9\",\"finished\"]",
+          "delivery": "collected",
+          "receipt": null
+        }
+      ],
       "id": "20260929-093706-remove-code-comments",
       "questions": [],
       "title": "Remove code comments",
       "repo": "/Users/dev/Projects/sc-weather",
       "createdAt": "2026-09-29T09:37:06.605Z",
       "session": {
+        "host": "claude-code",
         "sessionId": "3a977b65-13d4-44b7-a69b-6464bb1ae51f",
         "hostSessionId": null,
         "name": "sc-weather-03",
@@ -26,7 +42,7 @@
           "output": 1397
         },
         "costUsd": 0,
-        "wallMinutes": 3186
+        "wallMinutes": 4241
       },
       "agents": {
         "runs": 0,

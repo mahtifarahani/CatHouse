@@ -1,6 +1,6 @@
 # STATUS
 
-Last updated: 2026-10-01. Update this file at the end of every section.
+Last updated: 2026-10-02. Update this file at the end of every section.
 
 ## Current phase
 
@@ -19,6 +19,17 @@ Last updated: 2026-10-01. Update this file at the end of every section.
 | 5 | Release prep (remote, trust, a11y, themes, VSIX per platform) | 🚧 external gates | `docs/release/phase5.md`, `docs/runbook.md`, `docs/CHANGELOG.md` |
 | — | Upgrade to catherd 1.2.0 (push model, new fields, fixtures) | ✅ done (2026-09-29) | `docs/research/catherd-1.2-upgrade.md`, `docs/spikes/catherd-1.2.md`, ADR 0005 amendment |
 | — | Upgrade to catherd 1.3.0 (pin, fixtures; no contract change) | ✅ done (2026-10-01) | `docs/research/catherd-1.3-upgrade.md` |
+| — | Upgrade to catherd 1.4.0 (pin, orchestration host, fixtures) + release prep `0.4.0` | ✅ done (2026-10-02), not tagged | `docs/research/catherd-1.4-upgrade.md` |
+
+## catherd 1.4.0 upgrade and 0.4.0 prep (2026-10-02)
+
+catherd released 1.4.0 (npm `latest`). CatHouse now pins **catherd-cli 1.4.0 / plugin 1.4.0** (tag `v1.4.0`, commit `804682f`; `packages/compat`, adapter label `v1_4`). Full delta with citations: `docs/research/catherd-1.4-upgrade.md`.
+
+- **One contract change:** 1.4 resolves omitted architect/verifier rungs from the orchestration host and throws `E_CONFIG_INVALID` on host `unknown`, which is what CatHouse's `cathouse` MCP client with stripped `CLAUDE_CODE_*` looked like. `processEnv()` now sets `CATHERD_ORCHESTRATION_HOST=claude-code` for every spawned process (unit-tested). Everything else (`status.host/queue`, `RunSummary.delivery`, `profile_get raw`, doctor `host/queue/push`, `runs retry-push`) is additive. Codex as orchestrator is out of scope.
+- **Release 0.4.0 prepared:** `packages/extension/package.json` is `0.4.0`; `docs/CHANGELOG.md` has `## [0.4.0] - 2026-10-02`. The extension description (`package.nls.json`), keywords and both READMEs now name the Cursor, Grok Build and Antigravity worker backends (added in catherd 1.3) next to Codex, opencode and Claude Code.
+- **This machine** was upgraded with `bunx catherd-cli@1.4.0 init --no-input --plain` and `claude plugin marketplace update catherd && claude plugin update catherd@catherd` (plugin 1.4.0). doctor: **ready**.
+- **Verified:** Biome, typecheck, 97 unit tests, build, live contract 7/7 against 1.4.0 (fixtures re-recorded in `packages/compat/fixtures/1.4.0/`), e2e 5/5 in VS Code 1.139, `node scripts/release-notes.mjs --tag v0.4.0`, and a local `pnpm package` (`dist/cathouse-darwin-arm64-0.4.0.vsix`, 95.94 MB, manifest description and tags checked).
+- **Not done:** tag `v0.4.0` is not pushed (pushing it publishes GitHub + Open VSX). Runs does not show 1.4's delivery state yet (`catherd-1.4-upgrade.md` §6).
 
 ## catherd 1.3.0 upgrade (2026-10-01)
 
@@ -106,9 +117,9 @@ Prompt-placement follow-up: permission and question cards now stay in a fixed tr
 
 ## Exact next step (Phase 5)
 
-Release first: GitHub `v0.3.0` is published and the Open VSX backfill uploaded all four target packages. The owner must now log in to Open VSX with Eclipse, open **Show Publisher Agreement**, read it, and select **Agree**. Open VSX activates the already-uploaded `0.3.0` packages after that one-time legal step; do not republish or move the tag. Future stable tag pushes publish GitHub plus Open VSX automatically; prereleases stay on GitHub. VS Code Marketplace stays manual.
+Release first: `0.4.0` is committed but not tagged; push `v0.4.0` when the owner approves (`docs/release/github.md`). GitHub `v0.3.0` is published and the Open VSX backfill uploaded all four target packages. The owner must now log in to Open VSX with Eclipse, open **Show Publisher Agreement**, read it, and select **Agree**. Open VSX activates the already-uploaded `0.3.0` packages after that one-time legal step; do not republish or move the tag. Future stable tag pushes publish GitHub plus Open VSX automatically; prereleases stay on GitHub. VS Code Marketplace stays manual.
 
-1. Owner chooses the final SPDX license, updates the manifest, and adds the license file. The published extension id is `cathouse.cathouse` and current release version is `0.3.0`.
+1. Owner chooses the final SPDX license, updates the manifest, and adds the license file. The published extension id is `cathouse.cathouse` and current release version is `0.4.0` (prepared, not tagged).
 2. On an available SSH host or Dev Container, install the linux-x64 VSIX on the remote extension host and run Setup plus one short task. Docker is installed on this Mac but its daemon was not running; no SSH/Dev Container target was available, so remote remains explicitly untested.
 3. Execute the darwin-x64 and Linux VSIX artifacts on native target machines. They are build-verified only.
 4. After these gates, set Phase 5 to done and start the owner's bug/improvement backlog.
@@ -117,7 +128,7 @@ Release first: GitHub `v0.3.0` is published and the Open VSX backfill uploaded a
 
 ## Environment facts (planning machine, updated 2026-10-01)
 
-macOS (Darwin 27), VS Code 1.139.1 and Cursor 3.21.18 installed, Node 22.13.1 via nvm, pnpm present, `claude` 2.1.283 on PATH, Bun 1.4.2 (installed 2026-09-28 into ~/.bun), catherd-cli 1.3.0 (global `catherd` in ~/.bun/bin plus the bunx cache), Codex 0.158.0, plugin catherd@catherd 1.3.0, agent-browser not installed, opencode not installed, no Jev or Artificial Analysis key. npm latest: `@anthropic-ai/claude-agent-sdk` 0.3.283, `@anthropic-ai/claude-code` 2.1.283, `catherd-cli` 1.3.0, `@vscode/vsce` 4.0.0, `@vscode/test-electron` 3.1.0.
+macOS (Darwin 27), VS Code 1.139.1 and Cursor 3.21.18 installed, Node 22.13.1 via nvm, pnpm present, `claude` 2.1.283 on PATH, Bun 1.4.2 (installed 2026-09-28 into ~/.bun), catherd-cli 1.4.0 (global `catherd` in ~/.bun/bin plus the bunx cache), Codex 0.158.0, plugin catherd@catherd 1.4.0, agent-browser not installed, opencode not installed, no Jev or Artificial Analysis key. npm latest: `@anthropic-ai/claude-agent-sdk` 0.3.287 (CatHouse stays on 0.3.283), `@anthropic-ai/claude-code` 2.1.283, `catherd-cli` 1.4.0, `@vscode/vsce` 4.0.0, `@vscode/test-electron` 3.1.0.
 
 Profiles density follow-up: every Profiles setting group (Roles, Routing, Billing, Harness isolation, Budget, Failover, Timeouts & limits, Push notifications) is now a collapsible section that starts closed and shows a one-line summary in its header. Each role card's rung list collapses too, Expand all / Collapse all are available, open state persists in webview state, and filtering opens every match. Settings are stacked in one column instead of a two-column grid. Verified with lint, typecheck, 76 unit tests and build. The owner has not yet done the visual check in the Extension Development Host.
 

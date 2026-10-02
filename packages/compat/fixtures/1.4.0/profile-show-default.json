@@ -86,8 +86,8 @@
     "failover": {
       "codex:gpt-6-luna#high": "opencode:opencode-go/gpt-6-luna#high",
       "codex:gpt-6-sol#medium": "opencode:opencode-go/kimi-k3#max",
-      "codex:gpt-6-sol#high": "opencode:opencode-go/kimi-k3#max",
-      "codex:gpt-6-sol#xhigh": "opencode:opencode-go/kimi-k3#max"
+      "codex:gpt-6-sol#high": "claude-code:claude-sonnet-5-5#high",
+      "codex:gpt-6-sol#xhigh": "claude-code:claude-sonnet-5-5#xhigh"
     },
     "budget": {},
     "timeouts": {
@@ -130,17 +130,17 @@
     },
     {
       "from": "codex:gpt-6-sol#high",
-      "to": "opencode:opencode-go/kimi-k3#max",
+      "to": "claude-code:claude-sonnet-5-5#high",
       "inferred": true,
-      "via": "gpt-6-sol#medium",
-      "note": "scores borrowed from gpt-6-sol#medium"
+      "via": null,
+      "note": null
     },
     {
       "from": "codex:gpt-6-sol#xhigh",
-      "to": "opencode:opencode-go/kimi-k3#max",
+      "to": "claude-code:claude-sonnet-5-5#xhigh",
       "inferred": true,
-      "via": "gpt-6-sol#medium",
-      "note": "scores borrowed from gpt-6-sol#medium"
+      "via": null,
+      "note": null
     }
   ]
 }

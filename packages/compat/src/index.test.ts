@@ -2,10 +2,10 @@ import { describe, expect, it } from "vitest";
 import { atLeast, compareVersions, findCompat, PINNED } from "./index";
 
 describe("compat", () => {
-  it("pins catherd 1.3.0 with SDK >= 0.3.282", () => {
-    expect(PINNED.catherd).toBe("1.3.0");
+  it("pins catherd 1.4.0 with SDK >= 0.3.282", () => {
+    expect(PINNED.catherd).toBe("1.4.0");
     expect(atLeast(PINNED.sdk, "0.3.282")).toBe(true);
-    expect(findCompat("1.3.0")).toBe(PINNED);
+    expect(findCompat("1.4.0")).toBe(PINNED);
     expect(findCompat("1.1.0")).toBeUndefined();
   });
 
