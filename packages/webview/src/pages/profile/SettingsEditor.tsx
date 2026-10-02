@@ -45,6 +45,7 @@ export function SettingsEditor({
         </Row>
         <Row label={t("profiles.jev")} hint={t("profiles.jevHint")}>
           <Switch
+            className="[&>span:last-child]:hidden"
             label={t("profiles.jev")}
             checked={doc.jev.use !== "off"}
             onChange={(on) =>
@@ -116,6 +117,7 @@ export function SettingsEditor({
         </Row>
         <Row label={t("profiles.preflightConfirm")}>
           <Switch
+            className="[&>span:last-child]:hidden"
             label={t("profiles.preflightConfirm")}
             checked={doc.preflight.confirm}
             onChange={(on) =>
@@ -157,8 +159,13 @@ export function SettingsEditor({
       {Object.keys(doc.isolated).length > 0 && (
         <Group title={t("profiles.harness")} help={t("profiles.help.harness")}>
           {Object.entries(doc.isolated).map(([k, v]) => (
-            <Row key={k} label={k} hint={v ? t("profiles.isolated") : t("profiles.ownConfig")}>
+            <Row
+              key={k}
+              label={t("profiles.isolateBackend", { backend: k })}
+              hint={v ? t("profiles.isolated") : t("profiles.ownConfig")}
+            >
               <Switch
+                className="[&>span:last-child]:hidden"
                 label={t("profiles.isolateBackend", { backend: k })}
                 checked={v}
                 onChange={(on) =>
@@ -176,6 +183,7 @@ export function SettingsEditor({
         {NOTIFY.map((n) => (
           <Row key={n} label={t(`profiles.notify.${n}`)}>
             <Switch
+              className="[&>span:last-child]:hidden"
               label={t(`profiles.notify.${n}`)}
               checked={doc.notify.includes(n)}
               onChange={(on) =>

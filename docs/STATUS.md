@@ -29,6 +29,8 @@ Composer focus follow-up (2026-10-02): the textarea now clears its own focused b
 
 Composer mode follow-up (2026-10-02): the permission mode chevron now sits immediately after the selected label; the native select remains available for input and accessibility. See `docs/architecture/webview.md` §Styling. Owner visual pass in VS Code remains pending.
 
+Profile settings follow-up (2026-10-02): setting labels now precede their switches in the isolation, notification, Jev and preflight rows. The duplicate visual label inside each switch is hidden while its accessible name remains. See `docs/architecture/webview.md` §Pages. Owner visual pass remains pending.
+
 The owner found the UI hard to use: too many overlapping tabs, two-step actions, Interrupt/Stop at the top and usually disabled, borders everywhere, a confusing Setup and a poor Profiles page. The webview was rebuilt. Full description: `docs/architecture/webview.md` §Styling, §Pages, §Transcript layout.
 
 - **Five tabs:** Chat · Runs · Profile · Models · Setup, icon-only in a narrow sidebar. Overview → Runs header; Repos → repo menu above the chat input; Diagnostics → Setup "Logs and tools". The status bar is gone.
