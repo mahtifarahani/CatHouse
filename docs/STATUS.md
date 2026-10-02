@@ -2,6 +2,10 @@
 
 Last updated: 2026-10-02. Update this file at the end of every section.
 
+## Codex startup fix (2026-10-02)
+
+Cursor's live daemon returned the catherd skill as `catherd:catherd`, while CatHouse 0.4.3 looked for `catherd`. A chat therefore failed before the first turn and its draft was cleared. CatHouse now uses the qualified name in skill lookup and turn input; the Codex contract test uses the observed daemon shape, and a failed start keeps the draft and shows the error. Targeted test, typecheck, Biome, build and direct live daemon startup passed. The fixed VSIX was installed in Cursor; concurrent reinstall/reload activity prevented a conclusive panel response check. See `docs/spikes/codex-live.md`. **Exact next step:** verify a short chat response in Cursor, then verify a real catherd role push and resume.
+
 ## Current phase
 
 **Phase 5 (release prep): `0.1.0` is published on the VS Code Marketplace and Open VSX; GitHub Releases is at `0.3.0`; license and native gates remain.** Stable tags now automate GitHub Releases and Open VSX only. `OVSX_PAT` is configured and the four `0.3.0` packages reached Open VSX, but the registry keeps them inactive until the owner signs the one-time Open VSX Publisher Agreement. VS Code Marketplace automation was removed at the owner's request. A remote runtime was not available. Store-install smoke tests, the final SPDX license, and native execution of non-arm64 artifacts remain.

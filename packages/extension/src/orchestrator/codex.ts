@@ -289,7 +289,7 @@ export class CodexSession {
       await this.request("turn/start", {
         threadId: this.sessionId,
         input: [
-          { type: "skill", name: "catherd", path: this.skillPath },
+          { type: "skill", name: "catherd:catherd", path: this.skillPath },
           { type: "text", text: prompt, text_elements: [] },
         ],
         approvalPolicy: this.approvalPolicy(),
@@ -365,7 +365,9 @@ export class CodexSession {
       .map(object)
       .find(
         (item) =>
-          item.name === "catherd" && item.enabled === true && item.pluginId === "catherd@catherd",
+          item.name === "catherd:catherd" &&
+          item.enabled === true &&
+          item.pluginId === "catherd@catherd",
       );
     if (typeof skill?.path !== "string")
       throw new Error("catherd Codex skill is missing or disabled; install it in Setup");

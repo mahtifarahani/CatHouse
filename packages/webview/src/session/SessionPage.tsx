@@ -182,11 +182,15 @@ export function SessionPage({ canStart, blockedReason }: SessionPageProps) {
     if (!active) {
       if (!ready) return;
       void call(async () => {
-        await request("session.start", {
+        const started = await request("session.start", {
           task: message,
           repo: workspace?.repo ?? undefined,
           permissionMode: startMode,
         });
+        if (started.error) {
+          setError(started.error.message);
+          return;
+        }
         setDraft("");
         setFiles([]);
       });

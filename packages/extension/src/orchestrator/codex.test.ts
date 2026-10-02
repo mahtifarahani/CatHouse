@@ -29,7 +29,7 @@ describe("Codex app-server session", () => {
                 {
                   skills: [
                     {
-                      name: "catherd",
+                      name: "catherd:catherd",
                       enabled: true,
                       pluginId: "catherd@catherd",
                       path: "/plugin/skills/catherd/SKILL.md",
@@ -40,7 +40,10 @@ describe("Codex app-server session", () => {
             },
           });
         if (message.method === "turn/start") {
-          expect(message.params.input[0].type).toBe("skill");
+          expect(message.params.input[0]).toMatchObject({
+            type: "skill",
+            name: "catherd:catherd",
+          });
           out({ id: message.id, result: { turn: { id: "turn-1" } } });
           out({ method: "turn/started", params: { threadId: "thread-1", turn: { id: "turn-1" } } });
           out({

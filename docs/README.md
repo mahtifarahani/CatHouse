@@ -44,3 +44,4 @@
 | [`architecture/setup.md`](architecture/setup.md) | Setup gate: detectors, evaluator, installers, UI, e2e evidence |
 | [`spikes/phase1.md`](spikes/phase1.md) | Phase 1 spike results and the design findings they produced |
 | [`spikes/catherd-1.2.md`](spikes/catherd-1.2.md) | catherd 1.2 push notices in an Agent SDK session: proof, SDK message shape, a full pushed run |
+| [`spikes/codex-live.md`](spikes/codex-live.md) | Native Codex startup probe in Cursor, skill-name fix, and remaining push/resume check |
