@@ -1,3 +1,4 @@
+// @style-legacy — rebuilt by the UI/UX rebuild run; remove this line when the file is rewritten
 import { cn } from "@cathouse/ui";
 import type { ComponentPropsWithoutRef } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";

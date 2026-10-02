@@ -1,38 +1,171 @@
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from "react";
 import { cn } from "../cn";
-import { Button } from "./button";
+import { Button, type ButtonProps } from "./button";
 import { Icon, type IconName } from "./icons";
 
 /** An icon-only button. `label` is both its accessible name and its tooltip. */
 export function IconButton({
   icon,
   label,
-  onClick,
-  disabled,
-  className,
+  labelClassName,
   small,
   tone,
-}: {
+  variant,
+  className,
+  ...props
+}: ButtonProps & {
   icon: IconName;
   label: string;
-  onClick?: () => void;
-  disabled?: boolean;
-  className?: string;
+  labelClassName?: string;
   small?: boolean;
   tone?: "danger";
 }) {
   return (
     <Button
-      variant="quiet"
-      size={small ? "iconSm" : "icon"}
+      variant={variant ?? (tone === "danger" ? "danger" : "ghost")}
+      size="iconSm"
       aria-label={label}
       title={label}
-      disabled={disabled}
-      onClick={onClick}
-      className={cn(tone === "danger" && "hover:text-danger", className)}
+      {...props}
+      className={cn(
+        labelClassName ? "min-h-7 min-w-7 px-1.5" : "size-7",
+        small && "size-7",
+        className,
+      )}
     >
       <Icon name={icon} />
+      <span className={labelClassName ?? "sr-only"}>{label}</span>
     </Button>
+  );
+}
+
+export function ConfirmButton({
+  confirmLabel,
+  onConfirm,
+  windowMs = 4000,
+  children,
+  onClick,
+  onBlur,
+  variant,
+  ...props
+}: ButtonProps & {
+  confirmLabel: string;
+  onConfirm: () => void;
+  windowMs?: number;
+}) {
+  const [armed, setArmed] = useState(false);
+  useEffect(() => {
+    if (!armed) return;
+    const timer = window.setTimeout(() => setArmed(false), windowMs);
+    return () => window.clearTimeout(timer);
+  }, [armed, windowMs]);
+  return (
+    <Button
+      {...props}
+      variant={armed ? "danger" : variant}
+      onBlur={(event) => {
+        setArmed(false);
+        onBlur?.(event);
+      }}
+      onClick={(event) => {
+        onClick?.(event);
+        if (event.defaultPrevented) return;
+        if (armed) {
+          setArmed(false);
+          onConfirm();
+        } else setArmed(true);
+      }}
+    >
+      <span aria-live={armed ? "polite" : undefined}>{armed ? confirmLabel : children}</span>
+    </Button>
+  );
+}
+
+export function SegmentedControl<T extends string>({
+  label,
+  value,
+  options,
+  onChange,
+  disabled,
+  className,
+}: {
+  label: string;
+  value: T;
+  options: readonly { value: T; label: string }[];
+  onChange: (value: T) => void;
+  disabled?: boolean;
+  className?: string;
+}) {
+  const refs = useRef<(HTMLButtonElement | null)[]>([]);
+  const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    if (!(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"] as string[]).includes(event.key))
+      return;
+    event.preventDefault();
+    const next =
+      (index + (event.key === "ArrowLeft" || event.key === "ArrowUp" ? -1 : 1) + options.length) %
+      options.length;
+    const option = options[next];
+    if (option) {
+      onChange(option.value);
+      refs.current[next]?.focus();
+    }
+  };
+  return (
+    <div
+      role="radiogroup"
+      aria-label={label}
+      className={cn(
+        "inline-grid max-w-full grid-flow-col auto-cols-fr rounded-md bg-surface p-0.5",
+        className,
+      )}
+    >
+      {options.map((option, index) => (
+        // biome-ignore lint/a11y/useSemanticElements: button supports roving focus in this segmented radio group
+        <button
+          key={option.value}
+          ref={(node) => {
+            refs.current[index] = node;
+          }}
+          type="button"
+          role="radio"
+          aria-checked={value === option.value}
+          tabIndex={value === option.value ? 0 : -1}
+          disabled={disabled}
+          onClick={() => onChange(option.value)}
+          onKeyDown={(event) => onKeyDown(event, index)}
+          className={cn(
+            "min-h-7 min-w-0 truncate rounded-sm px-2 text-xs text-muted-foreground hover:bg-hover",
+            value === option.value && "bg-background font-medium text-foreground",
+          )}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+export function StatusDot({
+  tone,
+  label,
+  className,
+}: {
+  tone: "good" | "warn" | "bad" | "idle" | "busy";
+  label: string;
+  className?: string;
+}) {
+  const bg = {
+    good: "bg-success",
+    warn: "bg-warning",
+    bad: "bg-danger",
+    idle: "bg-muted-foreground",
+    busy: "bg-info motion-safe:animate-pulse",
+  }[tone];
+  return (
+    <span className={cn("inline-flex items-center", className)}>
+      <span aria-hidden="true" className={cn("size-2 rounded-full", bg)} />
+      <span className="sr-only">{label}</span>
+    </span>
   );
 }
 
@@ -176,40 +309,51 @@ export function Switch({
   checked,
   onChange,
   label,
+  ariaLabel,
+  description,
   disabled,
+  className,
 }: {
   checked: boolean;
   onChange: (next: boolean) => void;
   label: string;
+  ariaLabel?: string;
+  description?: string;
   disabled?: boolean;
+  className?: string;
 }) {
   return (
-    <label className="relative inline-flex shrink-0 cursor-pointer items-center" title={label}>
-      <input
-        type="checkbox"
-        role="switch"
-        className="peer sr-only"
-        checked={checked}
-        aria-checked={checked}
-        disabled={disabled}
-        aria-label={label}
-        onChange={(e) => onChange(e.target.checked)}
-      />
+    <button
+      type="button"
+      role="switch"
+      aria-label={ariaLabel ?? label}
+      aria-checked={checked}
+      disabled={disabled}
+      onClick={() => onChange(!checked)}
+      className={cn(
+        "inline-flex min-h-7 min-w-0 items-center gap-2 text-start disabled:opacity-50",
+        className,
+      )}
+    >
       <span
-        aria-hidden="true"
         className={cn(
-          "h-4 w-7 rounded-full transition-colors peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:outline-focus",
-          checked ? "bg-primary" : "bg-surface-hover",
+          "relative h-4 w-7 shrink-0 rounded-full transition-colors",
+          checked ? "bg-primary" : "bg-surface-strong",
         )}
-      />
-      <span
-        aria-hidden="true"
-        className={cn(
-          "absolute top-0.5 size-3 rounded-full bg-[var(--vscode-editor-background)] shadow transition-transform",
-          checked ? "translate-x-3.5" : "translate-x-0.5",
-        )}
-      />
-    </label>
+      >
+        <span
+          aria-hidden="true"
+          className={cn(
+            "absolute top-0.5 size-3 rounded-full bg-background shadow transition-transform",
+            checked ? "translate-x-3.5" : "translate-x-0.5",
+          )}
+        />
+      </span>
+      <span className="min-w-0">
+        <span className="block truncate">{label}</span>
+        {description && <span className="block text-xs text-muted-foreground">{description}</span>}
+      </span>
+    </button>
   );
 }
 

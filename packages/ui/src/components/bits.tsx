@@ -1,5 +1,6 @@
 import { type HTMLAttributes, type ReactNode, useId } from "react";
 import { cn } from "../cn";
+import { Icon } from "./icons";
 
 // Layout primitives. Groups are drawn with spacing and soft fills, never with borders: borders are
 // reserved for inputs and focus rings so the narrow sidebar stays calm.
@@ -53,17 +54,12 @@ export function Collapsible({
           aria-expanded={open}
           aria-controls={id}
           onClick={onToggle}
-          className="flex min-h-8 w-full items-center gap-2 rounded-md px-2 py-1 text-start hover:bg-surface"
+          className="flex min-h-8 w-full items-center gap-2 rounded-md px-2 py-1 text-start hover:bg-hover"
         >
-          <span
-            aria-hidden="true"
-            className={cn(
-              "inline-block w-3 text-xs text-muted-foreground transition-transform",
-              open && "rotate-90",
-            )}
-          >
-            ▸
-          </span>
+          <Icon
+            name="chevron"
+            className={cn("text-muted-foreground transition-transform", open && "rotate-90")}
+          />
           <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             {title}
           </span>
@@ -75,7 +71,7 @@ export function Collapsible({
         </button>
       </h3>
       {open && (
-        <div id={id} className="flex flex-col gap-1.5 px-2 pt-1 pb-2">
+        <div id={id} className="flex flex-col gap-1.5 ps-5 pt-1 pb-2">
           {children}
         </div>
       )}
@@ -88,14 +84,15 @@ export function Badge({
   className,
   ...props
 }: HTMLAttributes<HTMLSpanElement> & {
-  tone?: "neutral" | "good" | "warn" | "bad" | "info";
+  tone?: "neutral" | "good" | "warn" | "bad" | "info" | "accent";
 }) {
   const tones = {
-    neutral: "bg-surface text-muted-foreground",
-    good: "bg-success/15 text-success",
-    warn: "bg-warning/15 text-warning",
-    bad: "bg-danger/15 text-danger",
-    info: "bg-info/15 text-info",
+    neutral: "bg-surface-strong text-muted-foreground",
+    good: "bg-good-soft text-success",
+    warn: "bg-warn-soft text-warning",
+    bad: "bg-bad-soft text-danger",
+    info: "bg-info-soft text-info",
+    accent: "bg-accent-soft text-link",
   };
   return (
     <span
@@ -111,7 +108,15 @@ export function Badge({
 
 /** A soft, borderless surface. */
 export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("rounded-md bg-surface p-2.5", className)} {...props} />;
+  return (
+    <div
+      className={cn(
+        "rounded-md bg-surface p-3 outline outline-1 -outline-offset-1 outline-outline",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 /** A coloured dot for state; pair it with text so state is never colour-only. */
@@ -137,7 +142,7 @@ export function Dot({
       className={cn(
         "inline-block size-2 shrink-0 rounded-full",
         bg,
-        pulse && "animate-pulse",
+        pulse && "motion-safe:animate-pulse",
         className,
       )}
     />
@@ -150,7 +155,7 @@ export function Empty({ children }: { children: ReactNode }) {
 
 export function ErrorText({ children }: { children: ReactNode }) {
   return (
-    <p role="alert" className="m-0 rounded-md bg-danger/10 px-2.5 py-1.5 text-danger">
+    <p role="alert" className="m-0 rounded-md bg-bad-soft px-2.5 py-1.5 text-danger">
       {children}
     </p>
   );
@@ -169,7 +174,7 @@ export function Meter({ fraction, label }: { fraction: number; label: string }) 
         aria-valuenow={Math.round(pct)}
         aria-valuemin={0}
         aria-valuemax={100}
-        className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-hover"
+        className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-strong"
       >
         <div className={cn("h-full rounded-full", tone)} style={{ width: `${pct}%` }} />
       </div>
@@ -179,7 +184,7 @@ export function Meter({ fraction, label }: { fraction: number; label: string }) 
 }
 
 export const inputClass =
-  "min-h-8 rounded-md border border-input-border bg-input px-2 py-1 text-input-foreground";
+  "min-h-8 rounded-md bg-input px-2 py-1 text-input-foreground outline outline-1 -outline-offset-1 outline-input-border";
 
 /** A select without its own box: reads as text with a caret, for inline choices in a row. */
 export const quietSelectClass =

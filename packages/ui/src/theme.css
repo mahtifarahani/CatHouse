@@ -27,9 +27,43 @@
   --color-badge: var(--vscode-badge-background);
   --color-badge-foreground: var(--vscode-badge-foreground);
   /* Soft surfaces replace borders: a tinted fill reads as a group without drawing a line. */
-  --color-accent-soft: color-mix(in srgb, var(--vscode-button-background) 18%, transparent);
-  --color-surface: color-mix(in srgb, var(--vscode-foreground) 5%, transparent);
-  --color-surface-hover: color-mix(in srgb, var(--vscode-foreground) 9%, transparent);
+  --color-surface: color-mix(in srgb, var(--vscode-foreground) 4%, transparent);
+  --color-surface-strong: color-mix(in srgb, var(--vscode-foreground) 8%, transparent);
+  --color-hover: var(
+    --vscode-list-hoverBackground,
+    color-mix(in srgb, var(--vscode-foreground) 6%, transparent)
+  );
+  --color-selected: var(
+    --vscode-list-inactiveSelectionBackground,
+    color-mix(in srgb, var(--vscode-foreground) 10%, transparent)
+  );
+  --color-popover: var(--vscode-editorWidget-background, var(--vscode-editor-background));
+  --color-popover-foreground: var(--vscode-editorWidget-foreground, var(--vscode-foreground));
+  --color-user: color-mix(in srgb, var(--vscode-button-background) 18%, transparent);
+  --color-agent: color-mix(in srgb, var(--vscode-foreground) 5%, transparent);
+  --color-accent-soft: color-mix(in srgb, var(--vscode-button-background) 14%, transparent);
+  --color-good-soft: color-mix(
+    in srgb,
+    var(--vscode-testing-iconPassed, var(--vscode-charts-green)) 14%,
+    transparent
+  );
+  --color-warn-soft: color-mix(
+    in srgb,
+    var(--vscode-editorWarning-foreground, var(--vscode-charts-yellow)) 14%,
+    transparent
+  );
+  --color-bad-soft: color-mix(
+    in srgb,
+    var(--vscode-errorForeground, var(--vscode-charts-red)) 14%,
+    transparent
+  );
+  --color-info-soft: color-mix(
+    in srgb,
+    var(--vscode-editorInfo-foreground, var(--vscode-charts-blue)) 14%,
+    transparent
+  );
+  --color-outline: var(--vscode-contrastBorder, transparent);
+  --color-surface-hover: var(--color-hover);
 
   --font-sans: var(--vscode-font-family);
   --font-mono: var(--vscode-editor-font-family);

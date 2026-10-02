@@ -16,6 +16,7 @@ export function Transcript({
 }: {
   events: SessionEvent[];
   model?: string | undefined;
+  onOpenRun?: ((id: string) => void) | undefined;
 }) {
   const blocks = useMemo(() => toBlocks(toTranscript(events)), [events]);
   let speaker: "user" | "assistant" | undefined;

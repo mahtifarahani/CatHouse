@@ -22,7 +22,11 @@ const STATE: Record<SetupItem["state"], { icon: IconName; cls: string }> = {
  * Setup and diagnostics in one place: a clear verdict, only the things that need a click, and
  * everything else folded away. Installers still run only from a button (AGENTS rule 5).
  */
-export function SetupPage() {
+export interface SetupPageProps {
+  onOpenChat?: (() => void) | undefined;
+}
+
+export function SetupPage(_props: SetupPageProps) {
   const { state, output, lastDone } = useSetup();
   const [version, setVersion] = useState<string>();
   const [showAll, setShowAll] = useState(false);

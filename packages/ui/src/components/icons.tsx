@@ -4,6 +4,23 @@ import { cn } from "../cn";
 // Stroke icons (Lucide geometry, ISC licence) drawn at 1em so they follow the text size and
 // inherit `currentColor` from the theme.
 const PATHS = {
+  square: ["M3 3h18v18H3z"],
+  pause: ["M10 4H6v16h4z", "M18 4h-4v16h4z"],
+  messageSquare: ["M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"],
+  messagePlus: [
+    "M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8A8.5 8.5 0 0 1 12.5 3h.5",
+    "M19 2v6",
+    "M16 5h6",
+  ],
+  gauge: ["M12 14l4-4", "M3.34 19a10 10 0 1 1 17.32 0", "M3.34 19h17.32"],
+  undo: ["M3 7v6h6", "M3 13a9 9 0 1 1 9 9"],
+  redo: ["M21 7v6h-6", "M21 13a9 9 0 1 0-9 9"],
+  history: ["M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", "M3 3v5h5", "M12 7v5l4 2"],
+  circleCheck: ["M22 11.08V12a10 10 0 1 1-5.93-9.14", "m9 11 3 3L22 4"],
+  circleAlert: ["M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z", "M12 8v4", "M12 16h.01"],
+  info: ["M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z", "M12 16v-4", "M12 8h.01"],
+  lock: ["M5 11h14v11H5z", "M8 11V7a4 4 0 0 1 8 0v4"],
+  externalLink: ["M13 5h6v6", "m19 5-9 9", "M19 13v6H5V5h6"],
   arrowLeft: ["m12 19-7-7 7-7", "M19 12H5"],
   arrowUp: ["m5 12 7-7 7 7", "M12 19V5"],
   chat: ["M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"],

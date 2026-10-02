@@ -1,0 +1,28 @@
+export const PREFIXES = ["common.", "tabs.", "status.", "app.", "settings.", "time.", "shell."] as const;
+
+export const STRINGS = {
+  "settings.open": "CatHouse settings",
+  "settings.title": "Settings",
+  "settings.fontSize": "Text size",
+  "settings.smaller": "Smaller text",
+  "settings.larger": "Larger text",
+  "settings.presets": "Text size presets",
+  "settings.fontSizeHelp": "Scales CatHouse relative to your VS Code font size.",
+  "settings.preview": "The quick brown fox · Aa 123",
+  "settings.apply": "Apply",
+  "settings.cancel": "Cancel",
+  "tabs.setup": "Setup",
+  "tabs.session": "Chat",
+  "tabs.runs": "Runs",
+  "tabs.profiles": "Profile",
+  "tabs.models": "Models",
+  "tabs.label": "CatHouse dashboard",
+  "status.failed": "setup needs attention",
+  "common.loading": "Loading…",
+  "common.save": "Save",
+  "common.cancel": "Cancel",
+  "time.secs": "{n}s ago",
+  "time.mins": "{n} min ago",
+  "time.hours": "{n} h ago",
+  "time.days": "{n} d ago",
+} as const;

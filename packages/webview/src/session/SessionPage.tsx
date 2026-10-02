@@ -100,13 +100,19 @@ function RepoMenu({
   );
 }
 
+export interface SessionPageProps {
+  canStart: boolean;
+  blockedReason?: string | undefined;
+  profile?: string | undefined;
+  onOpenRun?: ((id: string) => void) | undefined;
+  onGoSetup?: (() => void) | undefined;
+  onGoProfiles?: (() => void) | undefined;
+}
+
 export function SessionPage({
   canStart,
   blockedReason,
-}: {
-  canStart: boolean;
-  blockedReason?: string | undefined;
-}) {
+}: SessionPageProps) {
   const s = useSession();
   // One draft for both "new task" and "follow-up"; it lives in webview state so switching tabs
   // or hiding the view keeps it.
