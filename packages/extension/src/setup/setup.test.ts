@@ -19,6 +19,9 @@ const ready: SetupFacts = {
   sdkBinary: { path: "/sdk/claude", version: "2.1.283" },
   plugin: { version: "1.4.0", installPath: "/p" },
   claudeLogin: { loggedIn: true, method: "claude.ai", email: "a@b" },
+  codex: {},
+  codexDaemon: { running: false },
+  codexPlugin: {},
   needsClaudeCli: false,
   claudeCli: {},
   doctor: {
@@ -53,6 +56,48 @@ const ready: SetupFacts = {
 };
 
 describe("evaluate", () => {
+  it("uses Codex readiness without requiring Claude login or plugin", () => {
+    const r = evaluate(
+      {
+        ...ready,
+        sdkBinary: {},
+        plugin: {},
+        claudeLogin: { loggedIn: false },
+        codex: { version: "0.159.2", loggedIn: true },
+        codexDaemon: { running: true, version: "0.159.2" },
+        codexPlugin: { version: "1.4.0" },
+      },
+      PINNED,
+      "codex",
+    );
+    expect(r.canStart).toBe(true);
+    expect(r.items.find((item) => item.id === "codex-daemon")?.state).toBe("ok");
+    expect(r.items.some((item) => item.id === "claude-login" || item.id === "plugin")).toBe(false);
+    const missing = evaluate(
+      { ...ready, codex: { version: "0.158.0", loggedIn: false }, codexPlugin: {} },
+      PINNED,
+      "codex",
+    );
+    expect(missing.gateOpen).toBe(false);
+    expect(missing.items.find((item) => item.id === "codex-host")?.action?.id).toBe(
+      "install-codex",
+    );
+    expect(missing.items.find((item) => item.id === "codex-plugin")?.action?.id).toBe(
+      "install-codex-plugin",
+    );
+    const stopped = evaluate(
+      {
+        ...ready,
+        codex: { version: "0.159.2", loggedIn: true },
+        codexPlugin: { version: "1.4.0" },
+      },
+      PINNED,
+      "codex",
+    );
+    expect(stopped.items.find((item) => item.id === "codex-daemon")?.action?.id).toBe(
+      "start-codex-daemon",
+    );
+  });
   it("fresh machine: gate closed, installers offered in order", () => {
     const r = evaluate(
       {
@@ -62,6 +107,9 @@ describe("evaluate", () => {
         sdkBinary: { path: "/sdk/claude" },
         plugin: {},
         claudeLogin: { loggedIn: false },
+        codex: {},
+        codexDaemon: { running: false },
+        codexPlugin: {},
         needsClaudeCli: false,
         claudeCli: {},
       },
@@ -106,6 +154,8 @@ describe("evaluate", () => {
       {
         ...ready,
         claudeLogin: { loggedIn: false },
+        codex: {},
+        codexPlugin: {},
         doctor: {
           ready: false,
           version: "1.4.0",
@@ -143,7 +193,12 @@ describe("evaluate", () => {
 });
 
 describe("actions", () => {
-  const ctx = { pin: PINNED, claude: "/sdk/claude", marketplaceKnown: false };
+  const ctx = {
+    pin: PINNED,
+    claude: "/sdk/claude",
+    marketplaceKnown: false,
+    host: "claude-code" as const,
+  };
   it("installs the plugin with the bundled binary over HTTPS", () => {
     const steps = stepsFor("install-plugin", ctx);
     expect(steps.map((s) => (s.kind === "run" ? s.args.join(" ") : s.command))).toEqual([
@@ -158,12 +213,26 @@ describe("actions", () => {
   it("pins catherd and opens logins in a terminal", () => {
     expect(stepsFor("init-catherd", ctx)[0]).toMatchObject({
       cmd: "bunx",
-      args: ["catherd-cli@1.4.0", "init", "--no-input", "--plain"],
+      args: ["catherd-cli@1.4.0", "init", "--no-input", "--plain", "--host", "claude-code"],
     });
     expect(stepsFor("login-claude", ctx)[0]).toMatchObject({
       kind: "terminal",
       command: "'/sdk/claude' auth login",
     });
+  });
+  it("installs the native Codex plugin only after its Setup action", () => {
+    expect(
+      stepsFor("install-codex-plugin", { ...ctx, host: "codex" }).map((step) =>
+        step.kind === "run" ? step.args.join(" ") : step.command,
+      ),
+    ).toEqual(["plugin marketplace add 47vigen/catherd", "plugin add catherd@catherd"]);
+    expect(stepsFor("start-codex-daemon", { ...ctx, host: "codex" })[0]).toMatchObject({
+      args: ["app-server", "daemon", "start"],
+    });
+    expect(stepsFor("restart-codex-daemon", { ...ctx, host: "codex" })).toMatchObject([
+      { args: ["app-server", "daemon", "stop"] },
+      { args: ["app-server", "daemon", "start"] },
+    ]);
   });
 });
 
@@ -186,6 +255,7 @@ function fakeRun(responses: (c: Call) => Partial<RunResult>, calls: Call[] = [])
 
 function detectDeps(run: DetectDeps["run"], home: string): DetectDeps {
   return {
+    host: () => "claude-code",
     run,
     env: async () => ({}),
     bundledClaude: () => "/sdk/claude",

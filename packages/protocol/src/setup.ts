@@ -1,15 +1,22 @@
 import { z } from "zod";
 
+export const OrchestratorHostSchema = z.enum(["claude-code", "codex"]);
+export type OrchestratorHost = z.infer<typeof OrchestratorHostSchema>;
+
 export const SetupActionIdSchema = z.enum([
   "install-bun",
   "upgrade-bun",
   "init-catherd",
   "install-plugin",
   "update-plugin",
+  "install-codex-plugin",
+  "update-codex-plugin",
   "login-claude",
   "install-claude-cli",
   "install-codex",
   "login-codex",
+  "start-codex-daemon",
+  "restart-codex-daemon",
   "install-opencode",
   "check-readiness",
 ]);
@@ -28,13 +35,14 @@ export const SetupItemSchema = z.object({
 export type SetupItem = z.infer<typeof SetupItemSchema>;
 
 export const SetupStateSchema = z.object({
+  host: OrchestratorHostSchema,
   checking: z.boolean(),
   /** The action currently running, if any (one at a time). */
   running: SetupActionIdSchema.optional(),
   items: z.array(SetupItemSchema),
   /** All gate items are ok: the dashboards may open. */
   gateOpen: z.boolean(),
-  /** Gate open, Claude logged in, readiness (doctor) checked and ready. */
+  /** Gate open, selected host logged in, readiness (doctor) checked and ready. */
   canStart: z.boolean(),
   canStartReason: z.string().optional(),
   checkedAt: z.string().optional(),

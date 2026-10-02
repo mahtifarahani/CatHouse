@@ -4,7 +4,7 @@ import type {
   Query,
   SDKUserMessage,
 } from "@anthropic-ai/claude-agent-sdk";
-import type { PromptAnswer, PromptRequest } from "@cathouse/protocol";
+import type { OrchestratorHost, PromptAnswer, PromptRequest } from "@cathouse/protocol";
 import { CATHERD_TOOL_PREFIX, createEventMapper, type SessionEvent } from "./events";
 
 export type { PromptAnswer, PromptRequest };
@@ -14,10 +14,11 @@ export type { PromptAnswer, PromptRequest };
 // external to the esbuild bundle and loaded with a dynamic import.
 
 export interface SessionOptions {
+  host?: OrchestratorHost;
   repo: string;
   /** First prompt, e.g. "/catherd:catherd <task>"; omitted when only resuming. */
   prompt: string;
-  pluginPath: string;
+  pluginPath?: string;
   env: Record<string, string>;
   resume?: string;
   permissionMode?: "default" | "acceptEdits" | "plan" | "dontAsk" | "auto";
@@ -120,6 +121,7 @@ export class OrchestratorSession {
   };
 
   async start(): Promise<void> {
+    if (!this.opts.pluginPath) throw new Error("catherd Claude plugin is missing");
     const { query } = await import("@anthropic-ai/claude-agent-sdk");
     const o = this.opts;
     this.inbox.push(o.prompt);
@@ -128,7 +130,7 @@ export class OrchestratorSession {
       options: {
         cwd: o.repo,
         settingSources: ["user", "project", "local"],
-        plugins: [{ type: "local", path: o.pluginPath }],
+        plugins: [{ type: "local", path: o.pluginPath as string }],
         allowedTools: [`${CATHERD_TOOL_PREFIX}*`],
         canUseTool: this.canUseTool,
         permissionMode: o.permissionMode ?? "default",

@@ -2,9 +2,13 @@
 
 Status: **built in Phase 2.** Source: `packages/extension/src/setup/`; webview `packages/webview/src/setup/`; protocol `packages/protocol/src/setup.ts`.
 
+## Selected orchestration host (2026-10-02)
+
+Setup evaluates only the chosen host's gate: Claude Code uses the bundled Agent SDK binary, Claude catherd plugin and Claude login; Codex uses native CLI >= 0.159.2, the enabled `catherd@catherd` Codex plugin at 1.4.0, and `codex login status`. Bun, catherd-cli 1.4.0, config and user-triggered `doctor` remain common. Switching host in Profile clears the in-memory readiness verdict and rechecks with `CATHERD_ORCHESTRATION_HOST` set to the new host. Codex plugin installation, update, and daemon start or restart actions run only after a Setup click. Starting the daemon may install a managed app-server package. `init` passes `--host` so a terminal lacking session evidence chooses the correct host defaults. `codex app-server daemon version` reports whether the daemon is running and its server version without starting it. CLI/plugin checks have no installer side effects; `doctor` remains explicitly triggered. See ADR 0009 for the live gate still to verify.
+
 ## Rule (from the plan)
 
-Until Bun, catherd, the Claude plugin and the bundled Claude binary are good, the dashboard shows **only Setup**. After that, a missing Claude login, a failing backend or an unchecked/failed readiness only **disables starting tasks** (`session.start` / `session.resume` refuse with `E_SETUP_REQUIRED`). Installers run **only when the user clicks**. Detectors have no side effects.
+Until Bun, catherd and the selected host's binary/plugin are good, the dashboard shows **Profile and Setup** (Profile keeps the host switch reachable). After that, a missing selected-host login, a failing backend or an unchecked/failed readiness **disables starting tasks** (`session.start` / `session.resume` refuse with `E_SETUP_REQUIRED`). Installers run **only when the user clicks**. Detectors have no side effects.
 
 ## Files
 
@@ -27,6 +31,7 @@ Until Bun, catherd, the Claude plugin and the bundled Claude binary are good, th
 | bundled Claude | `<bundled> --version` | ships with CatHouse (ADR 0008) |
 | plugin | `$CLAUDE_CONFIG_DIR/plugins/installed_plugins.json` → `catherd@catherd` version | must equal `PINNED.plugin` |
 | Claude login | `<bundled> auth status --json` → `loggedIn`, `authMethod`, `email` | runs in `processEnv()` (host-session vars stripped; `docs/spikes/phase1.md` finding 3) |
+| Codex CLI / account / plugin / daemon (Codex host only) | `codex --version`, `codex login status`, `codex plugin list --json`, `codex app-server daemon version` | selected-host gate; all probes are read-only and the daemon command reports an error when stopped |
 | needs claude CLI | `catherd profile show --json` contains a `"claude-code:` rung in roles or failover | ADR 0001 |
 | claude CLI | `claude --version` (only when needed) | ≥ `PINNED.claudeCode` (2.1.282) |
 | readiness | `catherd doctor --json` (+ `catalog refresh --json` first after backend changes) | **has side effects**: runs only on "Check readiness", after installs, or via `cathouse.checkSetup` |
@@ -40,6 +45,7 @@ The last successful doctor report and its timestamp are stored under `cathouse.r
 | `bun` | gate | `install-bun` / `upgrade-bun` |
 | `claude-bundled` | gate | none (fix: reinstall the platform VSIX) |
 | `catherd` | gate | `init-catherd` (offered only once Bun is OK) |
+| `codex-host` / `codex-plugin` / `codex-daemon` | gate on Codex | `install-codex`, `install-codex-plugin` / `update-codex-plugin`, `start-codex-daemon` / `restart-codex-daemon` |
 | `plugin` | gate | `install-plugin` / `update-plugin` (needs the bundled binary) |
 | `claude-login` | start | `login-claude` |
 | `claude-cli` | start (only with claude-code rungs) | `install-claude-cli` |
@@ -59,6 +65,7 @@ Doctor rows `bun` and `plugin` are hidden (CatHouse has its own items for them).
 | `update-plugin` | `plugin marketplace update catherd` + `plugin update catherd@catherd` |
 | `login-claude` | terminal: `'<bundled>' auth login` |
 | `install-claude-cli` | `npm i -g @anthropic-ai/claude-code@latest` |
+| `start-codex-daemon` / `restart-codex-daemon` | `codex app-server daemon start`; restart first runs `codex app-server daemon stop` |
 | `install-codex` / `login-codex` | `npm i -g @openai/codex@latest` / terminal `codex login` |
 | `install-opencode` | `bash -c "curl -fsSL https://opencode.ai/v2/install \| bash"` |
 | `check-readiness` | none (just the readiness check) |
@@ -73,7 +80,7 @@ Setup works without an open folder: catherd commands then run in the home direct
 
 ## UI
 
-`SetupPage` groups items by level ("Required to use CatHouse" / "Required to start tasks" / "Optional"), with a state glyph, detail, action button (disabled while busy), doctor fix with Copy, a Re-check button, the live output of the running (or last) action, and the result line. The Activity Bar view shows only Setup until `gateOpen`; then all tabs become available, and Chat's Start/Resume are disabled with `canStartReason` when readiness is incomplete.
+`SetupPage` groups items by level ("Required to use CatHouse" / "Required to start tasks" / "Optional"), with a state glyph, detail, action button (disabled while busy), doctor fix with Copy, a Re-check button, the live output of the running (or last) action, and the result line. The Activity Bar view shows Profile and Setup until `gateOpen`; then all tabs become available, and Chat's Start/Resume are disabled with `canStartReason` when readiness is incomplete.
 
 ## Verified (2026-09-28)
 

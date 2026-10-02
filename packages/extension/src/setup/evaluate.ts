@@ -1,5 +1,5 @@
 import { atLeast, type CompatEntry } from "@cathouse/compat";
-import type { SetupActionId, SetupItem } from "@cathouse/protocol";
+import type { OrchestratorHost, SetupActionId, SetupItem } from "@cathouse/protocol";
 import type { SetupFacts } from "./facts";
 
 // Pure: facts → Setup items and gates (docs/architecture/setup.md). The plan's rule: Setup-only
@@ -32,6 +32,7 @@ const COVERED_ROWS = new Set(["bun", "plugin"]);
 export function evaluate(
   f: SetupFacts,
   pin: CompatEntry,
+  host: OrchestratorHost = "claude-code",
 ): {
   items: SetupItem[];
   gateOpen: boolean;
@@ -64,24 +65,25 @@ export function evaluate(
   }
 
   // Bundled Claude (the SDK's binary): nothing to install, it ships with CatHouse.
-  items.push(
-    f.sdkBinary.path
-      ? {
-          id: "claude-bundled",
-          label: "Claude Code (bundled)",
-          state: "ok",
-          level: "gate",
-          detail: f.sdkBinary.version ?? f.sdkBinary.path,
-        }
-      : {
-          id: "claude-bundled",
-          label: "Claude Code (bundled)",
-          state: "error",
-          level: "gate",
-          detail: f.sdkBinary.error ?? "the Claude binary for this platform is missing",
-          fix: "reinstall the CatHouse VSIX built for this platform",
-        },
-  );
+  if (host === "claude-code")
+    items.push(
+      f.sdkBinary.path
+        ? {
+            id: "claude-bundled",
+            label: "Claude Code (bundled)",
+            state: "ok",
+            level: "gate",
+            detail: f.sdkBinary.version ?? f.sdkBinary.path,
+          }
+        : {
+            id: "claude-bundled",
+            label: "Claude Code (bundled)",
+            state: "error",
+            level: "gate",
+            detail: f.sdkBinary.error ?? "the Claude binary for this platform is missing",
+            fix: "reinstall the CatHouse VSIX built for this platform",
+          },
+    );
 
   // catherd CLI + init
   const bunOk = !!f.bun.version && atLeast(f.bun.version, pin.bun);
@@ -110,8 +112,102 @@ export function evaluate(
     });
   }
 
-  // Claude plugin
-  if (!f.plugin.version) {
+  // The selected host must load the matching catherd plugin.
+  if (host === "codex") {
+    const minCodex = pin.codexHost;
+    items.push(
+      f.codex.version && atLeast(f.codex.version, minCodex)
+        ? {
+            id: "codex-host",
+            label: "Codex CLI",
+            state: "ok",
+            level: "gate",
+            detail: f.codex.version,
+          }
+        : {
+            id: "codex-host",
+            label: "Codex CLI",
+            state: f.codex.version ? "outdated" : "missing",
+            level: "gate",
+            detail: f.codex.version
+              ? `${f.codex.version} is older than ${minCodex}`
+              : (f.codex.error ?? "Codex is not installed"),
+            action: act("install-codex", f.codex.version ? "Update Codex" : "Install Codex"),
+          },
+    );
+    items.push(
+      f.codexPlugin.version === pin.plugin
+        ? {
+            id: "codex-plugin",
+            label: "catherd plugin for Codex",
+            state: "ok",
+            level: "gate",
+            detail: pin.plugin,
+          }
+        : {
+            id: "codex-plugin",
+            label: "catherd plugin for Codex",
+            state: f.codexPlugin.version ? "outdated" : "missing",
+            level: "gate",
+            detail: f.codexPlugin.version
+              ? `installed ${f.codexPlugin.version}, needs ${pin.plugin}`
+              : "not installed",
+            ...(f.codex.version
+              ? {
+                  action: act(
+                    f.codexPlugin.version ? "update-codex-plugin" : "install-codex-plugin",
+                    f.codexPlugin.version ? "Update plugin" : "Install plugin",
+                  ),
+                }
+              : {}),
+          },
+    );
+    items.push(
+      f.codexDaemon.running && f.codexDaemon.version && atLeast(f.codexDaemon.version, minCodex)
+        ? {
+            id: "codex-daemon",
+            label: "Codex app-server daemon",
+            state: "ok",
+            level: "gate",
+            detail: f.codexDaemon.version,
+          }
+        : {
+            id: "codex-daemon",
+            label: "Codex app-server daemon",
+            state: f.codexDaemon.running ? "outdated" : "missing",
+            level: "gate",
+            detail: f.codexDaemon.running
+              ? `server ${f.codexDaemon.version ?? "unknown"}; needs ${minCodex}`
+              : (f.codexDaemon.error ?? "not running"),
+            ...(f.codex.version && atLeast(f.codex.version, minCodex)
+              ? {
+                  action: act(
+                    f.codexDaemon.running ? "restart-codex-daemon" : "start-codex-daemon",
+                    f.codexDaemon.running ? "Restart daemon" : "Start daemon",
+                  ),
+                }
+              : {}),
+          },
+    );
+    items.push(
+      f.codex.loggedIn
+        ? {
+            id: "codex-login",
+            label: "Codex account",
+            state: "ok",
+            level: "start",
+            detail: "logged in",
+          }
+        : {
+            id: "codex-login",
+            label: "Codex account",
+            state: "missing",
+            level: "start",
+            detail: "not logged in",
+            ...(f.codex.version ? { action: act("login-codex", "Log in") } : {}),
+          },
+    );
+  } else if (!f.plugin.version) {
     items.push({
       id: "plugin",
       label: "catherd plugin for Claude",
@@ -140,28 +236,30 @@ export function evaluate(
   }
 
   // Claude login
-  items.push(
-    f.claudeLogin.loggedIn
-      ? {
-          id: "claude-login",
-          label: "Claude account",
-          state: "ok",
-          level: "start",
-          detail:
-            [f.claudeLogin.method, f.claudeLogin.email].filter(Boolean).join(" · ") || "logged in",
-        }
-      : {
-          id: "claude-login",
-          label: "Claude account",
-          state: f.claudeLogin.error ? "unknown" : "missing",
-          level: "start",
-          detail: f.claudeLogin.error ?? "not logged in",
-          ...(f.sdkBinary.path ? { action: act("login-claude", "Log in") } : {}),
-        },
-  );
+  if (host === "claude-code")
+    items.push(
+      f.claudeLogin.loggedIn
+        ? {
+            id: "claude-login",
+            label: "Claude account",
+            state: "ok",
+            level: "start",
+            detail:
+              [f.claudeLogin.method, f.claudeLogin.email].filter(Boolean).join(" · ") ||
+              "logged in",
+          }
+        : {
+            id: "claude-login",
+            label: "Claude account",
+            state: f.claudeLogin.error ? "unknown" : "missing",
+            level: "start",
+            detail: f.claudeLogin.error ?? "not logged in",
+            ...(f.sdkBinary.path ? { action: act("login-claude", "Log in") } : {}),
+          },
+    );
 
   // Standalone claude, only for claude-code: rungs (ADR 0001)
-  if (f.needsClaudeCli) {
+  if (host === "claude-code" && f.needsClaudeCli) {
     const v = f.claudeCli.version;
     items.push(
       v && atLeast(v, pin.claudeCode)

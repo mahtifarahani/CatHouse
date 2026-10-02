@@ -1,6 +1,14 @@
 # Orchestrator session
 
-Status: **built in Phases 1 and 4** (session, controller, event mapper, panel wiring; repo picker, permission modes, prompt badge/notification, cancel-role note, Continue, compaction marker). Moved to catherd 1.2's push model on 2026-09-29 (`docs/spikes/catherd-1.2.md`). Source: `packages/extension/src/orchestrator/`.
+Status: **built in Phases 1 and 4** (session, controller, event mapper, panel wiring; repo picker, permission modes, prompt badge/notification, cancel-role note, Continue, compaction marker). Moved to catherd 1.2's push model on 2026-09-29 (`docs/spikes/catherd-1.2.md`). Native Codex host switch added on 2026-10-02 (ADR 0009; live push check pending). Source: `packages/extension/src/orchestrator/`.
+
+## Selectable host (2026-10-02)
+
+Profile contains CatHouse's `Claude Code / Codex` host selector. The preference is stored in VS Code global state; it affects new sessions, gateway/CLI host identity, and Setup gates. `SessionController` retains the same panel methods and events for both hosts. Saved links are keyed by host and repository; old Claude-only links are read as Claude links. A cross-host resume is refused, and Codex requires a saved link to resume rather than guessing the latest run.
+
+`session.ts` remains the Claude Agent SDK adapter. `codex.ts` connects to the managed daemon’s Unix WebSocket after the user starts it from Setup, initializes JSON-RPC, starts or resumes a thread, resolves the installed `catherd` skill from `skills/list`, then sends a skill plus text input on `turn/start`. App-server `item/*` events become CatHouse text/tool/run events. `turn/completed` is the end-of-turn result; a queued native turn becomes `inbound`. Codex command/file permission requests and `request_user_input` become the existing prompt cards. The socket never exposes daemon stderr to CatHouse logs. On close, an active turn is interrupted before the socket disconnects.
+
+The shared daemon choice is required by catherd-cli 1.4.0 at commit `804682f`: `src/infra/codex-queue.ts:117-121` calls `codex queue --remote unix://` for the original thread UUID. CatHouse's gateway never calls orchestrator-only MCP tools. Codex's installed plugin supplies those tools to the native thread. A profile's explicit `claude:` rungs are invalid on the Codex host; catherd validation reports that. The local Codex CLI 0.158.0 and absent Codex plugin prevented a live catherd push test; see ADR 0009 for the exact next check.
 
 ## Pieces
 

@@ -22,6 +22,13 @@ Last updated: 2026-10-02. Update this file at the end of every section.
 | — | Upgrade to catherd 1.4.0 (pin, orchestration host, fixtures) + release prep `0.4.0` | ✅ done (2026-10-02), not tagged | `docs/research/catherd-1.4-upgrade.md` |
 | — | UI/UX rebuild (five tabs, chat, one-step profile with auto-save, Setup + diagnostics) | ✅ built (2026-10-02), owner check in VS Code pending | `docs/architecture/webview.md` |
 | — | Prepare extension version `0.4.1` for the UI rebuild | ✅ version and release notes updated (2026-10-02), not tagged | `docs/CHANGELOG.md`, `docs/release/github.md` |
+| — | Profile setting for Claude Code/Codex orchestrator | ✅ code and mocked contract (2026-10-02); live native push pending | ADR 0009, `docs/architecture/{orchestrator,setup,webview}.md` |
+
+## Selectable orchestrator (2026-10-02)
+
+The Profile tab now has a Claude Code / Codex switch for future chats. CatHouse persists it globally, reevaluates Setup for the selected host, and keeps per-host resume links. The Claude Agent SDK path remains the default. The Codex path connects to the managed app-server daemon through its Unix WebSocket, invokes the installed catherd skill, maps turn/tool/prompt events to the existing panel, and sets catherd's host identity to `codex`. The daemon path shares the Unix endpoint used by catherd's completion queue. The daemon starts or restarts only after a Setup click because its start command can install a managed package. Installers remain click-only. Full report and invariants: `docs/decisions/0009-selectable-orchestrator-host.md`.
+
+Verified: TypeScript checks, 136 unit tests with 7 live opt-in skips, production build, a fake Unix WebSocket app-server run_start and queued-turn contract, an ephemeral live app-server simple turn, and a managed daemon Unix WebSocket handshake and skills/list against local Codex 0.158.0. Native catherd push was not verified: this machine still has Codex 0.158.0 and no Codex catherd plugin. **Exact next step:** in the Extension Development Host, select Codex in Profile, click Setup's Codex update, plugin-install and daemon-start actions, run Check readiness, select a Codex-valid profile, start a short role task, verify its queued completion reaches the same chat, then reload and resume. Record the result in a spike report. Owner visual confirmation of the Profile row is also pending.
 
 ## UI/UX rebuild (2026-10-02)
 

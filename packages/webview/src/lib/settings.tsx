@@ -250,7 +250,7 @@ export function SettingsMenu() {
               id={`${id}-lang`}
               value={draftLang}
               onChange={(e) => setDraftLang(e.target.value as LanguageId)}
-              className="w-full rounded-md border border-[var(--vscode-input-border,transparent)] bg-[var(--vscode-input-background,transparent)] text-[var(--vscode-input-foreground,inherit)] px-2 py-1 text-xs"
+              className="w-full rounded-md border border-input-border bg-[var(--vscode-input-background,transparent)] text-[var(--vscode-input-foreground,inherit)] px-2 py-1 text-xs"
             >
               {LANGUAGES.map((l) => (
                 <option key={l.id} value={l.id}>

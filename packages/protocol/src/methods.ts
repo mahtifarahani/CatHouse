@@ -4,7 +4,7 @@ import { PROTOCOL_VERSION } from "./envelope";
 import { ProfileDocSchema, ProfileSaveResultSchema, ProfilesStateSchema } from "./profiles";
 import { RoleDebugSchema, RoleReplySchema, RunDetailSchema, RunListItemSchema } from "./runs";
 import { PromptAnswerSchema, SessionStateSchema } from "./session";
-import { SetupActionIdSchema, SetupStateSchema } from "./setup";
+import { OrchestratorHostSchema, SetupActionIdSchema, SetupStateSchema } from "./setup";
 
 /**
  * Every request the webview can make, with its params and result schemas.
@@ -31,6 +31,10 @@ export const methods = {
   "app.setRepo": {
     params: z.object({ path: z.string() }),
     result: z.object({ repo: z.string() }),
+  },
+  "app.setHost": {
+    params: z.object({ host: OrchestratorHostSchema }),
+    result: SetupStateSchema,
   },
   "app.addFolders": {
     params: z.object({}),

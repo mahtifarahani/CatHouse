@@ -34,6 +34,7 @@
 | [`decisions/0006-long-lived-mcp-per-repo.md`](decisions/0006-long-lived-mcp-per-repo.md) | One MCP process per repo |
 | [`decisions/0007-run-files-reader.md`](decisions/0007-run-files-reader.md) | Run files via MCP `read_run_file`, never from disk |
 | [`decisions/0008-vsix-per-platform.md`](decisions/0008-vsix-per-platform.md) | One VSIX per platform |
+| [`decisions/0009-selectable-orchestrator-host.md`](decisions/0009-selectable-orchestrator-host.md) | Profile switch between Claude Code and native Codex sessions |
 | **architecture/** | |
 | [`architecture/overview.md`](architecture/overview.md) | Packages, data flow, runtime processes |
 | [`architecture/protocol.md`](architecture/protocol.md) | Webview⇄host protocol v1, methods table, router error cases, how to add a method |

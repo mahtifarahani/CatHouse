@@ -83,7 +83,7 @@ export function toTranscript(events: SessionEvent[]): TranscriptItem[] {
         items.push({
           type: "init",
           ok,
-          detail: `Claude Code ${e.claudeCodeVersion} · catherd plugin ${e.catherdPlugin?.version ?? "missing"} · MCP ${e.catherdMcpStatus ?? "absent"}`,
+          detail: `${e.host === "codex" ? "Codex" : `Claude Code ${e.claudeCodeVersion}`} · catherd plugin ${e.catherdPlugin?.version ?? (e.host === "codex" ? "loaded" : "missing")} · MCP ${e.catherdMcpStatus ?? "absent"}`,
         });
         break;
       }

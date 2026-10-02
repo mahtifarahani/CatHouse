@@ -29,6 +29,7 @@ function setup(overrides: Partial<ControllerDeps> = {}) {
     close: () => finish?.(),
   };
   const deps: ControllerDeps = {
+    host: () => "claude-code",
     env: async () => ({}),
     findPluginPath: async () => "/plugin",
     links: { get: (r) => links.get(r), set: (r, l) => links.set(r, l) },
@@ -45,6 +46,15 @@ function setup(overrides: Partial<ControllerDeps> = {}) {
 }
 
 describe("SessionController", () => {
+  it("does not resume a Claude-owned run under Codex", async () => {
+    const { c, links } = setup({ host: () => "codex" });
+    links.set("/repo", {
+      sessionId: "claude-session",
+      host: "claude-code",
+      savedAt: "2026-10-02T00:00:00Z",
+    });
+    await expect(c.resume("/repo")).rejects.toMatchObject({ code: "E_HOST_MISMATCH" });
+  });
   it("starts with the namespaced command and records the run ↔ session link", async () => {
     const { c, created, links } = setup();
     await c.start("/repo", "add a util");

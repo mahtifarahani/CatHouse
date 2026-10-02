@@ -2,6 +2,8 @@
 
 Status: **UI rebuilt on 2026-10-02** into five tabs: Chat, Runs, Profile, Models, Setup. Overview was folded into Runs, Repos into the Chat repo menu, and Diagnostics into Setup.
 
+Profile now begins with a CatHouse-level orchestrator selector (Claude Code or Codex). It applies immediately to new chats, disables during an active session, and asks Setup to recheck the selected host. If Setup's gate closes because the new host needs installation, Profile and Setup remain reachable so the user can switch back or finish Setup. The selector is global CatHouse state, not a catherd profile patch. Details: ADR 0009.
+
 ## One Activity Bar surface
 
 The complete application is one `WebviewView` in the `cathouse` Activity Bar container (`cathouse.sidebar`, `packages/extension/src/panel/sidebar.ts`). There is no intermediary status-only sidebar, Open Dashboard button, or separate editor `WebviewPanel`.

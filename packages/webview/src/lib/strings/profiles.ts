@@ -45,6 +45,11 @@ export const STRINGS = {
   "profiles.addWithTreat": "Add",
   "profiles.addInferred": "Add (let catherd infer)",
   "profiles.routing": "Routing",
+  "profiles.orchestrator": "Orchestrator",
+  "profiles.orchestratorHelp":
+    "Choose Claude Code or Codex for new chats. CatHouse will check the selected host in Setup.",
+  "profiles.orchestratorBusy": "End the current chat before switching.",
+  "profiles.orchestratorChanged": "Orchestrator set to {host}. Check Setup before starting a chat.",
   "profiles.objective": "Objective",
   "profiles.jev": "Jev",
   "profiles.billing": "Billing",
