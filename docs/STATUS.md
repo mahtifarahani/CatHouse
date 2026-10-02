@@ -25,6 +25,8 @@ Last updated: 2026-10-02. Update this file at the end of every section.
 
 ## UI/UX rebuild (2026-10-02)
 
+Pointer cursor follow-up (2026-10-02): clickable webview controls, including top tabs and buttons, now use a pointer cursor through the base stylesheet. Disabled controls are excluded. See `docs/architecture/webview.md` §Styling. Owner visual confirmation in VS Code remains pending.
+
 Composer focus follow-up (2026-10-02): the first pass moved the coloured focus border to the rounded wrapper, but the owner wanted no active border colour, and VS Code still drew a focused outline around the textarea. The wrapper now keeps its neutral border and a scoped webview rule suppresses the injected textarea focus outline/shadow (`docs/architecture/webview.md` §Styling). Owner visual confirmation in VS Code remains pending.
 
 Composer mode follow-up (2026-10-02): the permission mode chevron now sits immediately after the selected label; the native select remains available for input and accessibility. See `docs/architecture/webview.md` §Styling. Owner visual pass in VS Code remains pending.
