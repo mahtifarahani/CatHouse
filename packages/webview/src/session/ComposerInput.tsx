@@ -94,7 +94,7 @@ export function Composer({
       <textarea
         id={id}
         rows={2}
-        className="max-h-[40vh] min-h-14 w-full resize-none bg-transparent px-3 pt-2.5 pb-1 text-base leading-6 text-input-foreground [field-sizing:content] placeholder:text-muted-foreground focus-visible:outline-none"
+        className="max-h-[40vh] min-h-14 w-full resize-none border-0 bg-transparent px-3 pt-2.5 pb-1 text-base leading-6 text-input-foreground shadow-none [field-sizing:content] placeholder:text-muted-foreground focus:border-0 focus:shadow-none focus:outline-none"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={onKeyDown}

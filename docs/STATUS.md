@@ -25,6 +25,8 @@ Last updated: 2026-10-02. Update this file at the end of every section.
 
 ## UI/UX rebuild (2026-10-02)
 
+Composer focus follow-up (2026-10-02): the textarea now clears its own focused border, outline and shadow so the rounded composer is the only visible focus boundary (`docs/architecture/webview.md` §Styling). Targeted Biome, typecheck and production build pass. A full lint run currently fails on pre-existing edits in `packages/ui`; the owner visual pass in VS Code remains pending.
+
 The owner found the UI hard to use: too many overlapping tabs, two-step actions, Interrupt/Stop at the top and usually disabled, borders everywhere, a confusing Setup and a poor Profiles page. The webview was rebuilt. Full description: `docs/architecture/webview.md` §Styling, §Pages, §Transcript layout.
 
 - **Five tabs:** Chat · Runs · Profile · Models · Setup, icon-only in a narrow sidebar. Overview → Runs header; Repos → repo menu above the chat input; Diagnostics → Setup "Logs and tools". The status bar is gone.
