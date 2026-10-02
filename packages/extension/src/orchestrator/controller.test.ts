@@ -82,6 +82,19 @@ describe("SessionController", () => {
     await expect(c.start("/repo", "b")).rejects.toMatchObject({ code: "E_SESSION_ACTIVE" });
   });
 
+  it("keeps the sent message and explains a start failure with an empty error message", async () => {
+    const { c, fake } = setup({ host: () => "codex" });
+    fake.start = async () => {
+      throw new Error("");
+    };
+    const state = await c.start("/repo", "reply OK");
+    expect(state).toMatchObject({
+      phase: "ended",
+      events: [{ kind: "user", text: "reply OK" }],
+      error: { code: "E_SESSION_START", message: "Error" },
+    });
+  });
+
   it("refuses to start without the plugin", async () => {
     const { c } = setup({ findPluginPath: async () => undefined });
     await expect(c.start("/repo", "a")).rejects.toMatchObject({ code: "E_PLUGIN_MISSING" });

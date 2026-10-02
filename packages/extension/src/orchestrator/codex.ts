@@ -1,4 +1,3 @@
-import { connect } from "node:net";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import type { PromptAnswer, PromptRequest, SessionEvent } from "@cathouse/protocol";
@@ -309,7 +308,7 @@ export class CodexSession {
       "app-server-control",
       "app-server-control.sock",
     );
-    const socket = new WebSocket("ws://localhost/", { createConnection: () => connect(path) });
+    const socket = new WebSocket(`ws+unix://${path}:/`);
     this.socket = socket;
     socket.on("message", (message) => this.receive(String(message)));
     socket.on("error", (error) => {
@@ -334,11 +333,16 @@ export class CodexSession {
       });
       socket.once("error", (error) => {
         clearTimeout(timer);
-        reject(error);
+        reject(
+          new Error(
+            error.message ||
+              "Could not connect to the managed Codex daemon. Start it from CatHouse Setup.",
+          ),
+        );
       });
     });
     await this.request("initialize", {
-      clientInfo: { name: "cathouse", title: "CatHouse", version: "0.4.3" },
+      clientInfo: { name: "cathouse", title: "CatHouse", version: "0.4.4" },
       capabilities: null,
     });
     this.write({ method: "initialized" });

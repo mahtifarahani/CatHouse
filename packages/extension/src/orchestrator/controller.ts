@@ -197,12 +197,13 @@ export class SessionController {
     } catch (e) {
       session.close();
       this.session = undefined;
+      const detail = e instanceof Error ? e.message.trim() || e.name : String(e);
       this.state = {
         phase: "ended",
         turnActive: false,
         repo,
-        events: [],
-        error: { code: "E_SESSION_START", message: e instanceof Error ? e.message : String(e) },
+        events: [...this.state.events],
+        error: { code: "E_SESSION_START", message: detail || "Could not start the session" },
       };
       return this.publishState();
     }

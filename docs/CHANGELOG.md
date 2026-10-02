@@ -4,6 +4,10 @@ GitHub Release notes are the version sections below. Keep unfinished work under 
 
 ## Unreleased
 
+## [0.4.4] - 2026-10-02
+
+- **Fix native Codex chat in Cursor.** Connect to the managed daemon through its Unix WebSocket, select the installed catherd skill by its qualified name, and show the Codex response in Chat. A failed start keeps the message in the composer and transcript and displays a readable error instead of an empty red bar.
+
 ## [0.4.3] - 2026-10-02
 
 - **Choose the orchestrator.** Profile can switch new CatHouse chats between Claude Code and native Codex. Setup checks the selected host, including the matching catherd plugin and Codex app-server daemon. Installation and daemon startup run only after a click. Saved chat links stay separate for each host and repository.

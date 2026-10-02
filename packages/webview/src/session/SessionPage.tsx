@@ -187,10 +187,7 @@ export function SessionPage({ canStart, blockedReason }: SessionPageProps) {
           repo: workspace?.repo ?? undefined,
           permissionMode: startMode,
         });
-        if (started.error) {
-          setError(started.error.message);
-          return;
-        }
+        if (started.error) return;
         setDraft("");
         setFiles([]);
       });
@@ -254,13 +251,13 @@ export function SessionPage({ canStart, blockedReason }: SessionPageProps) {
               switchingHost={switchingHost}
             />
             {error && (
-              <p role="alert" className="m-0 rounded-md bg-danger/10 px-3 py-2 text-danger">
-                {error}
+              <p role="alert" className="m-0 rounded-md bg-danger/10 px-3 py-2 text-foreground">
+                {error || "Could not start the session"}
               </p>
             )}
             {s.error && (
-              <p role="alert" className="m-0 rounded-md bg-danger/10 px-3 py-2 text-danger">
-                {s.error.message}
+              <p role="alert" className="m-0 rounded-md bg-danger/10 px-3 py-2 text-foreground">
+                {s.error.message || s.error.code}
                 {s.error.fix && <span className="block text-xs opacity-80">{s.error.fix}</span>}
               </p>
             )}
