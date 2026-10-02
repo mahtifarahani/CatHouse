@@ -43,11 +43,19 @@ export class SetupService {
   state(): SetupState {
     const base = { checking: this.checking, ...(this.running ? { running: this.running } : {}) };
     if (!this.facts) {
-      return { ...base, items: [], gateOpen: false, canStart: false, canStartReason: "checking…" };
+      return {
+        ...base,
+        host: this.deps.host(),
+        items: [],
+        gateOpen: false,
+        canStart: false,
+        canStartReason: "checking…",
+      };
     }
     return {
       ...base,
-      ...evaluate(this.facts, this.deps.pin),
+      host: this.deps.host(),
+      ...evaluate(this.facts, this.deps.pin, this.deps.host()),
       ...(this.checkedAt ? { checkedAt: this.checkedAt } : {}),
       ...(this.doctorAt ? { doctorAt: this.doctorAt } : {}),
     };
@@ -67,13 +75,21 @@ export class SetupService {
       const doctor = this.facts?.doctor ?? this.cachedDoctor;
       this.facts = { ...(await detect(this.deps)), ...(doctor ? { doctor } : {}) };
       this.checkedAt = new Date().toISOString();
-      if (opts.readiness && evaluate(this.facts, this.deps.pin).gateOpen) {
+      if (opts.readiness && evaluate(this.facts, this.deps.pin, this.deps.host()).gateOpen) {
         await this.readiness(opts.refresh === true);
       }
     } finally {
       this.checking = false;
     }
     return this.publish();
+  }
+
+  async switchHost(): Promise<SetupState> {
+    this.cachedDoctor = undefined;
+    this.doctorAt = undefined;
+    this.facts = undefined;
+    await this.deps.persistReadiness?.(undefined);
+    return this.check();
   }
 
   /** catherd doctor has side effects; it runs only here (Setup, after installs, on "Check"). */
@@ -146,6 +162,7 @@ export class SetupService {
     try {
       const ctx: ActionContext = {
         pin: this.deps.pin,
+        host: this.deps.host(),
         claude: this.deps.bundledClaude(),
         marketplaceKnown: await this.marketplaceKnown(),
       };

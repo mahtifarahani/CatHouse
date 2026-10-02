@@ -236,6 +236,9 @@ export const zh: Partial<Record<StringKey, string>> = {
   "session.runStartedTitle": "运行已开始",
   "session.turnDone": "回合已完成",
   "session.turnFailed": "回合已结束：{subtype}",
+  "session.switchToCodex": "切换到 Codex",
+  "session.switchToCodexHint":
+    "结束当前 Claude 聊天。完成设置检查后，新任务将使用 Codex；此聊天仍属于 Claude。",
   "session.mode": "权限",
   "session.modeHelp": "总是允许 catherd 自身的工具；这会设置如何处理其他工具调用。",
   "session.mode.default": "询问 (您的 Claude 设置)",

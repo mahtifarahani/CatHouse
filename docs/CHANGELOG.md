@@ -4,6 +4,12 @@ GitHub Release notes are the version sections below. Keep unfinished work under 
 
 ## Unreleased
 
+## [0.4.3] - 2026-10-02
+
+- **Choose the orchestrator.** Profile can switch new CatHouse chats between Claude Code and native Codex. Setup checks the selected host, including the matching catherd plugin and Codex app-server daemon. Installation and daemon startup run only after a click. Saved chat links stay separate for each host and repository.
+- **Switch from a Claude limit.** When Claude reports a session limit in Chat, a Switch to Codex action appears beside the message. It ends that Claude chat and selects Codex for new tasks; the previous conversation stays attached to Claude. Setup shows any remaining Codex requirements.
+- **Codex chat adapter.** Native Codex sessions use the managed app-server Unix WebSocket so catherd can push role completions to the same thread. The Profile switch and Chat action do not change catherd profile files.
+
 ## [0.4.2] - 2026-10-02
 
 - **Languages.** The CatHouse UI is now fully translated into English, Chinese (中文), Hindi (हिन्दी), Spanish (Español), French (Français), and Persian (فارسی). You can change the language dynamically from the new Settings menu. Persian natively supports an RTL layout which flips all layout and animation directions.

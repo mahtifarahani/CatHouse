@@ -249,6 +249,9 @@ export const fr: Partial<Record<StringKey, string>> = {
   "session.runStartedTitle": "Exécution démarrée",
   "session.turnDone": "Tour terminé",
   "session.turnFailed": "Tour terminé : {subtype}",
+  "session.switchToCodex": "Passer à Codex",
+  "session.switchToCodexHint":
+    "Termine ce chat Claude. Les nouvelles tâches utiliseront Codex après la vérification de Setup ; ce chat reste associé à Claude.",
   "session.mode": "Permissions",
   "session.modeHelp":
     "Les propres outils de catherd sont toujours autorisés ; ceci définit comment les autres appels d'outils sont traités.",

@@ -1,10 +1,12 @@
 import { z } from "zod";
+import { OrchestratorHostSchema } from "./setup";
 
 // Session models shared by the host (packages/extension/src/orchestrator) and the webview.
 
 export const SessionEventSchema = z.discriminatedUnion("kind", [
   z.object({
     kind: z.literal("init"),
+    host: OrchestratorHostSchema.optional(),
     sessionId: z.string(),
     claudeCodeVersion: z.string(),
     /** The orchestrator session's model (SDK init `model`). */
@@ -108,7 +110,7 @@ export type PendingPrompt = z.infer<typeof PendingPromptSchema>;
 
 export const SessionStateSchema = z.object({
   phase: z.enum(["idle", "starting", "running", "ended"]),
-  /** True only while Claude is processing the current user turn. */
+  /** True while the selected host processes the current user turn. */
   turnActive: z.boolean(),
   permissionMode: z.string().optional(),
   repo: z.string().optional(),

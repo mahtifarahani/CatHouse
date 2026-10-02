@@ -1,6 +1,7 @@
 import { execFile } from "node:child_process";
 import { homedir } from "node:os";
 import { delimiter, join } from "node:path";
+import type { OrchestratorHost } from "@cathouse/protocol";
 
 // GUI-launched editors on macOS inherit a minimal PATH that misses ~/.bun/bin, Homebrew and
 // npm-global bins. We merge the user's login-shell PATH with the well-known install dirs.
@@ -26,6 +27,8 @@ const STRIPPED_PREFIXES = [
   "CLAUDE_EFFORT",
   "CLAUDE_PREVIEW_",
   "ANTHROPIC_BASE_URL",
+  "CODEX_THREAD_ID",
+  "CODEX_SESSION_ID",
 ];
 
 let loginPath: Promise<string> | undefined;
@@ -62,6 +65,7 @@ export function mergePath(...parts: string[]): string {
 /** The environment for every process CatHouse spawns. */
 export async function processEnv(
   extra: Record<string, string> = {},
+  host: OrchestratorHost = "claude-code",
 ): Promise<Record<string, string>> {
   loginPath ??= readLoginShellPath();
   const env: Record<string, string> = {};
@@ -71,7 +75,7 @@ export async function processEnv(
   env.PATH = mergePath(await loginPath, process.env.PATH ?? "", WELL_KNOWN.join(delimiter));
   // catherd 1.4 resolves omitted architect/verifier rungs from the orchestration host. CatHouse's
   // gateway client is neither Codex nor Claude Code by name, so without this a host-default profile
-  // fails with E_CONFIG_INVALID. CatHouse orchestrates through Claude Code (docs/research/catherd-1.4-upgrade.md).
-  env.CATHERD_ORCHESTRATION_HOST = "claude-code";
+  // fails with E_CONFIG_INVALID. Match the selected session host for gateway and CLI calls.
+  env.CATHERD_ORCHESTRATION_HOST = host;
   return { ...env, ...extra };
 }

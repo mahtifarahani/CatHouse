@@ -32,9 +32,9 @@ CatHouse's zod schemas are loose objects, so new fields pass through.
 | `runs` CLI | `catherd runs retry-push <run> <name> --event <id> --acknowledge-possible-duplicate` (`src/entry/runs-command.ts:289`); `status` prints the host and delivery lines | not used (retrying a push is the orchestrator's call) |
 | Profiles | Doctor rows for other profiles' errors drop from `fail` to `warn`; only the active (or repo-bound) profile can block readiness | Setup readiness follows doctor's `ready` |
 
-## 3. Codex as orchestrator: out of scope
+## 3. Codex as orchestrator: adopted after the 1.4 pin
 
-1.4 ships a native Codex plugin manifest (`plugin/.codex-plugin/plugin.json`, `.mcp-codex.json` with `CATHERD_ORCHESTRATION_HOST=codex`), a durable Codex queue for completion delivery, and optional Claude dependencies. CatHouse's orchestrator is the Claude Agent SDK session, so it stays a Claude Code host. Supporting a Codex-hosted orchestrator in CatHouse would be a separate design decision (an ADR), not part of this pin.
+1.4 ships a native Codex plugin manifest (`plugin/.codex-plugin/plugin.json`, `.mcp-codex.json` with `CATHERD_ORCHESTRATION_HOST=codex`), a durable Codex queue for completion delivery, and optional Claude dependencies. The original 1.4 pin kept only the Claude Agent SDK session. ADR 0009 adds a selectable native Codex host after that pin. CatHouse uses the user's Codex app-server daemon and installed plugin; this research section records the upstream surface, while `docs/decisions/0009-selectable-orchestrator-host.md` records the implementation and its live-test gap.
 
 ## 4. Upgrading a machine that ran 1.3
 

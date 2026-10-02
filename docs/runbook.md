@@ -47,6 +47,22 @@ Run `init` from a clean shell. A shell inside a Claude Code session carries `CLA
 
 Once CatHouse's Setup screen exists, it performs these steps from buttons. Use the manual commands above only to prepare a dev machine or to debug Setup.
 
+### Optional Codex orchestrator
+
+Select **Profile → Orchestrator → Codex**. This preference is global to CatHouse; role models remain in catherd's profile. The Codex path needs CLI >= 0.159.2, `codex login`, and the native `catherd@catherd` plugin at 1.4.0. Setup offers update/install/login actions and runs them only after a click. Equivalent manual dev-machine commands:
+
+```bash
+npm i -g @openai/codex@latest
+codex login
+codex plugin marketplace add 47vigen/catherd
+codex plugin add catherd@catherd
+codex plugin list --json
+codex app-server daemon start
+CATHERD_ORCHESTRATION_HOST=codex catherd doctor --host codex
+```
+
+Check that the doctor report has a usable Codex backend and no active-profile error. A profile written before catherd 1.4.0 may have explicit native `claude:` architect/verifier rungs; choose Codex rungs in Profile before starting a Codex-hosted run. Setup has a Start daemon action; click it after installing the CLI and plugin. CatHouse then connects to its Unix WebSocket and leaves the daemon running on chat close. The start command may install the managed daemon package. That shared daemon is needed for catherd's `codex queue --remote unix://` completion messages. Resume links are saved separately per repository and host. A live pushed role completion and reload/resume check is still pending (ADR 0009).
+
 ## 2. Isolated catherd environment for tests
 
 `CATHERD_HOME=$(mktemp -d)` puts catherd's config and data under that folder. The Claude side (`~/.claude/agents`, plugins) is still shared unless `CLAUDE_CONFIG_DIR` and `CATHERD_CLAUDE_AGENTS_DIR` also point to temp dirs. Use all three for contract tests.

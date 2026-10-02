@@ -20,6 +20,7 @@ export interface ActionContext {
   claude: string | undefined;
   /** Marketplace "catherd" already registered in Claude (known_marketplaces.json). */
   marketplaceKnown: boolean;
+  host: "claude-code" | "codex";
 }
 
 const quote = (s: string) => `'${s.replace(/'/g, `'\\''`)}'`;
@@ -47,7 +48,10 @@ export function stepsFor(action: SetupActionId, ctx: ActionContext): Step[] {
       return [{ kind: "run", cmd: "bun", args: ["upgrade"], label: "Upgrade Bun" }];
     case "init-catherd":
       return [
-        bunx(["init", "--no-input", "--plain"], `Install and set up catherd ${ctx.pin.catherd}`),
+        bunx(
+          ["init", "--no-input", "--plain", "--host", ctx.host],
+          `Install and set up catherd ${ctx.pin.catherd}`,
+        ),
       ];
     case "install-plugin":
       return [
@@ -63,6 +67,42 @@ export function stepsFor(action: SetupActionId, ctx: ActionContext): Step[] {
       return [
         ...claude(["plugin", "marketplace", "update", "catherd"], "Update the catherd marketplace"),
         ...claude(["plugin", "update", "catherd@catherd"], "Update catherd@catherd"),
+      ];
+    case "install-codex-plugin":
+      return [
+        {
+          kind: "run",
+          cmd: "codex",
+          args: ["plugin", "marketplace", "add", "47vigen/catherd"],
+          label: "Add the catherd marketplace",
+        },
+        {
+          kind: "run",
+          cmd: "codex",
+          args: ["plugin", "add", "catherd@catherd"],
+          label: "Install catherd for Codex",
+        },
+      ];
+    case "update-codex-plugin":
+      return [
+        {
+          kind: "run",
+          cmd: "codex",
+          args: ["plugin", "marketplace", "upgrade", "catherd"],
+          label: "Update the catherd marketplace",
+        },
+        {
+          kind: "run",
+          cmd: "codex",
+          args: ["plugin", "remove", "catherd@catherd"],
+          label: "Remove old catherd plugin",
+        },
+        {
+          kind: "run",
+          cmd: "codex",
+          args: ["plugin", "add", "catherd@catherd"],
+          label: "Install current catherd plugin",
+        },
       ];
     case "login-claude":
       return ctx.claude
@@ -97,6 +137,30 @@ export function stepsFor(action: SetupActionId, ctx: ActionContext): Step[] {
       return [
         { kind: "terminal", name: "Codex login", command: "codex login", label: "Log in to Codex" },
       ];
+    case "start-codex-daemon":
+      return [
+        {
+          kind: "run",
+          cmd: "codex",
+          args: ["app-server", "daemon", "start"],
+          label: "Start Codex app-server daemon",
+        },
+      ];
+    case "restart-codex-daemon":
+      return [
+        {
+          kind: "run",
+          cmd: "codex",
+          args: ["app-server", "daemon", "stop"],
+          label: "Stop outdated Codex app-server daemon",
+        },
+        {
+          kind: "run",
+          cmd: "codex",
+          args: ["app-server", "daemon", "start"],
+          label: "Start current Codex app-server daemon",
+        },
+      ];
     case "install-opencode":
       return [
         {
@@ -115,7 +179,11 @@ export function stepsFor(action: SetupActionId, ctx: ActionContext): Step[] {
 export const REFRESH_AFTER = new Set<SetupActionId>([
   "init-catherd",
   "install-codex",
+  "install-codex-plugin",
+  "update-codex-plugin",
   "install-opencode",
   "install-claude-cli",
   "login-codex",
+  "start-codex-daemon",
+  "restart-codex-daemon",
 ]);

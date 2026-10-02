@@ -242,6 +242,9 @@ export const hi: Partial<Record<StringKey, string>> = {
   "session.runStartedTitle": "रन शुरू हुआ",
   "session.turnDone": "बारी पूरी हुई",
   "session.turnFailed": "बारी समाप्त: {subtype}",
+  "session.switchToCodex": "Codex पर स्विच करें",
+  "session.switchToCodexHint":
+    "यह Claude चैट समाप्त होगी। Setup पूरा होने के बाद नए कार्य Codex का उपयोग करेंगे; यह चैट Claude से जुड़ी रहेगी।",
   "session.mode": "अनुमतियाँ",
   "session.modeHelp":
     "catherd के अपने टूल की हमेशा अनुमति है; यह सेट करता है कि अन्य टूल कॉल को कैसे नियंत्रित किया जाता है।",

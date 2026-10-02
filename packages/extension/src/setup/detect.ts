@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import type { CompatEntry } from "@cathouse/compat";
+import type { OrchestratorHost } from "@cathouse/protocol";
 import type { CatherdCli } from "../gateway/cli";
 import type { RunOptions, RunResult } from "../gateway/process";
 import { findCatherdPlugin } from "../orchestrator/plugin";
@@ -14,6 +15,7 @@ import type { SetupFacts } from "./facts";
 export type Runner = (cmd: string, args: string[], opts: RunOptions) => Promise<RunResult>;
 
 export interface DetectDeps {
+  host: () => OrchestratorHost;
   run: Runner;
   env: () => Promise<Record<string, string>>;
   bundledClaude: () => string | undefined;
@@ -100,20 +102,72 @@ async function profileNeedsClaudeCli(deps: DetectDeps, catherdReady: boolean): P
 }
 
 export async function detect(deps: DetectDeps): Promise<SetupFacts> {
+  const host = deps.host();
   const bin = deps.bundledClaude();
   const configDir = catherdConfigDir(deps.vars);
-  const [bun, catherd, sdkVersion, plugin, login, configExists] = await Promise.all([
+  const [bun, catherd, sdkVersion, plugin, login, configExists, codex] = await Promise.all([
     version(deps, "bun", ["--version"]),
     version(deps, "bunx", ["--no-install", `catherd-cli@${deps.pin.catherd}`, "--version"]),
     bin
       ? version(deps, bin, ["--version"])
       : Promise.resolve<{ version?: string; error?: string }>({ error: "missing" }),
-    findCatherdPlugin(deps.vars?.CLAUDE_CONFIG_DIR || undefined),
-    claudeLogin(deps, bin),
+    host === "claude-code"
+      ? findCatherdPlugin(deps.vars?.CLAUDE_CONFIG_DIR || undefined)
+      : Promise.resolve(undefined),
+    host === "claude-code" ? claudeLogin(deps, bin) : Promise.resolve({}),
     hasActiveConfig(configDir),
+    host === "codex"
+      ? version(deps, "codex", ["--version"])
+      : Promise.resolve<{ version?: string; error?: string }>({}),
   ]);
+  let codexPlugin: SetupFacts["codexPlugin"] = {};
+  let codexLogin = false;
+  let codexDaemon: SetupFacts["codexDaemon"] = { running: false };
+  if (host === "codex" && codex.version) {
+    const env = await deps.env();
+    const [plugins, loginStatus, daemonStatus] = await Promise.all([
+      deps
+        .run("codex", ["plugin", "list", "--json"], { env, timeoutMs: 20_000 })
+        .catch(() => undefined),
+      deps.run("codex", ["login", "status"], { env, timeoutMs: 20_000 }).catch(() => undefined),
+      deps
+        .run("codex", ["app-server", "daemon", "version"], { env, timeoutMs: 20_000 })
+        .catch(() => undefined),
+    ]);
+    codexLogin = loginStatus?.code === 0;
+    try {
+      const status = JSON.parse(daemonStatus?.stdout ?? "{}") as {
+        status?: string;
+        appServerVersion?: string;
+      };
+      codexDaemon = {
+        running: daemonStatus?.code === 0 && status.status === "running",
+        version: status.appServerVersion,
+      };
+    } catch {
+      codexDaemon = { running: false, error: "could not read daemon status" };
+    }
+    try {
+      const entries =
+        (
+          JSON.parse(plugins?.stdout ?? "{}") as {
+            installed?: Array<{
+              pluginId?: string;
+              version?: string;
+              source?: { path?: string };
+              enabled?: boolean;
+            }>;
+          }
+        ).installed ?? [];
+      const found = entries.find((p) => p.pluginId === "catherd@catherd" && p.enabled !== false);
+      if (found) codexPlugin = { version: found.version, installPath: found.source?.path };
+    } catch {
+      /* malformed listing is treated as missing */
+    }
+  }
   const catherdReady = catherd.version === deps.pin.catherd && configExists;
-  const needsClaudeCli = await profileNeedsClaudeCli(deps, catherdReady);
+  const needsClaudeCli =
+    host === "claude-code" && (await profileNeedsClaudeCli(deps, catherdReady));
   const claudeCli = needsClaudeCli ? await version(deps, "claude", ["--version"]) : {};
   return {
     bun,
@@ -124,6 +178,9 @@ export async function detect(deps: DetectDeps): Promise<SetupFacts> {
       : { error: "the Claude binary for this platform is not bundled" },
     plugin: plugin ?? {},
     claudeLogin: login,
+    codex: { ...codex, loggedIn: codexLogin },
+    codexDaemon,
+    codexPlugin,
     needsClaudeCli,
     claudeCli,
   };

@@ -10,6 +10,9 @@ export interface SetupFacts {
   sdkBinary: { path?: string; version?: string; error?: string };
   plugin: { version?: string; installPath?: string };
   claudeLogin: { loggedIn?: boolean; method?: string; email?: string; error?: string };
+  codex: { version?: string; error?: string; loggedIn?: boolean };
+  codexDaemon: { running: boolean; version?: string; error?: string };
+  codexPlugin: { version?: string; installPath?: string };
   /** Whether the profile this repo runs on has claude-code: rungs (then the standalone CLI is needed). */
   needsClaudeCli: boolean;
   claudeCli: { version?: string; error?: string };

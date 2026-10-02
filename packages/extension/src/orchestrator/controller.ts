@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type {
+  OrchestratorHost,
   PendingPrompt,
   PromptAnswer,
   PromptRequest,
@@ -15,6 +16,7 @@ import type { SessionOptions } from "./session";
 // Kept free of `vscode`; the extension injects storage, broadcasting and the session factory.
 
 export interface SavedLink {
+  host?: OrchestratorHost;
   runId?: string;
   sessionId: string;
   savedAt: string;
@@ -32,10 +34,11 @@ export interface SessionLike {
 }
 
 export interface ControllerDeps {
+  host: () => OrchestratorHost;
   env: () => Promise<Record<string, string>>;
   findPluginPath: () => Promise<string | undefined>;
   links: { get(repo: string): SavedLink | undefined; set(repo: string, link: SavedLink): void };
-  sessionExists: (sessionId: string) => Promise<boolean>;
+  sessionExists: (sessionId: string, host: OrchestratorHost) => Promise<boolean>;
   createSession: (opts: SessionOptions) => SessionLike;
   broadcast: (payload: SessionTopic) => void;
   log: (line: string) => void;
@@ -92,7 +95,10 @@ export class SessionController {
     if (e.kind === "init") {
       this.state.sessionId = e.sessionId;
       this.state.phase = "running";
-      if (!e.catherdPlugin || e.catherdMcpStatus === "failed") {
+      if (
+        this.deps.host() === "claude-code" &&
+        (!e.catherdPlugin || e.catherdMcpStatus === "failed")
+      ) {
         this.deps.log(
           `catherd plugin missing or its MCP server failed (${e.catherdMcpStatus ?? "absent"})`,
         );
@@ -113,6 +119,7 @@ export class SessionController {
   private saveLink(repo: string): void {
     if (!this.state.sessionId) return;
     this.deps.links.set(repo, {
+      host: this.deps.host(),
       sessionId: this.state.sessionId,
       ...(this.state.runId ? { runId: this.state.runId } : {}),
       savedAt: new Date().toISOString(),
@@ -155,8 +162,9 @@ export class SessionController {
         "stop it first, or keep working in it",
       );
     }
-    const pluginPath = await this.deps.findPluginPath();
-    if (!pluginPath) {
+    const host = this.deps.host();
+    const pluginPath = host === "claude-code" ? await this.deps.findPluginPath() : undefined;
+    if (host === "claude-code" && !pluginPath) {
       throw new HandlerError(
         "E_PLUGIN_MISSING",
         "the catherd Claude plugin is not installed",
@@ -172,9 +180,10 @@ export class SessionController {
     };
     if (first) this.deps.broadcast({ type: "event", event: first });
     const session = this.deps.createSession({
+      host,
       repo,
       prompt,
-      pluginPath,
+      ...(pluginPath ? { pluginPath } : {}),
       env: await this.deps.env(),
       ...(resume ? { resume } : {}),
       permissionMode,
@@ -186,6 +195,7 @@ export class SessionController {
     try {
       await session.start();
     } catch (e) {
+      session.close();
       this.session = undefined;
       this.state = {
         phase: "ended",
@@ -224,7 +234,7 @@ export class SessionController {
   ): Promise<SessionState> {
     return this.launch(
       repo,
-      `/catherd:catherd ${task}`,
+      this.deps.host() === "codex" ? task : `/catherd:catherd ${task}`,
       undefined,
       { kind: "user", text: task },
       permissionMode,
@@ -246,12 +256,29 @@ export class SessionController {
    */
   async resume(repo: string): Promise<SessionState> {
     const link = this.deps.links.get(repo);
-    if (link && (await this.deps.sessionExists(link.sessionId))) {
+    if (link && (link.host ?? "claude-code") !== this.deps.host()) {
+      throw new HandlerError(
+        "E_HOST_MISMATCH",
+        `the saved run belongs to ${link.host ?? "claude-code"}`,
+        "switch back to that orchestrator in Profile, or start a new chat",
+      );
+    }
+    if (!link && this.deps.host() === "codex") {
+      throw new HandlerError(
+        "E_NO_SAVED_RUN",
+        "there is no saved Codex session for this repository",
+        "start a new chat",
+      );
+    }
+    if (link && (await this.deps.sessionExists(link.sessionId, this.deps.host()))) {
       const state = await this.launch(repo, RESUME_PROMPT(link.runId), link.sessionId);
       if (link.runId) this.state.runId = link.runId;
       return state;
     }
-    return this.launch(repo, "/catherd:catherd");
+    return this.launch(
+      repo,
+      this.deps.host() === "codex" ? "Resume the latest catherd run." : "/catherd:catherd",
+    );
   }
 
   send(text: string): void {

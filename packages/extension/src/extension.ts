@@ -1,6 +1,11 @@
 import { homedir } from "node:os";
 import { PINNED } from "@cathouse/compat";
-import { type EventTopic, PROTOCOL_VERSION, type SetupActionId } from "@cathouse/protocol";
+import {
+  type EventTopic,
+  type OrchestratorHost,
+  PROTOCOL_VERSION,
+  type SetupActionId,
+} from "@cathouse/protocol";
 import * as vscode from "vscode";
 import { CatherdCli } from "./gateway/cli";
 import { processEnv } from "./gateway/env";
@@ -8,6 +13,7 @@ import { CatherdMcp } from "./gateway/mcp-client";
 import { runProcess } from "./gateway/process";
 import { DoctorReportSchema } from "./gateway/schemas";
 import { CatherdGateway } from "./gateway/service";
+import { CodexSession } from "./orchestrator/codex";
 import { type SavedLink, SessionController } from "./orchestrator/controller";
 import { findCatherdPlugin } from "./orchestrator/plugin";
 import { OrchestratorSession } from "./orchestrator/session";
@@ -26,6 +32,7 @@ interface RequestContext {
 const LINKS_KEY = "cathouse.links.v1";
 const REPO_KEY = "cathouse.repo.v1";
 const READINESS_KEY = "cathouse.readiness.v1";
+const HOST_KEY = "cathouse.orchestratorHost.v1";
 
 /** The repo CatHouse works on: the requested folder, else the selected one, else the first. */
 let selectedRepo: string | undefined;
@@ -42,13 +49,17 @@ function repoFor(requested?: string): string {
 export function activate(context: vscode.ExtensionContext): void {
   const extensionVersion = String(context.extension.packageJSON.version ?? "0.0.0");
   selectedRepo = context.workspaceState.get<string>(REPO_KEY);
+  let host: OrchestratorHost =
+    context.globalState.get<OrchestratorHost>(HOST_KEY) === "codex" ? "codex" : "claude-code";
   const output = vscode.window.createOutputChannel("CatHouse", { log: true });
   const broadcaster = new Broadcaster();
   const publish = (topic: EventTopic, payload: unknown) =>
     broadcaster.post({ v: PROTOCOL_VERSION, kind: "event", topic, payload });
-  const env = () => processEnv();
+  const env = () => processEnv({}, host);
 
-  const storedReadiness = context.workspaceState.get<Partial<ReadinessSnapshot>>(READINESS_KEY);
+  const storedReadiness = context.workspaceState.get<Partial<ReadinessSnapshot>>(
+    `${READINESS_KEY}.${host}`,
+  );
   const storedDoctor = DoctorReportSchema.safeParse(storedReadiness?.doctor);
   const initialReadiness =
     storedDoctor.success && typeof storedReadiness?.doctorAt === "string"
@@ -56,6 +67,7 @@ export function activate(context: vscode.ExtensionContext): void {
       : undefined;
 
   const setup = new SetupService({
+    host: () => host,
     run: runProcess,
     env,
     bundledClaude: bundledClaudePath,
@@ -64,7 +76,8 @@ export function activate(context: vscode.ExtensionContext): void {
       new CatherdCli({ cwd: vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? homedir(), env }),
     pin: PINNED,
     ...(initialReadiness ? { initialReadiness } : {}),
-    persistReadiness: (snapshot) => context.workspaceState.update(READINESS_KEY, snapshot),
+    persistReadiness: (snapshot) =>
+      context.workspaceState.update(`${READINESS_KEY}.${host}`, snapshot),
     broadcast: (payload) => publish("setup", payload),
     log: (line) => output.info(line),
     openTerminal: (name, command, termEnv) =>
@@ -83,20 +96,26 @@ export function activate(context: vscode.ExtensionContext): void {
   void setup.check();
 
   const controller = new SessionController({
+    host: () => host,
     env,
     findPluginPath: async () => (await findCatherdPlugin())?.installPath,
     links: {
-      get: (repo) => context.workspaceState.get<Record<string, SavedLink>>(LINKS_KEY)?.[repo],
+      get: (repo) => {
+        const all = context.workspaceState.get<Record<string, SavedLink>>(LINKS_KEY) ?? {};
+        return all[`${host}:${repo}`] ?? (host === "claude-code" ? all[repo] : undefined);
+      },
       set: (repo, link) => {
         const all = context.workspaceState.get<Record<string, SavedLink>>(LINKS_KEY) ?? {};
-        void context.workspaceState.update(LINKS_KEY, { ...all, [repo]: link });
+        void context.workspaceState.update(LINKS_KEY, { ...all, [`${host}:${repo}`]: link });
       },
     },
-    sessionExists: async (id) => {
+    sessionExists: async (id, linkHost) => {
+      if (linkHost === "codex") return true; // thread/resume validates the saved ID
       const { getSessionInfo } = await import("@anthropic-ai/claude-agent-sdk");
       return (await getSessionInfo(id)) !== undefined;
     },
-    createSession: (opts) => new OrchestratorSession(opts),
+    createSession: (opts) =>
+      opts.host === "codex" ? new CodexSession(opts) : new OrchestratorSession(opts),
     broadcast: (payload) => publish("session", payload),
     log: (line) => output.info(line),
     onPromptsChanged: (count, latest) => {
@@ -152,7 +171,7 @@ export function activate(context: vscode.ExtensionContext): void {
     if (phase === "starting" || phase === "running") {
       throw new HandlerError(
         "E_SESSION_ACTIVE",
-        "workspace folders cannot change while an orchestrator session is running",
+        "end the current orchestrator session before changing this setting",
         "stop the session first",
       );
     }
@@ -179,6 +198,17 @@ export function activate(context: vscode.ExtensionContext): void {
       void context.workspaceState.update(REPO_KEY, repo);
       publish("app", { type: "repo", repo });
       return { repo };
+    },
+    "app.setHost": async ({ host: nextHost }) => {
+      requireIdleSession();
+      if (nextHost !== host) {
+        host = nextHost;
+        await context.globalState.update(HOST_KEY, host);
+        await gateway?.dispose();
+        gateway = undefined;
+        return setup.switchHost();
+      }
+      return setup.state();
     },
     "app.addFolders": async () => {
       requireIdleSession();

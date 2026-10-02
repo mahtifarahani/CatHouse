@@ -2,6 +2,10 @@
 
 Status: **UI rebuilt on 2026-10-02** into five tabs: Chat, Runs, Profile, Models, Setup. Overview was folded into Runs, Repos into the Chat repo menu, and Diagnostics into Setup.
 
+Profile now begins with a CatHouse-level orchestrator selector (Claude Code or Codex). It applies immediately to new chats, disables during an active session, and asks Setup to recheck the selected host. If Setup's gate closes because the new host needs installation, Profile and Setup remain reachable so the user can switch back or finish Setup. The selector is global CatHouse state, not a catherd profile patch. Details: ADR 0009.
+
+Chat offers the same change at the point of a Claude session-limit response. The transcript identifies that specific assistant message, renders one **Switch to Codex** action beside the latest matching message, and explains that the current Claude chat ends and stays with Claude. The action calls `session.stop` for an active chat, then `app.setHost(codex)`; the existing Profile/Setup gate handles unmet Codex prerequisites. Other errors and Codex-hosted chats do not show the action. The message and action are translated in all six UI languages.
+
 ## One Activity Bar surface
 
 The complete application is one `WebviewView` in the `cathouse` Activity Bar container (`cathouse.sidebar`, `packages/extension/src/panel/sidebar.ts`). There is no intermediary status-only sidebar, Open Dashboard button, or separate editor `WebviewPanel`.
@@ -21,6 +25,7 @@ It loads the Vite build directly. `retainContextWhenHidden` is off; safety-criti
 - `theme.css` maps every colour token to a `--vscode-*` variable (`bg-primary` = `--vscode-button-background`, `text-muted-foreground` = `--vscode-descriptionForeground`, `text-danger` = `--vscode-errorForeground`, …), so Light, Dark and High Contrast work with no theme-specific CSS. **Never use literal colours.**
 - Focus ring: `--vscode-focusBorder`. Reduced motion is honoured globally.
 - The webview's base CSS gives enabled buttons, links, selects, tabs, menu items, switches, radio controls and associated labels a pointer cursor. VS Code's webview reset does not provide this consistently; disabled controls keep their noninteractive cursor.
+- `html`, `body` and `#root` occupy the webview height without their own scrolling; the active tab panel owns page scrolling. Setup's install output wraps within its row and grows with the page, so the page and output do not show two vertical scrollbars. VS Code body padding is reset to zero. Keep long output in normal flow when editing Setup.
 - The Chat composer keeps the same neutral outer border while typing. It does not use a focused border colour. VS Code injects textarea focus styling into webviews, so a scoped rule in `packages/webview/src/index.css` suppresses the textarea's focused outline and shadow as well. The caret still shows text entry focus.
 - The composer permission mode shows the selected label with a chevron directly after it. A transparent native select covers that compact trigger, preserving native keyboard and screen-reader behaviour; the trigger draws the focus outline.
 - Dense supporting text uses a 13 px minimum (`--text-xs`) with a 20 px line height, the base layer uses 1.45 line height, and shared inputs have a 32 px minimum height. This keeps the Activity Bar UI readable without changing the user's VS Code base-font setting.

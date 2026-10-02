@@ -1,5 +1,5 @@
 {
-  "cathouse.description": "catherd in VS Code: Claude plans and verifies while Codex, opencode, Claude Code, Cursor, Grok Build or Antigravity workers write the code, starting on the cheapest model that can do each job. CatHouse replaces catherd's terminal setup and TUI with one-click setup, a chat to start tasks, and live views of every role, budget and milestone.",
+  "cathouse.description": "catherd in VS Code: choose Claude Code or Codex as the orchestrator, then run coding agents from one chat. CatHouse adds guided setup, profiles, live roles, budgets and milestones without replacing catherd's orchestration.",
   "cathouse.untrusted": "CatHouse runs catherd and coding agents in your repository, so it needs a trusted workspace.",
   "cathouse.container.title": "CatHouse",
   "cathouse.sidebar.name": "CatHouse",

@@ -1,5 +1,7 @@
 > Reference copy of the approved plan (2026-09-28). Plan changes are recorded here and in docs/decisions/.
 
+> 2026-10-02 amendment (ADR 0009): the owner requested a Profile setting to switch the orchestration host between Claude Code and native Codex. The original Claude-only session plan remains the default path; the Codex app-server daemon Unix WebSocket path, host-aware Setup and per-host resume links are documented in `docs/decisions/0009-selectable-orchestrator-host.md`.
+
 # CatHouse — پلن اجرایی افزونهٔ VS Code برای catherd 1.0.0
 
 ## Context

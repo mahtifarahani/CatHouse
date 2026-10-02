@@ -15,6 +15,8 @@ export interface CompatEntry {
   bun: string;
   /** Minimum standalone `claude` for `claude-code:` rungs (catherd's adapter minimum) */
   claudeCode: string;
+  /** Minimum native Codex CLI verified for the app-server/queue orchestration host. */
+  codexHost: string;
   /** Which gateway adapter maps this version's shapes */
   adapter: "v1_4";
 }
@@ -26,6 +28,7 @@ export const SUPPORTED: readonly CompatEntry[] = [
     sdk: "0.3.283",
     bun: "1.4.0",
     claudeCode: "2.1.282",
+    codexHost: "0.159.2",
     adapter: "v1_4",
   },
 ];
