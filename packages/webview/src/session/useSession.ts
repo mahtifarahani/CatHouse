@@ -1,6 +1,7 @@
 import { type SessionEvent, type SessionState, SessionTopicSchema } from "@cathouse/protocol";
 import { useEffect, useState } from "react";
 import { onEvent, request } from "../lib/rpc";
+import { parseAgentName } from "./format";
 
 const EMPTY: SessionState = { phase: "idle", turnActive: false, events: [], prompts: [] };
 
@@ -52,7 +53,15 @@ export type TranscriptItem =
       nested: boolean;
     }
   | { type: "run"; runId: string }
-  | { type: "task"; id: string; description: string; status?: string; durationMs?: number }
+  | {
+      type: "task";
+      id: string;
+      description: string;
+      status?: string;
+      durationMs?: number;
+      /** Set when the sub-agent is one of catherd's native role agents. */
+      agent?: { role: string; model: string; effort?: string };
+    }
   | { type: "result"; subtype: string; isError: boolean; costUsd?: number }
   | { type: "init"; ok: boolean; detail: string }
   | { type: "compacted" }
@@ -109,10 +118,20 @@ export function toTranscript(events: SessionEvent[]): TranscriptItem[] {
       case "task": {
         let t = tasks.get(e.taskId);
         if (!t) {
+          const agent = parseAgentName(e.subagentType);
           t = {
             type: "task",
             id: e.taskId,
             description: e.description ?? e.subagentType ?? "task",
+            ...(agent
+              ? {
+                  agent: {
+                    role: agent.role,
+                    model: agent.model,
+                    ...(agent.effort ? { effort: agent.effort } : {}),
+                  },
+                }
+              : {}),
           };
           tasks.set(e.taskId, t);
           items.push(t);
@@ -140,4 +159,13 @@ export function toTranscript(events: SessionEvent[]): TranscriptItem[] {
     }
   }
   return items;
+}
+
+/** The orchestrator's model, from the newest init event (undefined before a session starts). */
+export function orchestratorModel(events: SessionEvent[]): string | undefined {
+  for (let i = events.length - 1; i >= 0; i--) {
+    const e = events[i];
+    if (e?.kind === "init") return e.model;
+  }
+  return undefined;
 }

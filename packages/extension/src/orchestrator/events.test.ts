@@ -8,6 +8,7 @@ describe("event mapper", () => {
       subtype: "init",
       session_id: "s1",
       claude_code_version: "2.1.283",
+      model: "claude-opus-5-5",
       plugins: [{ name: "catherd", path: "/p", version: "1.0.0" }],
       mcp_servers: [{ name: "plugin:catherd:catherd", status: "pending" }],
       agents: ["catherd-default-architect-claude-opus-5-5-high"],
@@ -18,6 +19,7 @@ describe("event mapper", () => {
       sessionId: "s1",
       catherdPlugin: { version: "1.0.0" },
       catherdMcpStatus: "pending",
+      model: "claude-opus-5-5",
     });
   });
 

@@ -26,6 +26,10 @@
   --color-info: var(--vscode-editorInfo-foreground, var(--vscode-charts-blue));
   --color-badge: var(--vscode-badge-background);
   --color-badge-foreground: var(--vscode-badge-foreground);
+  /* Soft surfaces replace borders: a tinted fill reads as a group without drawing a line. */
+  --color-accent-soft: color-mix(in srgb, var(--vscode-button-background) 18%, transparent);
+  --color-surface: color-mix(in srgb, var(--vscode-foreground) 5%, transparent);
+  --color-surface-hover: color-mix(in srgb, var(--vscode-foreground) 9%, transparent);
 
   --font-sans: var(--vscode-font-family);
   --font-mono: var(--vscode-editor-font-family);

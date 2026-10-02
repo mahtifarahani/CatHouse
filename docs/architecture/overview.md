@@ -47,7 +47,7 @@ Note: two `catherd mcp` processes exist per active repo (the gateway's and the o
 |---|---|---|
 | `protocol` | Message envelope, request/response/event schemas, stable domain models (RunSummary, RunRecord, Profile, CatalogModel, DoctorReport, SetupState, SessionEvent…) | zod |
 | `ui` | shadcn components, tokens mapped to `--vscode-*`, icons | react |
-| `webview` | Pages: Setup, Overview, Runs, Run detail, Session, Profiles, Models, Diagnostics | protocol, ui |
+| `webview` | Pages: Chat, Runs (+ run detail), Profile, Models, Setup (with logs and tools) | protocol, ui |
 | `extension` | activate, commands, views, setup, gateway, orchestrator, panel, state | protocol, @anthropic-ai/claude-agent-sdk, @modelcontextprotocol/sdk, zod |
 | `compat` | `compat.json` (catherd ↔ plugin ↔ SDK versions ↔ adapter id), recorded fixtures per catherd version | none |
 

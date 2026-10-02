@@ -20,6 +20,19 @@ Last updated: 2026-10-02. Update this file at the end of every section.
 | — | Upgrade to catherd 1.2.0 (push model, new fields, fixtures) | ✅ done (2026-09-29) | `docs/research/catherd-1.2-upgrade.md`, `docs/spikes/catherd-1.2.md`, ADR 0005 amendment |
 | — | Upgrade to catherd 1.3.0 (pin, fixtures; no contract change) | ✅ done (2026-10-01) | `docs/research/catherd-1.3-upgrade.md` |
 | — | Upgrade to catherd 1.4.0 (pin, orchestration host, fixtures) + release prep `0.4.0` | ✅ done (2026-10-02), not tagged | `docs/research/catherd-1.4-upgrade.md` |
+| — | UI/UX rebuild (five tabs, chat, one-step profile with auto-save, Setup + diagnostics) | ✅ built (2026-10-02), owner check in VS Code pending | `docs/architecture/webview.md` |
+
+## UI/UX rebuild (2026-10-02)
+
+The owner found the UI hard to use: too many overlapping tabs, two-step actions, Interrupt/Stop at the top and usually disabled, borders everywhere, a confusing Setup and a poor Profiles page. The webview was rebuilt. Full description: `docs/architecture/webview.md` §Styling, §Pages, §Transcript layout.
+
+- **Five tabs:** Chat · Runs · Profile · Models · Setup, icon-only in a narrow sidebar. Overview → Runs header; Repos → repo menu above the chat input; Diagnostics → Setup "Logs and tools". The status bar is gone.
+- **Design rules:** borders only on inputs and focus; soft `bg-surface` fills; container-query responsive down to 240 px; one action in one place (no permanently disabled buttons, no select-then-activate).
+- **Chat:** user bubbles on the right, catherd on the left with its avatar and the orchestrator model; a live roles strip (role · model · time) above the input; one composer box whose round button is Start / Send / Stop; End session and Resume in a `⋯` menu. Protocol: `SessionEvent.init.model` (optional, from the SDK init message).
+- **Profile:** picking a profile makes it globally active in one step; edits auto-save through `profiles.save` with Undo; roles are compact rows that open in place with a searchable model picker. Owner decisions: global activation on pick, auto-save, Models stays a tab.
+- **Setup:** a verdict, then only rows that need a click; passing checks and tools folded.
+- **Verified:** Biome, typecheck, 102 unit tests, production build, and a throwaway mocked-host render (outside the repo) at 240 and 300 px.
+- **Not done:** the owner's visual pass in the Extension Development Host (Light/Dark/High Contrast), and a live run confirming the init message carries `model`. Not committed yet.
 
 ## catherd 1.4.0 upgrade and 0.4.0 prep (2026-10-02)
 
@@ -116,6 +129,8 @@ Workspace-management follow-up: New Chat now exposes the repository choice befor
 Prompt-placement follow-up: permission and question cards now stay in a fixed tray immediately above the New Chat input instead of scrolling away with the transcript. The tray is capped at 40% of the view height and scrolls internally when several requests are pending, so the composer remains visible and anchored. Verified with lint, 76 unit tests, typecheck and production build.
 
 ## Exact next step (Phase 5)
+
+UI rebuild: the owner checks the new UI in the Extension Development Host (F5 "Run CatHouse") at a narrow and a wide sidebar, starts one short task to see the model header and live roles strip, and approves the commit. Then the release steps below.
 
 Release first: `0.4.0` is committed but not tagged; push `v0.4.0` when the owner approves (`docs/release/github.md`). GitHub `v0.3.0` is published and the Open VSX backfill uploaded all four target packages. The owner must now log in to Open VSX with Eclipse, open **Show Publisher Agreement**, read it, and select **Agree**. Open VSX activates the already-uploaded `0.3.0` packages after that one-time legal step; do not republish or move the tag. Future stable tag pushes publish GitHub plus Open VSX automatically; prereleases stay on GitHub. VS Code Marketplace stays manual.
 

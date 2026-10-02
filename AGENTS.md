@@ -3,7 +3,7 @@
 **CatHouse** is a VS Code extension that turns [catherd](https://github.com/47vigen/catherd) (npm `catherd-cli@1.4.0`, a Bun-based orchestrator that runs coding agents from a Claude Code session) into a full UI. It has four jobs:
 - a mandatory **Setup** (Bun, catherd, the Claude plugin, login, backends);
 - running **`/catherd:catherd <task>`** inside the panel through the Claude Agent SDK, with permission and question cards;
-- dashboards: **Runs, Profiles, Models, Diagnostics** (parity with catherd's TUI);
+- dashboards: **Runs, Profile, Models** and diagnostics inside **Setup** (parity with catherd's TUI);
 - **resume** after reload.
 
 catherd stays the source of truth. CatHouse never re-implements orchestration and never writes catherd's files.

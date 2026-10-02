@@ -21,17 +21,17 @@ With catherd alone, you install Bun, the catherd CLI, the Claude plugin and each
 | Start `/catherd` in a Claude Code terminal | **Chat** starts the task from the Activity Bar and streams it into the editor |
 | Watch the terminal for questions and permission prompts | Questions and permissions appear as cards, and you get a notification when a run needs you |
 | Read the TUI, logs and `state.md` to see progress | **Runs** shows live roles, budget, climbs, milestones and each role's reply, and can cancel a role |
-| Edit profile JSON by hand | **Profiles** is a form with validation, undo/redo and a diff before saving |
-| Run `catherd doctor` and read the output | **Diagnostics** shows each problem with its fix |
+| Edit profile JSON by hand | **Profile** is a form that catherd validates and that saves each change, with Undo |
+| Run `catherd doctor` and read the output | **Setup** shows only what needs fixing, each with one button |
 
 The views in detail:
 
 - **Setup** installs and checks everything catherd needs: Bun, catherd 1.4.0, the catherd Claude plugin, your Claude login, and your worker backends. Nothing is installed until you click.
 - **Chat** runs `/catherd` on a task directly from the CatHouse Activity Bar view. Questions and permission requests appear as cards, and you get a notification when the orchestrator is waiting for you. A run continues after a window reload.
 - **Runs** shows live roles, budget, climbs, routes, landed milestones, each role's reply and debug output, and `state.md`. You can cancel a live role.
-- **Profiles** edits catherd profiles: rungs per role, access, failover, budget, isolation and more. Edits are staged with undo/redo, and you see a diff before saving.
+- **Profile** edits catherd profiles: rungs per role, access, failover, budget, isolation and more. Picking a profile makes it active; each change saves itself, with Undo.
 - **Models** browses the model catalog, refreshes listings, and maps unscored rungs with treat-like.
-- **Diagnostics** shows catherd doctor, catherd's logs, and runs heavy commands behind catherd's lock.
+- **Setup** also shows catherd doctor, opens catherd's logs, and runs heavy commands behind catherd's lock.
 
 catherd stays the source of truth: CatHouse only uses catherd's CLI and MCP server, and never edits its files.
 

@@ -1,6 +1,9 @@
 import { type HTMLAttributes, type ReactNode, useId } from "react";
 import { cn } from "../cn";
 
+// Layout primitives. Groups are drawn with spacing and soft fills, never with borders: borders are
+// reserved for inputs and focus rings so the narrow sidebar stays calm.
+
 export function Section({
   title,
   actions,
@@ -14,11 +17,11 @@ export function Section({
 }) {
   return (
     <section className={cn("flex flex-col gap-1.5", className)}>
-      <div className="flex flex-wrap items-center gap-2">
-        <h3 className="font-semibold text-muted-foreground uppercase tracking-wide text-xs">
+      <div className="flex min-h-7 flex-wrap items-center gap-2">
+        <h3 className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           {title}
         </h3>
-        {actions && <div className="ms-auto flex flex-wrap gap-2">{actions}</div>}
+        {actions && <div className="ms-auto flex flex-wrap items-center gap-1">{actions}</div>}
       </div>
       {children}
     </section>
@@ -43,22 +46,27 @@ export function Collapsible({
 }) {
   const id = useId();
   return (
-    <section className={cn("rounded-sm border border-border", className)}>
+    <section className={cn("flex flex-col", className)}>
       <h3 className="m-0">
         <button
           type="button"
           aria-expanded={open}
           aria-controls={id}
           onClick={onToggle}
-          className="flex min-h-8 w-full items-center gap-2 px-2 py-1.5 text-start hover:bg-secondary/40"
+          className="flex min-h-8 w-full items-center gap-2 rounded-md px-2 py-1 text-start hover:bg-surface"
         >
           <span
             aria-hidden="true"
-            className={cn("inline-block w-3 text-xs transition-transform", open && "rotate-90")}
+            className={cn(
+              "inline-block w-3 text-xs text-muted-foreground transition-transform",
+              open && "rotate-90",
+            )}
           >
             ▸
           </span>
-          <span className="font-semibold text-xs uppercase tracking-wide">{title}</span>
+          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {title}
+          </span>
           {summary && (
             <span className="ms-auto min-w-0 truncate text-xs text-muted-foreground">
               {summary}
@@ -67,7 +75,7 @@ export function Collapsible({
         </button>
       </h3>
       {open && (
-        <div id={id} className="flex flex-col gap-1.5 border-t border-border p-2">
+        <div id={id} className="flex flex-col gap-1.5 px-2 pt-1 pb-2">
           {children}
         </div>
       )}
@@ -83,31 +91,66 @@ export function Badge({
   tone?: "neutral" | "good" | "warn" | "bad" | "info";
 }) {
   const tones = {
-    neutral: "bg-badge text-badge-foreground",
-    good: "border border-success text-success",
-    warn: "border border-warning text-warning",
-    bad: "border border-danger text-danger",
-    info: "border border-info text-info",
+    neutral: "bg-surface text-muted-foreground",
+    good: "bg-success/15 text-success",
+    warn: "bg-warning/15 text-warning",
+    bad: "bg-danger/15 text-danger",
+    info: "bg-info/15 text-info",
   };
   return (
     <span
-      className={cn("inline-block rounded-sm px-1.5 text-xs leading-5", tones[tone], className)}
+      className={cn(
+        "inline-block max-w-full truncate rounded-full px-2 text-xs leading-5",
+        tones[tone],
+        className,
+      )}
       {...props}
     />
   );
 }
 
+/** A soft, borderless surface. */
 export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("rounded-sm border border-border p-2", className)} {...props} />;
+  return <div className={cn("rounded-md bg-surface p-2.5", className)} {...props} />;
+}
+
+/** A coloured dot for state; pair it with text so state is never colour-only. */
+export function Dot({
+  tone,
+  pulse,
+  className,
+}: {
+  tone: "good" | "warn" | "bad" | "info" | "neutral";
+  pulse?: boolean;
+  className?: string;
+}) {
+  const bg = {
+    good: "bg-success",
+    warn: "bg-warning",
+    bad: "bg-danger",
+    info: "bg-info",
+    neutral: "bg-muted-foreground/50",
+  }[tone];
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        "inline-block size-2 shrink-0 rounded-full",
+        bg,
+        pulse && "animate-pulse",
+        className,
+      )}
+    />
+  );
 }
 
 export function Empty({ children }: { children: ReactNode }) {
-  return <p className="text-muted-foreground">{children}</p>;
+  return <p className="m-0 py-2 text-muted-foreground">{children}</p>;
 }
 
 export function ErrorText({ children }: { children: ReactNode }) {
   return (
-    <p role="alert" className="text-danger">
+    <p role="alert" className="m-0 rounded-md bg-danger/10 px-2.5 py-1.5 text-danger">
       {children}
     </p>
   );
@@ -126,9 +169,9 @@ export function Meter({ fraction, label }: { fraction: number; label: string }) 
         aria-valuenow={Math.round(pct)}
         aria-valuemin={0}
         aria-valuemax={100}
-        className="h-2 flex-1 overflow-hidden rounded-sm bg-secondary"
+        className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-hover"
       >
-        <div className={cn("h-full", tone)} style={{ width: `${pct}%` }} />
+        <div className={cn("h-full rounded-full", tone)} style={{ width: `${pct}%` }} />
       </div>
       <span className="w-10 text-end text-xs tabular-nums">{Math.round(fraction * 100)}%</span>
     </div>
@@ -136,4 +179,8 @@ export function Meter({ fraction, label }: { fraction: number; label: string }) 
 }
 
 export const inputClass =
-  "min-h-8 rounded-sm border border-input-border bg-input px-2 py-1 text-input-foreground";
+  "min-h-8 rounded-md border border-input-border bg-input px-2 py-1 text-input-foreground";
+
+/** A select without its own box: reads as text with a caret, for inline choices in a row. */
+export const quietSelectClass =
+  "min-h-7 min-w-0 cursor-pointer truncate rounded-md bg-transparent px-1.5 py-0.5 text-muted-foreground hover:bg-surface hover:text-foreground";

@@ -1,8 +1,9 @@
-import { Button, cn } from "@cathouse/ui";
+import { cn, IconButton } from "@cathouse/ui";
 import {
   type Dispatch,
   type DragEvent,
   type KeyboardEvent,
+  type ReactNode,
   type SetStateAction,
   useState,
 } from "react";
@@ -17,29 +18,10 @@ import {
   pathsFromUriList,
 } from "./composer";
 
-const COMPOSER_CLASS =
-  "min-h-32 w-full resize-y rounded-sm border border-input-border bg-input px-3 py-2 text-base text-input-foreground leading-6";
 const URI_TYPES = ["application/vnd.code.uri-list", "text/uri-list"];
 
 const carriesFiles = (types: readonly string[]) =>
   types.includes("Files") || URI_TYPES.some((type) => types.includes(type));
-
-function AttachIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="size-4 shrink-0"
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m5.25 8.75 4.6-4.6a2.25 2.25 0 0 1 3.18 3.18l-5.3 5.3a3.25 3.25 0 0 1-4.6-4.6l5.13-5.12" />
-      <path d="m6.3 10.7 4.95-4.95" />
-    </svg>
-  );
-}
 
 /** Paths from a VS Code / OS uri-list first; otherwise the text of small dropped files. */
 async function readDrop(
@@ -62,6 +44,10 @@ async function readDrop(
   return inline;
 }
 
+/**
+ * The chat input: one rounded box holding the textarea (it grows with its content), the attached
+ * files and a footer row of actions, so every control for a message sits in one place.
+ */
 export function Composer({
   id,
   value,
@@ -71,6 +57,7 @@ export function Composer({
   onKeyDown,
   onError,
   placeholder,
+  footer,
 }: {
   id?: string;
   value: string;
@@ -80,6 +67,7 @@ export function Composer({
   onKeyDown: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
   onError: (message: string) => void;
   placeholder: string;
+  footer: ReactNode;
 }) {
   const [over, setOver] = useState(false);
   const onDragOver = (event: DragEvent) => {
@@ -97,40 +85,41 @@ export function Composer({
     );
   };
   return (
-    <div className="flex flex-col gap-2 px-[2px]">
-      <div className="relative">
-        <textarea
-          id={id}
-          rows={4}
-          className={cn(COMPOSER_CLASS, over && "border-focus")}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onKeyDown={onKeyDown}
-          onDragOver={onDragOver}
-          onDragLeave={() => setOver(false)}
-          onDrop={onDrop}
-          aria-keyshortcuts="Enter Shift+Enter"
-          placeholder={placeholder}
-        />
-        {over && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-sm border-2 border-dashed border-focus bg-input/90 text-muted-foreground">
-            {t("session.dropHere")}
-          </div>
-        )}
-      </div>
+    <div
+      className={cn(
+        "relative flex flex-col rounded-lg border border-input-border bg-input focus-within:border-focus",
+        over && "border-focus",
+      )}
+    >
+      <textarea
+        id={id}
+        rows={2}
+        className="max-h-[40vh] min-h-14 w-full resize-none bg-transparent px-3 pt-2.5 pb-1 text-base leading-6 text-input-foreground [field-sizing:content] placeholder:text-muted-foreground focus-visible:outline-none"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onKeyDown={onKeyDown}
+        onDragOver={onDragOver}
+        onDragLeave={() => setOver(false)}
+        onDrop={onDrop}
+        aria-keyshortcuts="Enter Shift+Enter"
+        placeholder={placeholder}
+      />
       {attachments.length > 0 && (
-        <ul aria-label={t("session.attachments")} className="flex flex-wrap gap-1">
+        <ul
+          aria-label={t("session.attachments")}
+          className="m-0 flex list-none flex-wrap gap-1 px-2 pb-1"
+        >
           {attachments.map((a) => (
             <li
               key={attachmentKey(a)}
               title={a.kind === "path" ? a.path : a.name}
-              className="flex max-w-full items-center gap-1 rounded-sm border border-border px-2 py-0.5 text-xs"
+              className="flex max-w-full items-center gap-1 rounded-full bg-surface-hover ps-2 pe-1 text-xs"
             >
               <span className="truncate">{a.name}</span>
               <button
                 type="button"
                 aria-label={t("session.removeAttachment", { name: a.name })}
-                className="text-muted-foreground hover:text-foreground"
+                className="inline-flex size-5 items-center justify-center rounded-full text-muted-foreground hover:text-foreground"
                 onClick={() =>
                   onAttachments((prev) => prev.filter((x) => attachmentKey(x) !== attachmentKey(a)))
                 }
@@ -140,6 +129,12 @@ export function Composer({
             </li>
           ))}
         </ul>
+      )}
+      <div className="flex min-w-0 items-center gap-1 px-1.5 pb-1.5">{footer}</div>
+      {over && (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-lg bg-input/90 text-muted-foreground">
+          {t("session.dropHere")}
+        </div>
       )}
     </div>
   );
@@ -153,11 +148,9 @@ export function AttachButton({
   onError: (message: string) => void;
 }) {
   return (
-    <Button
-      className="min-h-9 shrink-0"
-      variant="secondary"
-      title={t("session.attachHelp")}
-      aria-label={t("session.attach")}
+    <IconButton
+      icon="paperclip"
+      label={t("session.attach")}
       onClick={() =>
         void request("app.pickFiles", {})
           .then(({ paths }) => {
@@ -166,10 +159,6 @@ export function AttachButton({
           })
           .catch((e: unknown) => onError(String(e)))
       }
-    >
-      <AttachIcon />
-      {/* Icon-only in a narrow sidebar; the enclosing form is the @container. */}
-      <span className="hidden @xl:inline">{t("session.attach")}</span>
-    </Button>
+    />
   );
 }

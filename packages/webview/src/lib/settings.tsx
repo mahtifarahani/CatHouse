@@ -93,7 +93,7 @@ export function SettingsMenu() {
 
   const pct = `${Math.round(draft * 100)}%`;
   return (
-    <>
+    <div className="relative">
       <button
         ref={button}
         type="button"
@@ -103,11 +103,11 @@ export function SettingsMenu() {
         aria-controls={id}
         onClick={toggle}
         className={cn(
-          "inline-flex size-6 items-center justify-center rounded-sm text-muted-foreground hover:bg-secondary hover:text-foreground",
-          open && "bg-secondary text-foreground",
+          "inline-flex size-8 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover hover:text-foreground",
+          open && "bg-surface-hover text-foreground",
         )}
       >
-        <Icon name="settings" className="size-3.5" />
+        <Icon name="settings" />
       </button>
       {open && (
         <div
@@ -115,7 +115,7 @@ export function SettingsMenu() {
           id={id}
           role="dialog"
           aria-label={t("settings.title")}
-          className="absolute end-0 top-full z-30 mt-1 flex w-64 max-w-[calc(100vw-1.5rem)] flex-col gap-3 rounded-md border border-border bg-background p-3 text-foreground shadow-lg"
+          className="absolute end-0 top-full z-30 mt-1 flex w-64 max-w-[calc(100vw-1.5rem)] flex-col gap-3 rounded-md bg-[var(--vscode-editorWidget-background,var(--vscode-editor-background))] p-3 text-foreground shadow-lg ring-1 ring-[var(--vscode-widget-border,transparent)]"
         >
           <div className="flex items-center gap-2">
             <Icon name="settings" className="text-muted-foreground" />
@@ -140,7 +140,7 @@ export function SettingsMenu() {
                 aria-label={t("settings.smaller")}
                 onClick={() => setDraft(clampScale(draft - FONT_SCALE.step))}
                 disabled={draft <= FONT_SCALE.min}
-                className="inline-flex size-7 items-center justify-center rounded-sm border border-border text-xs hover:bg-secondary disabled:opacity-40"
+                className="inline-flex size-7 items-center justify-center rounded-md bg-surface text-xs hover:bg-surface-hover disabled:opacity-40"
               >
                 A
               </button>
@@ -161,7 +161,7 @@ export function SettingsMenu() {
                 aria-label={t("settings.larger")}
                 onClick={() => setDraft(clampScale(draft + FONT_SCALE.step))}
                 disabled={draft >= FONT_SCALE.max}
-                className="inline-flex size-7 items-center justify-center rounded-sm border border-border text-base font-semibold hover:bg-secondary disabled:opacity-40"
+                className="inline-flex size-7 items-center justify-center rounded-md bg-surface text-base font-semibold hover:bg-surface-hover disabled:opacity-40"
               >
                 A
               </button>
@@ -175,10 +175,10 @@ export function SettingsMenu() {
                   aria-pressed={draft === p}
                   onClick={() => setDraft(p)}
                   className={cn(
-                    "rounded-sm border px-1 py-0.5 text-xs tabular-nums",
+                    "rounded-md px-1 py-0.5 text-xs tabular-nums",
                     draft === p
-                      ? "border-focus bg-secondary text-foreground"
-                      : "border-border text-muted-foreground hover:bg-secondary",
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-surface text-muted-foreground hover:bg-surface-hover",
                   )}
                 >
                   {Math.round(p * 100)}%
@@ -187,7 +187,7 @@ export function SettingsMenu() {
             </fieldset>
             <div
               aria-hidden="true"
-              className="flex h-12 items-center overflow-hidden rounded-sm border border-border px-2"
+              className="flex h-12 items-center overflow-hidden rounded-md bg-surface px-2"
             >
               <span
                 className="truncate"
@@ -209,6 +209,6 @@ export function SettingsMenu() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

@@ -43,6 +43,7 @@ export function createEventMapper() {
               kind: "init",
               sessionId: String(m.session_id),
               claudeCodeVersion: String(m.claude_code_version ?? ""),
+              ...(typeof m.model === "string" && m.model ? { model: m.model } : {}),
               catherdPlugin: plugins.find((p) => p.name === "catherd"),
               catherdMcpStatus: servers.find((s) => s.name.includes("catherd"))?.status,
               pluginErrors: (m.plugin_errors as { plugin: string }[] | undefined) ?? [],

@@ -4,6 +4,11 @@ GitHub Release notes are the version sections below. Keep unfinished work under 
 
 ## Unreleased
 
+- **New UI.** CatHouse was rebuilt around five tabs: Chat, Runs, Profile, Models and Setup. Overview is part of Runs, the Repos tab became a repo menu above the chat input, and Diagnostics is part of Setup. The look is calmer: soft surfaces instead of borders everywhere, icon-only tabs and buttons in a narrow sidebar, and nothing scrolls sideways.
+- **Chat.** Your messages sit on the right; catherd's answers sit on the left under its avatar with the orchestrator's model. A strip above the input shows which roles are working right now, with their model and time. One round button starts a task, sends a follow-up or stops the running turn; End session and Resume moved into a `⋯` menu.
+- **Profile.** Choosing a profile makes it active in one step, and every change saves itself (with Undo). Roles are compact rows that open in place; models are added from a searchable list.
+- **Setup.** A clear verdict on top, then only the things that need a click. Passing checks, logs and the command lock are folded away.
+
 - Release: stable version tags now publish all four platform VSIX files to Open VSX as well as GitHub Releases. The workflow can also backfill an existing tag, skips duplicate Open VSX uploads, and keeps prerelease tags on GitHub only. VS Code Marketplace publishing remains manual and is intentionally not part of the workflow.
 
 ## [0.4.0] - 2026-10-02

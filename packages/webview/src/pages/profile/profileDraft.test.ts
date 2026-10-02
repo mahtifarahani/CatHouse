@@ -1,6 +1,6 @@
 import type { ProfileDoc } from "@cathouse/protocol";
 import { describe, expect, it } from "vitest";
-import { dirtyCount, draftReducer, initDraft } from "./profileDraft";
+import { dirtyCount, draftReducer, initDraft, saveOutcome } from "./profileDraft";
 
 const base = {
   name: "p",
@@ -83,5 +83,57 @@ describe("profile draft", () => {
     expect(d.doc.roles.worker?.enabled).toBe(false);
     expect(dirtyCount(d)).toBe(1);
     expect(d.past).toHaveLength(1);
+  });
+
+  it("auto-save keeps edits made while a save was in flight", () => {
+    let d = initDraft(base);
+    d = draftReducer(d, {
+      type: "edit",
+      fn: (x) => {
+        x.objective = "speed";
+      },
+    });
+    const submitted = { base: d.base, doc: structuredClone(d.doc), treatLikes: d.treatLikes };
+    // The user keeps editing while catherd saves.
+    d = draftReducer(d, {
+      type: "edit",
+      fn: (x) => {
+        x.timeouts.idleMin = 30;
+      },
+    });
+    d = draftReducer(
+      d,
+      saveOutcome(submitted, {
+        status: "saved",
+        diff: [],
+        warnings: [],
+        newSessionNeededFor: [],
+        activated: false,
+      }),
+    );
+    expect(d.base.objective).toBe("speed");
+    expect(d.doc.timeouts.idleMin).toBe(30);
+    expect(dirtyCount(d)).toBe(1);
+  });
+
+  it("auto-save reverts a refused change and rebases on a conflict", () => {
+    let d = initDraft(base);
+    d = draftReducer(d, {
+      type: "edit",
+      fn: (x) => {
+        x.objective = "speed";
+      },
+    });
+    const submitted = { base: d.base, doc: structuredClone(d.doc), treatLikes: [] };
+    const refused = draftReducer(
+      d,
+      saveOutcome(submitted, { status: "refused", errors: [], warnings: [] }),
+    );
+    expect(refused.doc.objective).toBe("cost");
+    expect(dirtyCount(refused)).toBe(0);
+    const current = { ...base, objective: "speed", timeouts: { idleMin: 5, wallMin: 90 } };
+    const conflict = draftReducer(d, saveOutcome(submitted, { status: "conflict", current }));
+    expect(conflict.base.timeouts.idleMin).toBe(5);
+    expect(dirtyCount(conflict)).toBe(0);
   });
 });

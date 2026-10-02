@@ -4,6 +4,60 @@ import { cn } from "../cn";
 // Stroke icons (Lucide geometry, ISC licence) drawn at 1em so they follow the text size and
 // inherit `currentColor` from the theme.
 const PATHS = {
+  arrowLeft: ["m12 19-7-7 7-7", "M19 12H5"],
+  arrowUp: ["m5 12 7-7 7 7", "M12 19V5"],
+  chat: ["M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"],
+  chevronDown: ["m6 9 6 6 6-6"],
+  chevronUp: ["m18 15-6-6-6 6"],
+  copy: [
+    "M8 8h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2Z",
+    "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2",
+  ],
+  cpu: [
+    "M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z",
+    "M9 9h6v6H9Z",
+    "M9 1v3",
+    "M15 1v3",
+    "M9 20v3",
+    "M15 20v3",
+    "M20 9h3",
+    "M20 14h3",
+    "M1 9h3",
+    "M1 14h3",
+  ],
+  folder: [
+    "M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z",
+  ],
+  list: ["M3 6h.01", "M3 12h.01", "M3 18h.01", "M8 6h13", "M8 12h13", "M8 18h13"],
+  more: ["M5 12h.01", "M12 12h.01", "M19 12h.01"],
+  newChat: [
+    "M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7",
+    "M18.38 2.62a1 1 0 0 1 3 3l-9.01 9.02a2 2 0 0 1-.86.5l-2.87.84a.5.5 0 0 1-.62-.62l.84-2.87a2 2 0 0 1 .5-.86z",
+  ],
+  paperclip: [
+    "m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48",
+  ],
+  plus: ["M5 12h14", "M12 5v14"],
+  refresh: [
+    "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8",
+    "M21 3v5h-5",
+    "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16",
+    "M8 16H3v5",
+  ],
+  resume: ["M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", "M3 3v5h5"],
+  sliders: [
+    "M21 4h-7",
+    "M10 4H3",
+    "M21 12h-9",
+    "M8 12H3",
+    "M21 20h-5",
+    "M12 20H3",
+    "M14 2v4",
+    "M8 10v4",
+    "M16 18v4",
+  ],
+  stop: ["M7 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"],
+  trash: ["M3 6h18", "M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6", "M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"],
   bot: [
     "M12 8V4H8",
     "M4 10a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z",
@@ -78,6 +132,7 @@ export function Icon({
       className={cn(
         "inline-block size-[1em] shrink-0",
         name === "spinner" && "animate-spin",
+        (name === "stop" || name === "play") && "fill-current",
         className,
       )}
       {...props}

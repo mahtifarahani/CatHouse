@@ -11,10 +11,7 @@ function answer(id: string, a: PromptAnswer) {
 
 export function PromptCard({ prompt }: { prompt: PendingPrompt }) {
   return (
-    <section
-      aria-live="assertive"
-      className="flex flex-col gap-2 rounded-sm border border-focus bg-muted p-3"
-    >
+    <section aria-live="assertive" className="flex flex-col gap-2 rounded-lg bg-accent-soft p-3">
       {prompt.request.kind === "question" ? (
         <QuestionForm prompt={prompt} req={prompt.request} />
       ) : (
@@ -58,9 +55,7 @@ function QuestionForm({ prompt, req }: { prompt: PendingPrompt; req: QuestionReq
       {req.questions.map((q) => (
         <fieldset key={q.question} className="flex flex-col gap-1.5">
           <legend className="mb-1">
-            <span className="mr-2 rounded-sm bg-badge px-1.5 text-badge-foreground">
-              {q.header}
-            </span>
+            <span className="me-2 rounded-full bg-surface-hover px-2 text-xs">{q.header}</span>
             {q.question}
           </legend>
           {q.options.map((o) => {
@@ -72,12 +67,12 @@ function QuestionForm({ prompt, req }: { prompt: PendingPrompt; req: QuestionReq
                 aria-pressed={on}
                 onClick={() => toggle(q.question, o.label, q.multiSelect)}
                 className={cn(
-                  "flex flex-col rounded-sm border px-2 py-1.5 text-start",
-                  on ? "border-focus bg-secondary" : "border-border hover:bg-secondary",
+                  "flex flex-col rounded-md px-2 py-1.5 text-start",
+                  on ? "bg-primary text-primary-foreground" : "bg-surface hover:bg-surface-hover",
                 )}
               >
                 <span className="font-medium">{o.label}</span>
-                <span className="text-muted-foreground">{o.description}</span>
+                <span className="text-xs opacity-80">{o.description}</span>
                 {o.preview && (
                   <pre className="mt-1 overflow-x-hidden font-mono text-xs whitespace-pre-wrap wrap-anywhere">
                     {o.preview}
@@ -87,7 +82,7 @@ function QuestionForm({ prompt, req }: { prompt: PendingPrompt; req: QuestionReq
             );
           })}
           <input
-            className="rounded-sm border border-input-border bg-input px-2 py-1 text-input-foreground"
+            className="rounded-md border border-input-border bg-input px-2 py-1 text-input-foreground"
             placeholder={t("prompt.question.other")}
             value={other[q.question] ?? ""}
             onChange={(e) => setOther((s) => ({ ...s, [q.question]: e.target.value }))}
@@ -117,7 +112,7 @@ function PermissionForm({ prompt, req }: { prompt: PendingPrompt; req: Permissio
         {command ?? path ?? JSON.stringify(req.input, null, 2)}
       </pre>
       <input
-        className="rounded-sm border border-input-border bg-input px-2 py-1 text-input-foreground"
+        className="rounded-md border border-input-border bg-input px-2 py-1 text-input-foreground"
         placeholder={t("prompt.permission.message")}
         value={message}
         onChange={(e) => setMessage(e.target.value)}

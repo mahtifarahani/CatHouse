@@ -18,9 +18,9 @@ catherd still does the real work: Claude plans and verifies, Codex, opencode, he
 - **Chat** — starts `/catherd:catherd <task>` directly from the Activity Bar and streams the orchestration session into VS Code. Roles report back by themselves when they finish (catherd's push notices), so you can keep chatting while they run.
 - **Human-in-the-loop cards** — answers Claude questions and permission requests without leaving the editor, with notifications when a run needs attention.
 - **Runs** — follows live roles, budget, climbs, routes, landed milestones, replies, state, and debug output; live roles can be cancelled from the UI.
-- **Profiles** — edits roles, rungs, models, effort, access, isolation, budget, routing, and failover with staged changes, undo/redo, validation, and a diff before save.
+- **Profile** — pick the active profile in one step and edit roles, model ladders, access, isolation, budget, routing and failover; every change is validated by catherd and saves itself, with Undo.
 - **Models** — searches and refreshes catherd's model catalog and supports `treat-like` mappings for unscored rungs.
-- **Diagnostics** — presents `catherd doctor`, actionable fixes, logs, and catherd's machine-wide command lock.
+- **Setup** also holds diagnostics: `catherd doctor` results with their fixes, catherd's logs, and its machine-wide command lock.
 - **Resume after reload** — reconnects a saved Claude session to the same catherd run instead of creating a duplicate.
 
 Everything lives in one VS Code Activity Bar view and follows the active Light, Dark, or High Contrast theme.

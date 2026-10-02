@@ -15,7 +15,7 @@ const components: Components = {
   blockquote: ({ className, ...props }) => (
     <blockquote
       {...props}
-      className={cn("my-2 border-s-2 border-border ps-3 text-muted-foreground", className)}
+      className={cn("my-2 rounded-md bg-surface px-3 py-1 text-muted-foreground", className)}
     />
   ),
   code: ({ className, ...props }) => (
@@ -27,7 +27,7 @@ const components: Components = {
   h1: (props) => <h1 {...props} className="mt-4 mb-2 text-xl font-semibold first:mt-0" />,
   h2: (props) => <h2 {...props} className="mt-4 mb-2 text-lg font-semibold first:mt-0" />,
   h3: (props) => <h3 {...props} className="mt-3 mb-1 font-semibold first:mt-0" />,
-  hr: (props) => <hr {...props} className="my-3 border-border" />,
+  hr: (props) => <hr {...props} className="my-3 h-px border-0 bg-surface-hover" />,
   ol: ({ className, ...props }) => (
     <ol {...props} className={cn("my-2 list-decimal space-y-1 ps-5", className)} />
   ),
@@ -38,7 +38,7 @@ const components: Components = {
     <pre
       {...props}
       className={cn(
-        "my-2 max-w-full overflow-x-hidden rounded-sm border border-border bg-background p-2 font-mono text-xs whitespace-pre-wrap wrap-anywhere [&>code]:bg-transparent [&>code]:p-0",
+        "my-2 max-w-full overflow-x-hidden rounded-md bg-surface p-2 font-mono text-xs whitespace-pre-wrap wrap-anywhere [&>code]:bg-transparent [&>code]:p-0",
         className,
       )}
     />
@@ -50,16 +50,10 @@ const components: Components = {
     />
   ),
   td: ({ className, ...props }) => (
-    <td {...props} className={cn("border border-border px-2 py-1 align-top", className)} />
+    <td {...props} className={cn("border-b border-surface-hover px-2 py-1 align-top", className)} />
   ),
   th: ({ className, ...props }) => (
-    <th
-      {...props}
-      className={cn(
-        "border border-border bg-secondary px-2 py-1 text-start font-semibold",
-        className,
-      )}
-    />
+    <th {...props} className={cn("bg-surface px-2 py-1 text-start font-semibold", className)} />
   ),
   ul: ({ className, ...props }) => (
     <ul {...props} className={cn("my-2 list-disc space-y-1 ps-5", className)} />

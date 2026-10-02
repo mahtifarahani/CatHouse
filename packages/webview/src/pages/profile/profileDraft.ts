@@ -1,7 +1,13 @@
-import { deepEqual, type ProfileDoc, profilePatch } from "@cathouse/protocol";
+import {
+  deepEqual,
+  type ProfileDoc,
+  type ProfileSaveResult,
+  profilePatch,
+} from "@cathouse/protocol";
 
-// Staged edits, like catherd's TUI (src/entry/tui/state.ts): nothing touches disk before Save;
-// 100 undo steps; a treat-like and the rung it enables are one step.
+// The Profile editor's draft. Edits land here first; the auto-save (useAutoSave) submits the
+// difference to catherd and folds the answer back in with saveOutcome(). A treat-like and the
+// rung it enables are one edit.
 
 export interface Draft {
   base: ProfileDoc;
@@ -100,4 +106,33 @@ export function dirtyCount(d: Draft): number {
       ? Object.values(v).reduce<number>((n, x) => n + count(x), 0)
       : 1;
   return (patch ? count(patch) : 0) + d.treatLikes.length;
+}
+
+/** What a save sent: the base it was diffed against, the doc and the staged treat-likes. */
+export interface Submitted {
+  base: ProfileDoc;
+  doc: ProfileDoc;
+  treatLikes: Draft["treatLikes"];
+}
+
+/**
+ * Folds catherd's answer to an auto-save back into the draft. Saved: the submitted doc becomes the
+ * base and edits made while the save was in flight stay staged. Refused: back to the last saved
+ * profile (catherd wrote nothing). Conflict: the profile changed on disk, so start from that.
+ */
+export function saveOutcome(submitted: Submitted, result: ProfileSaveResult): DraftAction {
+  switch (result.status) {
+    case "saved":
+    case "unchanged":
+      return {
+        type: "saved",
+        base: submitted.doc,
+        submitted: submitted.doc,
+        submittedTreatLikes: submitted.treatLikes,
+      };
+    case "refused":
+      return { type: "reset", base: submitted.base };
+    case "conflict":
+      return { type: "reset", base: result.current };
+  }
 }

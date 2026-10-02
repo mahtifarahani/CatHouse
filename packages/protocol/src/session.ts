@@ -7,6 +7,8 @@ export const SessionEventSchema = z.discriminatedUnion("kind", [
     kind: z.literal("init"),
     sessionId: z.string(),
     claudeCodeVersion: z.string(),
+    /** The orchestrator session's model (SDK init `model`). */
+    model: z.string().optional(),
     catherdPlugin: z
       .object({ name: z.string(), path: z.string(), version: z.string().optional() })
       .optional(),

@@ -10,7 +10,13 @@ import { type TranscriptItem, toTranscript } from "./useSession";
 const isAssistant = (b: Block) =>
   b.kind === "steps" || b.item.type === "text" || b.item.type === "run" || b.item.type === "task";
 
-export function Transcript({ events }: { events: SessionEvent[] }) {
+export function Transcript({
+  events,
+  model,
+}: {
+  events: SessionEvent[];
+  model?: string | undefined;
+}) {
   const blocks = useMemo(() => toBlocks(toTranscript(events)), [events]);
   let speaker: "user" | "assistant" | undefined;
   return (
@@ -26,7 +32,7 @@ export function Transcript({ events }: { events: SessionEvent[] }) {
         else if (isAssistant(b)) speaker = "assistant";
         return (
           <li key={key} className="flex min-w-0 flex-col gap-1.5">
-            {header && <SpeakerHeader icon="cat" name={t("session.orchestrator")} />}
+            {header && <SpeakerHeader model={model} />}
             {b.kind === "steps" ? (
               <StepGroup items={b.items} nested={b.nested} />
             ) : (
@@ -39,13 +45,18 @@ export function Transcript({ events }: { events: SessionEvent[] }) {
   );
 }
 
-function SpeakerHeader({ icon, name }: { icon: IconName; name: string }) {
+/** catherd's side of the chat: a coloured cat avatar, its name and the model answering. */
+function SpeakerHeader({ model }: { model?: string | undefined }) {
   return (
-    <div className="mt-1 flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
-      <span className="inline-flex size-5 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
-        <Icon name={icon} className="size-3" />
+    <div className="mt-2 flex min-w-0 items-center gap-1.5 text-xs">
+      <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+        <Icon name="cat" className="size-3" />
       </span>
-      {name}
+      <span className="font-semibold">{t("session.orchestrator")}</span>
+      <span className="min-w-0 truncate text-muted-foreground">
+        {t("session.orchestratorRole")}
+        {model && ` · ${model}`}
+      </span>
     </div>
   );
 }
@@ -65,9 +76,12 @@ function Item({ it }: { it: Exclude<TranscriptItem, ToolItem> }) {
   switch (it.type) {
     case "user":
       return (
-        <div className="flex flex-col gap-1.5">
-          <SpeakerHeader icon="user" name={t("session.you")} />
-          <div className="ms-6 min-w-0 rounded-md border border-border bg-secondary/40 px-3 py-2">
+        <div className="mt-2 flex justify-end">
+          <div
+            role="note"
+            aria-label={t("session.you")}
+            className="min-w-0 max-w-[85%] rounded-2xl rounded-ee-sm bg-accent-soft px-3 py-2"
+          >
             <MarkdownText>{it.text}</MarkdownText>
           </div>
         </div>
@@ -75,7 +89,7 @@ function Item({ it }: { it: Exclude<TranscriptItem, ToolItem> }) {
     case "init":
       return (
         <div className="flex justify-center">
-          <span className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-border px-2.5 py-0.5 text-xs text-muted-foreground">
+          <span className="inline-flex max-w-full items-center gap-1.5 rounded-full bg-surface px-2.5 py-0.5 text-xs text-muted-foreground">
             <span
               aria-hidden="true"
               className={cn("size-1.5 shrink-0 rounded-full", it.ok ? "bg-success" : "bg-danger")}
@@ -86,15 +100,15 @@ function Item({ it }: { it: Exclude<TranscriptItem, ToolItem> }) {
       );
     case "text":
       return it.nested ? (
-        <div className="ms-3 border-s-2 border-border ps-3 text-muted-foreground">
+        <div className="ms-7 rounded-md bg-surface px-3 py-1.5 text-muted-foreground">
           <MarkdownText>{it.text}</MarkdownText>
         </div>
       ) : (
-        <MarkdownText className="ps-6">{it.text}</MarkdownText>
+        <MarkdownText className="ps-7">{it.text}</MarkdownText>
       );
     case "run":
       return (
-        <div className="ms-6 flex items-center gap-2 rounded-md border border-link/40 bg-link/10 px-2.5 py-1.5">
+        <div className="ms-7 flex min-w-0 items-center gap-2 rounded-md bg-link/10 px-2.5 py-1.5">
           <Icon name="play" className="text-link" />
           <span className="text-xs font-semibold">{t("session.runStartedTitle")}</span>
           <code className="min-w-0 truncate font-mono text-xs text-link">{it.runId}</code>
@@ -103,11 +117,25 @@ function Item({ it }: { it: Exclude<TranscriptItem, ToolItem> }) {
     case "task": {
       const tone = it.status === "completed" ? "good" : it.status === "failed" ? "bad" : "info";
       return (
-        <div className="ms-6 flex items-center gap-2 rounded-md border border-border px-2.5 py-1.5 text-xs">
+        <div className="ms-7 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 rounded-md bg-surface px-2.5 py-1.5 text-xs">
           <Icon name="bot" className="text-info" />
-          <span className="min-w-0 flex-1 truncate" title={it.description}>
+          {it.agent && (
+            <span
+              className="shrink-0 font-semibold"
+              title={t("session.roleOf", { role: it.agent.role })}
+            >
+              {it.agent.role}
+            </span>
+          )}
+          <span className="min-w-0 flex-1 basis-24 truncate" title={it.description}>
             {it.description}
           </span>
+          {it.agent && (
+            <span className="min-w-0 truncate font-mono text-muted-foreground">
+              {it.agent.model}
+              {it.agent.effort && `#${it.agent.effort}`}
+            </span>
+          )}
           {it.durationMs !== undefined && (
             <span className="tabular-nums text-muted-foreground">{mmss(it.durationMs / 1000)}</span>
           )}
@@ -151,14 +179,9 @@ function StepGroup({ items, nested }: { items: ToolItem[]; nested: boolean }) {
   const running = items.filter((i) => !i.result).length;
   const hidden = showAll || items.length <= VISIBLE + 1 ? 0 : items.length - VISIBLE;
   return (
-    <div
-      className={cn(
-        "min-w-0 overflow-hidden rounded-md border border-border",
-        nested ? "ms-9" : "ms-6",
-      )}
-    >
+    <div className={cn("min-w-0 overflow-hidden rounded-md bg-surface", nested ? "ms-10" : "ms-7")}>
       {items.length > 1 && (
-        <div className="flex items-center gap-2 border-b border-border bg-secondary/30 px-2.5 py-1 text-xs text-muted-foreground">
+        <div className="flex items-center gap-2 px-2.5 pt-1.5 pb-0.5 text-xs text-muted-foreground">
           <Icon name="wrench" />
           <span>{t("session.steps", { n: items.length })}</span>
           {running > 0 && (
@@ -173,13 +196,13 @@ function StepGroup({ items, nested }: { items: ToolItem[]; nested: boolean }) {
         <button
           type="button"
           onClick={() => setShowAll(true)}
-          className="flex w-full items-center gap-1 border-b border-border px-2.5 py-1 text-start text-xs text-link hover:bg-secondary/40"
+          className="flex w-full items-center gap-1 px-2.5 py-1 text-start text-xs text-link hover:bg-surface-hover"
         >
           <Icon name="chevron" className="rotate-90" />
           {t("session.showEarlier", { n: hidden })}
         </button>
       )}
-      <ol className="m-0 list-none divide-y divide-border p-0">
+      <ol className="m-0 list-none p-0">
         {items.slice(hidden).map((it) => (
           <Step key={it.id} it={it} />
         ))}
@@ -207,7 +230,7 @@ function Step({ it }: { it: ToolItem }) {
   return (
     <li>
       <details className="group">
-        <summary className="flex min-h-8 cursor-pointer list-none items-center gap-2 px-2.5 py-1 text-xs hover:bg-secondary/40 [&::-webkit-details-marker]:hidden">
+        <summary className="flex min-h-8 cursor-pointer list-none items-center gap-2 px-2.5 py-1 text-xs hover:bg-surface-hover [&::-webkit-details-marker]:hidden">
           {status === "running" ? (
             <Icon name="spinner" className="text-info" />
           ) : status === "error" ? (
@@ -218,7 +241,7 @@ function Step({ it }: { it: ToolItem }) {
           <Icon name={toolIcon(tool, server)} className="text-muted-foreground" />
           <span className="shrink-0 font-semibold">{tool}</span>
           {server && (
-            <span className="shrink-0 rounded-sm bg-badge px-1 text-[0.85em] leading-4 text-badge-foreground">
+            <span className="shrink-0 rounded-full bg-surface-hover px-1.5 text-[0.85em] leading-4 text-muted-foreground">
               {server}
             </span>
           )}
@@ -233,15 +256,15 @@ function Step({ it }: { it: ToolItem }) {
             className="text-muted-foreground transition-transform group-open:rotate-90"
           />
         </summary>
-        <div className="flex flex-col gap-2 border-t border-border bg-background/60 p-2.5 text-xs">
+        <div className="mx-1.5 mb-1.5 flex flex-col gap-2 rounded-md bg-background/60 p-2.5 text-xs">
           <ToolInput input={it.input} />
           {it.result && (
             <div className="flex flex-col gap-1">
               <span className="font-semibold text-muted-foreground">{t("session.output")}</span>
               <pre
                 className={cn(
-                  "m-0 max-h-64 overflow-x-hidden overflow-y-auto rounded-sm border border-border bg-background p-2 font-mono whitespace-pre-wrap wrap-anywhere",
-                  it.result.isError && "border-danger text-danger",
+                  "m-0 max-h-64 overflow-x-hidden overflow-y-auto rounded-md bg-surface p-2 font-mono whitespace-pre-wrap wrap-anywhere",
+                  it.result.isError && "bg-danger/10 text-danger",
                 )}
               >
                 {it.result.text.slice(0, 4000) || "—"}
