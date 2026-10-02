@@ -150,8 +150,43 @@ export class SetupService {
     }
   }
 
+  /** Send optional keys to catherd's own init prompt; catherd validates and saves them. */
+  async saveKeys(jevKey?: string, aaKey?: string): Promise<void> {
+    if (this.running) throw new HandlerError("E_SETUP_BUSY", `${this.running} is still running`);
+    const valid = (key: string | undefined) =>
+      key === undefined ||
+      (key.length > 0 && key.length <= 2048 && [...key].every((ch) => ch.charCodeAt(0) > 31));
+    if ((!jevKey && !aaKey) || !valid(jevKey) || !valid(aaKey)) {
+      throw new HandlerError(
+        "E_SETUP_KEYS",
+        "Enter one or both API keys (single line, up to 2048 characters)",
+      );
+    }
+    const action = "save-api-keys" as const;
+    this.running = action;
+    this.publish();
+    let ok = false;
+    let message: string | undefined;
+    try {
+      ok = (await this.deps.cli().saveApiKeys({ jevKey, aaKey }, this.deps.host())).ok;
+      if (!ok)
+        message =
+          "catherd did not save every supplied key. Check readiness and retry the missing key.";
+    } catch {
+      message =
+        "Could not save API keys through catherd init. Check that catherd is installed and try again.";
+    } finally {
+      this.running = undefined;
+    }
+    this.deps.broadcast({ type: "action_done", action, ok, ...(message ? { message } : {}) });
+    await this.check({ readiness: true });
+  }
+
   /** Runs one action (user click). One at a time; results stream on the "setup" topic. */
   async run(action: SetupActionId): Promise<void> {
+    if (action === "save-api-keys") {
+      throw new HandlerError("E_SETUP_KEYS", "Use the API key form in Setup");
+    }
     if (this.running) {
       throw new HandlerError("E_SETUP_BUSY", `${this.running} is still running`);
     }

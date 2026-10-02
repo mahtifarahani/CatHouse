@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { PINNED } from "@cathouse/compat";
 import type { SetupTopic } from "@cathouse/protocol";
 import { describe, expect, it } from "vitest";
-import type { CatherdCli } from "../gateway/cli";
+import { CatherdCli } from "../gateway/cli";
 import type { RunOptions, RunResult } from "../gateway/process";
 import { GIT_HTTPS_ENV, stepsFor } from "./actions";
 import { type DetectDeps, detect } from "./detect";
@@ -327,6 +327,58 @@ describe("detect", () => {
 });
 
 describe("SetupService", () => {
+  it("passes both API keys only on stdin and never broadcasts or logs them", async () => {
+    const events: SetupTopic[] = [];
+    const logs: string[] = [];
+    let initOptions: RunOptions | undefined;
+    let initArgs: string[] | undefined;
+    const run = async (cmd: string, args: string[], opts: RunOptions): Promise<RunResult> => {
+      if (cmd === "bunx" && args.includes("init")) {
+        initOptions = opts;
+        initArgs = args;
+        return {
+          code: 0,
+          signal: null,
+          timedOut: false,
+          stdout:
+            "ok Jev: the key answers; saved with mode 600\nok Artificial Analysis: the key answers; saved with mode 600\nupstream diagnostic jev-secret aa-secret\n",
+          stderr: "",
+        };
+      }
+      return {
+        code: 0,
+        signal: null,
+        timedOut: false,
+        stdout: cmd === "bunx" ? "1.4.0" : "1.4.2",
+        stderr: "",
+      };
+    };
+    const svc = new SetupService({
+      ...detectDeps(run, mkdtempSync(join(tmpdir(), "cathouse-keys-"))),
+      env: async () => ({ TYPESAFE_API_KEY: "old-env-key", ARTIFICIAL_ANALYSIS_API_KEY: "old-aa" }),
+      cli: () =>
+        new CatherdCli({
+          cwd: "/repo",
+          env: async () => ({
+            TYPESAFE_API_KEY: "old-env-key",
+            ARTIFICIAL_ANALYSIS_API_KEY: "old-aa",
+          }),
+          runner: run,
+        }),
+      broadcast: (event) => events.push(event),
+      log: (line) => logs.push(line),
+      openTerminal: async () => {},
+    });
+    await svc.saveKeys("jev-secret", "aa-secret");
+    expect(initOptions?.stdin).toBe("jev-secret\naa-secret\n\nn\n");
+    expect(initOptions?.env.TYPESAFE_API_KEY).toBeUndefined();
+    expect(initOptions?.env.ARTIFICIAL_ANALYSIS_API_KEY).toBeUndefined();
+    expect(initArgs).toContain("--no-global");
+    expect(initArgs).toContain("--no-install");
+    expect(events).toContainEqual({ type: "action_done", action: "save-api-keys", ok: true });
+    expect(JSON.stringify(events) + logs.join(" ")).not.toMatch(/jev-secret|aa-secret/);
+  });
+
   it("restores the last user-triggered readiness result without running doctor on activation", async () => {
     const home = mkdtempSync(join(tmpdir(), "cathouse-setup-"));
     mkdirSync(join(home, "catherd", "config"), { recursive: true });

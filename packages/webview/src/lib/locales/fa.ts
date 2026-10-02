@@ -214,6 +214,14 @@ export const fa: Partial<Record<StringKey, string>> = {
   "setup.allChecks": "بررسی‌های دیگر ({n})",
   "setup.tools": "لاگ‌ها و ابزارها",
   "setup.copied": "کپی شد",
+  "setup.keysTitle": "کلیدهای API",
+  "setup.keysHelp":
+    "اختیاری. catherd کلیدهای جدید را در این دستگاه بررسی و ذخیره می‌کند. کلیدهای ذخیره‌شدهٔ قبلی حفظ می‌شوند.",
+  "setup.jevKey": "کلید API جِو (TypeSafe)",
+  "setup.aaKey": "کلید API Artificial Analysis",
+  "setup.saveKeys": "ذخیرهٔ کلیدها",
+  "setup.keysSaved": "توسط catherd ذخیره و بررسی شد",
+  "setup.keysError": "شروع ذخیرهٔ کلیدها ممکن نشد",
   "session.taskPlaceholder": "وظیفه‌ای را برای catherd توصیف کنید…",
   "session.roleGuide":
     "catherd کار را برنامه‌ریزی می‌کند، هر بخش را به نقش و مدل مناسب ارسال می‌کند و نتیجه را گزارش می‌دهد. در وظیفه خود از یک محقق یا بازبین درخواست کنید تا آن را هدایت کند.",

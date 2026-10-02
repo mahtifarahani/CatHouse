@@ -171,6 +171,7 @@ export function stepsFor(action: SetupActionId, ctx: ActionContext): Step[] {
         },
       ];
     case "check-readiness":
+    case "save-api-keys":
       return [];
   }
 }

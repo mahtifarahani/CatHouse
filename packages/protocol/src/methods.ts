@@ -147,6 +147,10 @@ export const methods = {
     params: z.object({ action: SetupActionIdSchema }),
     result: z.object({ started: z.boolean() }),
   },
+  "setup.saveKeys": {
+    params: z.object({ jevKey: z.string().optional(), aaKey: z.string().optional() }),
+    result: z.object({ started: z.boolean() }),
+  },
   "session.state": { params: z.object({}), result: SessionStateSchema },
   "session.start": {
     params: z.object({

@@ -19,6 +19,7 @@ export const SetupActionIdSchema = z.enum([
   "restart-codex-daemon",
   "install-opencode",
   "check-readiness",
+  "save-api-keys",
 ]);
 export type SetupActionId = z.infer<typeof SetupActionIdSchema>;
 

@@ -1,3 +1,4 @@
+import { homedir } from "node:os";
 import { PINNED } from "@cathouse/compat";
 import type { z } from "zod";
 import { CatherdError, parseCliError } from "./errors";
@@ -53,6 +54,43 @@ export class CatherdCli {
       }
       throw e;
     }
+  }
+
+  /** catherd owns validation and storage of optional API keys. Raw init output stays here. */
+  async saveApiKeys(
+    keys: { jevKey?: string; aaKey?: string },
+    host: "claude-code" | "codex",
+  ): Promise<{ ok: boolean }> {
+    const env = { ...(await this.opts.env()) };
+    delete env.TYPESAFE_API_KEY;
+    delete env.ARTIFICIAL_ANALYSIS_API_KEY;
+    const result = await this.runner(
+      "bunx",
+      [
+        "--no-install",
+        `catherd-cli@${PINNED.catherd}`,
+        "init",
+        "--no-global",
+        "--plain",
+        "--host",
+        host,
+      ],
+      {
+        cwd: homedir(),
+        env: { ...env, CATHERD_NO_SYNC: "1" },
+        stdin: `${keys.jevKey ?? ""}\n${keys.aaKey ?? ""}\n\nn\n`,
+        timeoutMs: DEFAULT_TIMEOUT_MS,
+      },
+    );
+    const jevOk =
+      !keys.jevKey ||
+      /Jev: (the key answers; saved with mode 600|using the saved key)/.test(result.stdout);
+    const aaOk =
+      !keys.aaKey ||
+      /Artificial Analysis: (the key answers; saved with mode 600|using the saved key)/.test(
+        result.stdout,
+      );
+    return { ok: result.code === 0 && jevOk && aaOk };
   }
 
   /** Runs a command expected to print JSON; `okCodes` lists exit codes that still carry JSON. */

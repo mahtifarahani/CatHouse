@@ -121,6 +121,9 @@ export function SetupPage(_props: SetupPageProps) {
           logFor={logFor}
         />
       )}
+      {state.items.some((i) => i.id === "catherd" && i.state === "ok") && (
+        <ApiKeys busy={busy} lastDone={lastDone} />
+      )}
       {lastDone && !state.running && !lastDone.ok && (
         <p role="alert" className="m-0 rounded-md bg-danger/10 px-3 py-2 text-danger">
           {lastDone.message}
@@ -148,6 +151,75 @@ export function SetupPage(_props: SetupPageProps) {
         <Tools />
       </Collapsible>
     </div>
+  );
+}
+
+function ApiKeys({
+  busy,
+  lastDone,
+}: {
+  busy: boolean;
+  lastDone: { action: SetupActionId; ok: boolean } | undefined;
+}) {
+  const [jevKey, setJevKey] = useState("");
+  const [aaKey, setAaKey] = useState("");
+  useEffect(() => {
+    if (lastDone?.action === "save-api-keys" && lastDone.ok) {
+      setJevKey("");
+      setAaKey("");
+    }
+  }, [lastDone]);
+  return (
+    <form
+      className="flex flex-col gap-2 rounded-md bg-surface p-3"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (busy || (!jevKey.trim() && !aaKey.trim())) return;
+        void request("setup.saveKeys", {
+          ...(jevKey.trim() ? { jevKey: jevKey.trim() } : {}),
+          ...(aaKey.trim() ? { aaKey: aaKey.trim() } : {}),
+        }).catch(() => toast(t("setup.keysError"), "bad"));
+      }}
+    >
+      <div>
+        <h3 className="m-0 text-sm font-semibold">{t("setup.keysTitle")}</h3>
+        <p className="m-0 text-xs text-muted-foreground">{t("setup.keysHelp")}</p>
+      </div>
+      <label className="flex flex-col gap-1 text-xs font-medium">
+        {t("setup.jevKey")}
+        <input
+          type="password"
+          autoComplete="off"
+          spellCheck={false}
+          maxLength={2048}
+          className={inputClass}
+          value={jevKey}
+          onChange={(e) => setJevKey(e.target.value)}
+        />
+      </label>
+      <label className="flex flex-col gap-1 text-xs font-medium">
+        {t("setup.aaKey")}
+        <input
+          type="password"
+          autoComplete="off"
+          spellCheck={false}
+          maxLength={2048}
+          className={inputClass}
+          value={aaKey}
+          onChange={(e) => setAaKey(e.target.value)}
+        />
+      </label>
+      <div className="flex items-center gap-2">
+        <Button type="submit" size="sm" disabled={busy || (!jevKey.trim() && !aaKey.trim())}>
+          {busy && lastDone?.action !== "save-api-keys" ? t("setup.running") : t("setup.saveKeys")}
+        </Button>
+        {lastDone?.action === "save-api-keys" && lastDone.ok && (
+          <span role="status" className="text-xs text-success">
+            {t("setup.keysSaved")}
+          </span>
+        )}
+      </div>
+    </form>
   );
 }
 

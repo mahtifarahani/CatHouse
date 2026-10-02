@@ -351,6 +351,10 @@ export function activate(context: vscode.ExtensionContext): void {
       void setup.run(action).catch((e: unknown) => output.warn(String(e)));
       return { started: true };
     },
+    "setup.saveKeys": ({ jevKey, aaKey }) => {
+      void setup.saveKeys(jevKey, aaKey).catch((e: unknown) => output.warn(String(e)));
+      return { started: true };
+    },
     "session.state": () => controller.snapshot(),
     "session.start": ({ task, repo, permissionMode }) => {
       requireReady();

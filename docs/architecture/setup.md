@@ -69,18 +69,21 @@ Doctor rows `bun` and `plugin` are hidden (CatHouse has its own items for them).
 | `install-codex` / `login-codex` | `npm i -g @openai/codex@latest` / terminal `codex login` |
 | `install-opencode` | `bash -c "curl -fsSL https://opencode.ai/v2/install \| bash"` |
 | `check-readiness` | none (just the readiness check) |
+| `save-api-keys` | Setup calls `CatherdCli.saveApiKeys` in the Gateway, which sends optional Jev and Artificial Analysis keys through stdin to pinned `bunx --no-install catherd-cli@1.4.0 init --no-global --plain --host <selected host>` from the home directory, with source sync disabled. catherd validates each new key and saves it in its own credentials file. Existing saved keys are kept. The action is click-only. |
 
 After an action, Setup re-detects. After `init-catherd`, `install-codex`, `install-opencode`, `install-claude-cli` and `login-codex`, it also refreshes the catalog and runs doctor (only if the gate is open). Terminal actions resolve when the user closes the terminal. A step with a non-zero exit fails the action with `E_SETUP_STEP`; the output stays visible. A second action while one runs → `E_SETUP_BUSY`.
 
 ## Protocol
 
-Methods `setup.state`, `setup.check {readiness?}`, `setup.run {action}` (fire and forget). Topic `setup`: `state`, `output {action, chunk}`, `action_done {action, ok, message?}`. VS Code commands: `cathouse.checkSetup` (Command Palette "CatHouse: Check Setup"; runs readiness), plus the hidden `cathouse._runSetupAction` used by e2e tests.
+Methods `setup.state`, `setup.check {readiness?}`, `setup.run {action}` and `setup.saveKeys {jevKey?, aaKey?}` (fire and forget). Topic `setup`: `state`, `output {action, chunk}`, `action_done {action, ok, message?}`. VS Code commands: `cathouse.checkSetup` (Command Palette "CatHouse: Check Setup"; runs readiness), plus the hidden `cathouse._runSetupAction` used by e2e tests. `save-api-keys` is accepted only through `setup.saveKeys`, not the generic action method.
 
 Setup works without an open folder: catherd commands then run in the home directory (global active profile). This was a real bug caught by e2e.
 
 ## UI
 
-`SetupPage` groups items by level ("Required to use CatHouse" / "Required to start tasks" / "Optional"), with a state glyph, detail, action button (disabled while busy), doctor fix with Copy, a Re-check button, the live output of the running (or last) action, and the result line. The Activity Bar view shows Profile and Setup until `gateOpen`; then all tabs become available, and Chat's Start/Resume are disabled with `canStartReason` when readiness is incomplete.
+`SetupPage` groups items by level ("Required to use CatHouse" / "Required to start tasks" / "Optional"), with a state glyph, detail, action button (disabled while busy), doctor fix with Copy, a Re-check button, the live output of the running (or last) action, and the result line. When catherd is installed, Setup also shows two optional masked API-key fields and a Save keys button. The fields use component memory only; a successful action clears them. The Gateway sends the keys only on stdin, strips old API-key environment overrides for that invocation, and returns only an `ok` flag; the host publishes no raw `init` output or key-bearing error. It reports whether catherd confirmed saving or already had a saved key, then runs a user-triggered readiness check. Replacing an existing saved key is outside this UI because catherd 1.4.0 `init` deliberately keeps saved credentials; use catherd's own credential flow for replacement. The Activity Bar view shows Profile and Setup until `gateOpen`; then all tabs become available, and Chat's Start/Resume are disabled with `canStartReason` when readiness is incomplete.
+
+Key entry command contract: `printf '%s\n%s\n\nn\n' "$JEV_KEY" "$AA_KEY" | bunx --no-install catherd-cli@1.4.0 init --no-global --plain --host claude-code` illustrates the four input lines (Jev, Artificial Analysis, profile default, do not replace profile). Do not put real keys in shell history. The extension supplies the lines directly to stdin. `TYPESAFE_API_KEY` and `ARTIFICIAL_ANALYSIS_API_KEY` are omitted only for that child process so `init` will prompt and save the input; `CATHERD_NO_SYNC=1` skips an unrelated catalog sync. The working directory is home so a repository binding is not changed by the credential action. The key must not appear in the command arguments, output topic, Output channel, or persisted webview state.
 
 ## Verified (2026-09-28)
 
@@ -97,4 +100,4 @@ env -i HOME=$FRESH USER=$USER TERM=dumb SHELL=/bin/zsh PATH=/usr/bin:/bin:/usr/s
 
 ## Not covered yet
 
-Windows (out of v1). Remote hosts (Phase 5). A Setup item for a Jev key (optional; doctor shows its row with the fix).
+Windows (out of v1). Remote hosts (Phase 5). Replacing an already saved API key through a narrow upstream CLI operation remains unavailable in catherd 1.4.0.

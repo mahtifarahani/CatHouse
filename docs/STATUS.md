@@ -1,6 +1,10 @@
 # STATUS
 
-Last updated: 2026-10-02. Update this file at the end of every section.
+Last updated: 2026-10-03. Update this file at the end of every section.
+
+## Setup API keys (2026-10-03)
+
+Setup now has optional masked Jev (TypeSafe) and Artificial Analysis API-key fields. A Save keys click sends nonempty keys over the webview protocol and then through stdin to pinned catherd 1.4.0 `init`; catherd validates and saves them. CatHouse does not write credentials, persist the form, or publish raw init output. Saved keys are retained by upstream `init`, so this UI adds missing keys and leaves existing ones alone. The action runs readiness afterward. The extension test checks stdin, command flags, and absence of keys from events and logs, including a simulated upstream diagnostic containing both keys. Typecheck, lint, build and the full unit suite (142 passed, 7 live opt-in skipped) passed. Full report and command contract: `docs/architecture/setup.md`. **Exact next step for this addition:** verify the Setup form and a real optional-key save in the Extension Development Host; do not use a production key in automated tests. The Codex live role push/resume and release gates below remain pending.
 
 ## Codex startup fix (2026-10-02)
 
