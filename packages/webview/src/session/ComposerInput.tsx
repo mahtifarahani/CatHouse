@@ -87,7 +87,7 @@ export function Composer({
   return (
     <div
       className={cn(
-        "relative flex flex-col rounded-lg border border-input-border bg-input focus-within:border-focus",
+        "cathouse-composer relative flex flex-col rounded-lg border border-input-border bg-input",
         over && "border-focus",
       )}
     >

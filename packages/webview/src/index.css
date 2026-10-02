@@ -2,3 +2,14 @@
 @import "@cathouse/ui/theme.css";
 
 @source "../../ui/src";
+
+/* VS Code injects input focus styling into webviews. The composer has one steady border. */
+.cathouse-composer textarea:focus,
+.cathouse-composer textarea:focus-visible {
+  /* biome-ignore lint/complexity/noImportantStyles: override the injected VS Code textarea focus rule */
+  outline: none !important;
+  /* biome-ignore lint/complexity/noImportantStyles: override the injected VS Code textarea focus rule */
+  box-shadow: none !important;
+  /* biome-ignore lint/complexity/noImportantStyles: override the injected VS Code textarea focus rule */
+  border-color: transparent !important;
+}
