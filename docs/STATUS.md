@@ -11,7 +11,8 @@ catherd released 1.5.0 (npm `latest`). CatHouse now pins **catherd-cli 1.5.0 / p
 - **UI:** Runs rows show "N results waiting for the orchestrator" (with a stalled variant) and "superseded by <id>", in all six locales.
 - **This machine** was upgraded with `bunx catherd-cli@1.5.0 init --no-input --plain` and `claude plugin marketplace update catherd && claude plugin update catherd@catherd`. Doctor: **ready**.
 - **Verified:** Biome, typecheck, 144 unit tests (7 live opt-in skipped), build, live contract 7/7 (fixtures re-recorded in `packages/compat/fixtures/1.5.0/` from an isolated home), e2e 5/5 in VS Code with `CATHOUSE_EXPECT_READY=1 CATHOUSE_E2E_WORKSPACE=~/Projects/sc-weather`.
-- **Not done:** a pause banner from `status.paused`, verifier step open/closed, a Workspaces view, a per-role timeouts editor (`catherd-1.5-upgrade.md` §7), and a visual pass of the new Runs labels. No version bump or tag.
+- **Not done:** a pause banner from `status.paused`, verifier step open/closed, a Workspaces view, a per-role timeouts editor (`catherd-1.5-upgrade.md` §7), and a visual pass of the new Runs labels.
+- **Release:** extension version `0.5.0` (`docs/CHANGELOG.md`), tagged `v0.5.0` on `main`.
 
 **Exact next step:** run the extension in the Extension Development Host and check the Runs labels on a run whose role finished while no orchestrator chat was open. On a Codex host, reinstall the native plugin 1.5.0 from Setup, restart the daemon, and do the pending ADR 0009 live push/resume check.
 

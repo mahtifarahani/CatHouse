@@ -4,7 +4,10 @@ GitHub Release notes are the version sections below. Keep unfinished work under 
 
 ## Unreleased
 
+## [0.5.0] - 2026-10-03
+
 - **catherd 1.5.0.** CatHouse now pins catherd-cli 1.5.0 and plugin 1.5.0. Setup offers the update ("found 1.4.0, CatHouse needs 1.5.0") and then the plugin update. Runs rows show when finished results are waiting for the orchestrator (and when that wait has stalled) and which run superseded a closed run. Profile saves keep working if CatHouse inherits a catherd role variable from its shell.
+- **Optional API keys.** Setup can save a Jev (TypeSafe) key and an Artificial Analysis key. The values go to pinned catherd `init` over stdin, are not stored in the form, and are not written to CatHouse logs. Existing keys are left in place.
 
 ## [0.4.4] - 2026-10-02
 
