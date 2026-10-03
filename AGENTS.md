@@ -1,6 +1,6 @@
 # AGENTS.md: start here
 
-**CatHouse** is a VS Code extension that turns [catherd](https://github.com/47vigen/catherd) (npm `catherd-cli@1.4.0`, a Bun-based orchestrator that runs coding agents from a Claude Code session) into a full UI. It has four jobs:
+**CatHouse** is a VS Code extension that turns [catherd](https://github.com/47vigen/catherd) (npm `catherd-cli@1.5.0`, a Bun-based orchestrator that runs coding agents from a Claude Code session) into a full UI. It has four jobs:
 - a mandatory **Setup** (Bun, catherd, the Claude plugin, login, backends);
 - running catherd inside the panel through the selected Claude Agent SDK or native Codex host, with permission and question cards;
 - dashboards: **Runs, Profile, Models** and diagnostics inside **Setup** (parity with catherd's TUI);
@@ -13,14 +13,14 @@ catherd stays the source of truth. CatHouse never re-implements orchestration an
 1. [`docs/STATUS.md`](docs/STATUS.md): where the project is now and the **exact next step**.
 2. [`docs/plan.md`](docs/plan.md): the approved plan (Persian, with English identifiers).
 3. [`docs/README.md`](docs/README.md): the map of every document.
-4. The research doc for the area you touch (`docs/research/`) and the ADRs (`docs/decisions/`). The catherd research docs describe the 1.0.0 baseline; `docs/research/catherd-1.2-upgrade.md`, `docs/research/catherd-1.3-upgrade.md` and `docs/research/catherd-1.4-upgrade.md` list what 1.1–1.4 changed and win where they differ.
+4. The research doc for the area you touch (`docs/research/`) and the ADRs (`docs/decisions/`). The catherd research docs describe the 1.0.0 baseline; `docs/research/catherd-1.2-upgrade.md`, `docs/research/catherd-1.3-upgrade.md`, `docs/research/catherd-1.4-upgrade.md` and `docs/research/catherd-1.5-upgrade.md` list what 1.1–1.5 changed and win where they differ.
 
 ## Hard rules
 
-1. **Document every completed section.** Before moving to the next section (phase, spike, subsystem), write or update its report in `docs/` (architecture doc, spike notes, research corrections), update `docs/STATUS.md` and, if needed, this file. Commit the docs with the code. A section without its report is not done. Reports must be self-contained: no references to chats, exact versions, `path:line` citations (catherd citations at commit `804682f` (tag `v1.4.0`; the 1.3 upgrade doc cites `f1422f8`, the 1.2 upgrade doc cites `3cee546`, the 1.0.0 baseline docs cite `b257da7`)), copy-pasteable commands, invariants and traps, remaining work, next step.
-2. **The gateway is the only boundary to catherd** (ADR 0005). Never call `result`, `cancel`, `peek`, `park`, `answer`, `gate_check`, `gate_pass`, `dispatch`, `run_start`, `route`, `preflight`, `climb`, `ask`, `land`, `set_next`, `record_agent_run` or `write_run_file` from CatHouse. Those belong to the orchestrator session. Since catherd 1.1, `result`/`cancel` mark a record read and `peek` claims the run, which would stop catherd from pushing that role to the orchestrator: read replies with `read_run_file` and cancel with the CLI `catherd runs cancel`.
+1. **Document every completed section.** Before moving to the next section (phase, spike, subsystem), write or update its report in `docs/` (architecture doc, spike notes, research corrections), update `docs/STATUS.md` and, if needed, this file. Commit the docs with the code. A section without its report is not done. Reports must be self-contained: no references to chats, exact versions, `path:line` citations (catherd citations at commit `2061e6e` (tag `v1.5.0`; the 1.4 upgrade doc cites `804682f`, the 1.3 upgrade doc cites `f1422f8`, the 1.2 upgrade doc cites `3cee546`, the 1.0.0 baseline docs cite `b257da7`)), copy-pasteable commands, invariants and traps, remaining work, next step.
+2. **The gateway is the only boundary to catherd** (ADR 0005). Never call `result`, `cancel`, `peek`, `park`, `answer`, `gate_check`, `gate_pass`, `dispatch`, `run_start`, `route`, `preflight`, `climb`, `ask`, `land`, `set_next`, `record_agent_run` or `write_run_file` from CatHouse. Those belong to the orchestrator session. Since catherd 1.1, `result`/`cancel` mark a record read and `peek` claims the run, which would stop catherd from pushing that role to the orchestrator: read replies with `read_run_file` and cancel with the CLI `catherd runs cancel`. catherd 1.5's coordinator tools (`test_push`, `run_pin`, `lane_set`, `owns_add`, `workspace_start`, `workspace_contract`, `workspace_child_start`, `workspace_budget`, `workspace_pause`, `workspace_resume`) are forbidden too.
 3. **Never write catherd's files.** Profiles change only through MCP `profile_set` or the CLI. Run files are read through MCP `read_run_file` (ADR 0007); Setup only reads `config.json` and Claude's plugin lists.
-4. **Pin versions:** `catherd-cli@1.4.0`, plugin `catherd@1.4.0`, `@anthropic-ai/claude-agent-sdk@0.3.283` (≥ 0.3.282), and Codex CLI ≥ 0.159.2 for Codex orchestration. A version outside `packages/compat/compat.json` shows the Upgrade screen and runs nothing.
+4. **Pin versions:** `catherd-cli@1.5.0`, plugin `catherd@1.5.0`, `@anthropic-ai/claude-agent-sdk@0.3.283` (≥ 0.3.282), and Codex CLI ≥ 0.159.2 for Codex orchestration. A version outside `packages/compat/compat.json` shows the Upgrade screen and runs nothing.
 5. **Installers run only after a user click.** Detectors have no side effects. `catherd doctor` has side effects, so it never runs on a timer.
 6. **Secrets never reach logs.** This covers the Jev key, tokens and env values.
 7. Commit messages: conventional commits.
@@ -47,6 +47,6 @@ docs/               knowledge base (this is where you write reports)
 
 ## Machine prerequisites to run CatHouse against real catherd
 
-Node ≥ 22, pnpm, Bun ≥ 1.4, `bunx catherd-cli@1.4.0 init --no-input --plain` (also installs the global `catherd`), the catherd plugin 1.4.0 (`claude plugin marketplace add 47vigen/catherd && claude plugin install catherd@catherd`; HTTPS since 1.1), a Claude login, and at least one worker backend (Codex ≥ 0.157.0 by default). Details are in `docs/runbook.md`.
+Node ≥ 22, pnpm, Bun ≥ 1.4, `bunx catherd-cli@1.5.0 init --no-input --plain` (also installs the global `catherd`), the catherd plugin 1.5.0 (`claude plugin marketplace add 47vigen/catherd && claude plugin install catherd@catherd`; HTTPS since 1.1), a Claude login, and at least one worker backend (Codex ≥ 0.157.0 by default). Details are in `docs/runbook.md`.
 
-For the optional Codex orchestrator, select Codex in Profile, then use Setup's click actions to install/update Codex CLI ≥ 0.159.2 and the native catherd plugin 1.4.0, log in, start the managed daemon, and check readiness. Do not run installers or start the daemon during detection. ADR 0009 records the Unix WebSocket and resume constraints.
+For the optional Codex orchestrator, select Codex in Profile, then use Setup's click actions to install/update Codex CLI ≥ 0.159.2 and the native catherd plugin 1.5.0, log in, start the managed daemon, and check readiness. Do not run installers or start the daemon during detection. ADR 0009 records the Unix WebSocket and resume constraints.

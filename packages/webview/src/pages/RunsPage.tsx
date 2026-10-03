@@ -34,6 +34,9 @@ function RunRow({ run, onOpen }: { run: RunListItem; onOpen: () => void }) {
     run.session &&
       t(run.session.live ? "runs.sessionLive" : "runs.session", { name: run.session.name }),
     run.continuedIn && t("runs.continuedIn", { name: run.continuedIn }),
+    run.supersededBy && t("runs.supersededBy", { id: run.supersededBy }),
+    run.waiting &&
+      t(run.waiting.stalled ? "runs.waitingStalled" : "runs.waiting", { n: run.waiting.unread }),
   ].filter(Boolean);
   return (
     <li>

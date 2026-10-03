@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-// Raw catherd 1.4.0 output shapes (docs/research/catherd-*-contract.md). Objects are loose so a
+// Raw catherd 1.5.0 output shapes (docs/research/catherd-*-contract.md). Objects are loose so a
 // newer catherd adding fields does not break parsing; only the fields CatHouse uses are checked.
 
 export const DoctorCheckSchema = z.looseObject({
@@ -86,6 +86,12 @@ export const RunsListSchema = z.looseObject({
       roleRuns: z.number(),
       session: RunSessionSchema,
       continuedIn: z.string().nullable(),
+      // 1.5: results waiting for the orchestrator, and a closed run's successor
+      waiting: z
+        .looseObject({ seconds: z.number(), stalled: z.boolean(), unread: z.number() })
+        .nullable()
+        .optional(),
+      supersededBy: z.string().nullable().optional(),
     }),
   ),
   corrupt: z.array(z.looseObject({ id: z.string(), dir: z.string(), reason: z.string() })),

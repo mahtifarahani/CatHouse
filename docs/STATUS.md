@@ -2,6 +2,19 @@
 
 Last updated: 2026-10-03. Update this file at the end of every section.
 
+## catherd 1.5.0 upgrade (2026-10-03)
+
+catherd released 1.5.0 (npm `latest`). CatHouse now pins **catherd-cli 1.5.0 / plugin 1.5.0** (tag `v1.5.0`, commit `2061e6e`; `packages/compat`, adapter label `v1_5`). Full delta with citations: `docs/research/catherd-1.5-upgrade.md`.
+
+- **No breaking contract change.** Every shape CatHouse parses decodes unchanged. New fields are optional: `status.paused`, `RunSummary.waiting/supersededBy/pinChanges`, verifier `secs/open/closedBy`, runs-list `waiting/supersededBy`, per-role `timeouts`, and the new doctor rows `role-mcp:*`, `caches`, `isolation:*` and `credentials`. Minimum Bun, Codex and Claude Code versions are unchanged.
+- **Role scope (`E_ROLE_SCOPE`).** catherd 1.5 refuses coordinator tools, `profile_set` included, to any process with `CATHERD_ROLE`. `processEnv()` now strips that variable. ADR 0005 was amended: the 10 new coordinator tools (`test_push`, `run_pin`, `lane_set`, `owns_add`, `workspace_start/contract/child_start/budget/pause/resume`) join the forbidden list. The allowlist is unchanged.
+- **UI:** Runs rows show "N results waiting for the orchestrator" (with a stalled variant) and "superseded by <id>", in all six locales.
+- **This machine** was upgraded with `bunx catherd-cli@1.5.0 init --no-input --plain` and `claude plugin marketplace update catherd && claude plugin update catherd@catherd`. Doctor: **ready**.
+- **Verified:** Biome, typecheck, 144 unit tests (7 live opt-in skipped), build, live contract 7/7 (fixtures re-recorded in `packages/compat/fixtures/1.5.0/` from an isolated home), e2e 5/5 in VS Code with `CATHOUSE_EXPECT_READY=1 CATHOUSE_E2E_WORKSPACE=~/Projects/sc-weather`.
+- **Not done:** a pause banner from `status.paused`, verifier step open/closed, a Workspaces view, a per-role timeouts editor (`catherd-1.5-upgrade.md` §7), and a visual pass of the new Runs labels. No version bump or tag.
+
+**Exact next step:** run the extension in the Extension Development Host and check the Runs labels on a run whose role finished while no orchestrator chat was open. On a Codex host, reinstall the native plugin 1.5.0 from Setup, restart the daemon, and do the pending ADR 0009 live push/resume check.
+
 ## Setup API keys (2026-10-03)
 
 Setup now has optional masked Jev (TypeSafe) and Artificial Analysis API-key fields. A Save keys click sends nonempty keys over the webview protocol and then through stdin to pinned catherd 1.4.0 `init`; catherd validates and saves them. CatHouse does not write credentials, persist the form, or publish raw init output. Saved keys are retained by upstream `init`, so this UI adds missing keys and leaves existing ones alone. The action runs readiness afterward. The extension test checks stdin, command flags, and absence of keys from events and logs, including a simulated upstream diagnostic containing both keys. Typecheck, lint, build and the full unit suite (142 passed, 7 live opt-in skipped) passed. Full report and command contract: `docs/architecture/setup.md`. **Exact next step for this addition:** verify the Setup form and a real optional-key save in the Extension Development Host; do not use a production key in automated tests. The Codex live role push/resume and release gates below remain pending.
@@ -28,6 +41,7 @@ Cursor's live daemon returned the catherd skill as `catherd:catherd`, while CatH
 | — | Upgrade to catherd 1.2.0 (push model, new fields, fixtures) | ✅ done (2026-09-29) | `docs/research/catherd-1.2-upgrade.md`, `docs/spikes/catherd-1.2.md`, ADR 0005 amendment |
 | — | Upgrade to catherd 1.3.0 (pin, fixtures; no contract change) | ✅ done (2026-10-01) | `docs/research/catherd-1.3-upgrade.md` |
 | — | Upgrade to catherd 1.4.0 (pin, orchestration host, fixtures) + release prep `0.4.0` | ✅ done (2026-10-02), not tagged | `docs/research/catherd-1.4-upgrade.md` |
+| — | Upgrade to catherd 1.5.0 (pin, fixtures, role scope, Runs waiting/superseded) | ✅ done (2026-10-03), not released | `docs/research/catherd-1.5-upgrade.md`, ADR 0005 amendment |
 | — | UI/UX rebuild (five tabs, chat, one-step profile with auto-save, Setup + diagnostics) | ✅ built (2026-10-02), owner check in VS Code pending | `docs/architecture/webview.md` |
 | — | Prepare extension version `0.4.1` for the UI rebuild | ✅ version and release notes updated (2026-10-02), not tagged | `docs/CHANGELOG.md`, `docs/release/github.md` |
 | — | Profile setting for Claude Code/Codex orchestrator | ✅ code and mocked contract (2026-10-02); live native push pending | ADR 0009, `docs/architecture/{orchestrator,setup,webview}.md` |

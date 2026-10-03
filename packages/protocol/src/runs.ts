@@ -25,6 +25,13 @@ export const RunListItemSchema = z.object({
   session: z.object({ name: z.string(), live: z.boolean() }).nullable().optional(),
   /** The session a run moved to, when another session continued it. */
   continuedIn: z.string().nullable().optional(),
+  /** catherd 1.5: no live role and results the orchestrator has not collected yet. */
+  waiting: z
+    .object({ seconds: z.number(), stalled: z.boolean(), unread: z.number() })
+    .nullable()
+    .optional(),
+  /** catherd 1.5: the run that took this one over (`catherd runs supersede`). */
+  supersededBy: z.string().nullable().optional(),
 });
 export type RunListItem = z.infer<typeof RunListItemSchema>;
 

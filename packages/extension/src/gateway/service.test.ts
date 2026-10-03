@@ -10,7 +10,7 @@ import { CatherdGateway } from "./service";
 const fixture = (n: string) =>
   JSON.parse(
     readFileSync(
-      fileURLToPath(new URL(`../../../compat/fixtures/1.4.0/${n}`, import.meta.url)),
+      fileURLToPath(new URL(`../../../compat/fixtures/1.5.0/${n}`, import.meta.url)),
       "utf8",
     ),
   );
@@ -93,7 +93,11 @@ describe("CatherdGateway profiles", () => {
     const s = await g.profiles();
     expect(s.here).toBe("default");
     expect(s.profile.roles.worker?.rungs.length).toBe(4);
-    expect(s.standIns[0]).toMatchObject({ from: "codex:gpt-6-luna#high", inferred: false });
+    expect(s.standIns[0]).toMatchObject({
+      from: "codex:gpt-6-luna#high",
+      inferred: true,
+      note: "agentic, steer borrowed from gpt-5.6-luna#high",
+    });
     expect(s.standIns[1]).toMatchObject({
       from: "codex:gpt-6-sol#medium",
       inferred: true,
@@ -245,7 +249,7 @@ describe("CatherdGateway runs (catherd 1.1+ push model)", () => {
     const g = gatewayWith(
       calls,
       {
-        status: { version: "1.4.0", runs: [summary], warnings: [] },
+        status: { version: "1.5.0", runs: [summary], warnings: [] },
         read_run_file: "STATUS: done\nall 5 tests pass",
       },
       [],
@@ -283,7 +287,7 @@ describe("CatherdGateway runs (catherd 1.1+ push model)", () => {
   });
 
   it("lists runs with the session that started them", async () => {
-    const g = gatewayWith([], { status: { version: "1.4.0", runs: [summary], warnings: [] } }, [], {
+    const g = gatewayWith([], { status: { version: "1.5.0", runs: [summary], warnings: [] } }, [], {
       runsList: async () => ({
         runs: [
           {
@@ -307,5 +311,42 @@ describe("CatherdGateway runs (catherd 1.1+ push model)", () => {
       landed: 1,
     });
     expect(runs[0]?.session).not.toHaveProperty("sessionId");
+  });
+
+  it("carries 1.5's waiting and superseded state without the internal timestamps", async () => {
+    const row = {
+      id: detail.id,
+      title: detail.title,
+      repo: detail.repo,
+      createdAt: detail.createdAt,
+      live: 0,
+      roleRuns: 2,
+      session: null,
+      continuedIn: null,
+    };
+    const g = gatewayWith([], { status: { version: "1.5.0", runs: [summary], warnings: [] } }, [], {
+      runsList: async () => ({
+        runs: [
+          {
+            ...row,
+            waiting: {
+              since: "2026-10-03T08:00:00Z",
+              seconds: 90,
+              stalled: false,
+              unread: 2,
+              until: "2026-10-04T08:00:00Z",
+            },
+            supersededBy: null,
+          },
+          { ...row, id: "old", waiting: null, supersededBy: detail.id },
+          row,
+        ],
+        corrupt: [],
+      }),
+    });
+    const { runs } = await g.runsList();
+    expect(runs[0]?.waiting).toEqual({ seconds: 90, stalled: false, unread: 2 });
+    expect(runs[1]).toMatchObject({ waiting: null, supersededBy: detail.id });
+    expect(runs[2]).toMatchObject({ waiting: null, supersededBy: null });
   });
 });

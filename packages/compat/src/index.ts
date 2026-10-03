@@ -18,18 +18,18 @@ export interface CompatEntry {
   /** Minimum native Codex CLI verified for the app-server/queue orchestration host. */
   codexHost: string;
   /** Which gateway adapter maps this version's shapes */
-  adapter: "v1_4";
+  adapter: "v1_5";
 }
 
 export const SUPPORTED: readonly CompatEntry[] = [
   {
-    catherd: "1.4.0",
-    plugin: "1.4.0",
+    catherd: "1.5.0",
+    plugin: "1.5.0",
     sdk: "0.3.283",
     bun: "1.4.0",
     claudeCode: "2.1.282",
     codexHost: "0.159.2",
-    adapter: "v1_4",
+    adapter: "v1_5",
   },
 ];
 

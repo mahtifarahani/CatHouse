@@ -1,5 +1,5 @@
 {
-  "total": 179,
+  "total": 171,
   "models": [
     {
       "id": "claude-fable-5-1",
@@ -32,9 +32,7 @@
         "cached": 0.25,
         "output": 50
       },
-      "speed": {
-        "openrouter.uptime_last_30m": 99.64684730961861
-      },
+      "speed": {},
       "rungs": [
         {
           "rung": "claude:claude-fable-5-1#low",
@@ -46,7 +44,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "claude-opus-5-5#low"
+              "from": "claude-opus-5-5#low",
+              "lent": "stand-in"
             },
             "terminal": {
               "value": 55.8,
@@ -61,7 +60,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#low"
+              "from": "gpt-6-astra#low",
+              "lent": "stand-in"
             },
             "agentic": {
               "value": 0.1384,
@@ -103,7 +103,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "claude-opus-5-5#high"
+              "from": "claude-opus-5-5#medium",
+              "lent": "stand-in"
             },
             "terminal": {
               "value": 55.8,
@@ -118,7 +119,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "gpt-6-astra#medium",
+              "lent": "stand-in"
             },
             "agentic": {
               "value": 0.1384,
@@ -160,7 +162,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "claude-opus-5-5#high"
+              "from": "claude-opus-5-5#high",
+              "lent": "stand-in"
             },
             "terminal": {
               "value": 55.8,
@@ -175,7 +178,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "gpt-6-astra#high",
+              "lent": "stand-in"
             },
             "agentic": {
               "value": 0.1384,
@@ -212,12 +216,13 @@
           "enabled": true,
           "scores": {
             "repo_code": {
-              "value": 74,
+              "value": 74.2,
               "benchmark": "DeepSWE 1.1",
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "claude-opus-5-5#xhigh",
+              "lent": "stand-in"
             },
             "terminal": {
               "value": 55.8,
@@ -232,7 +237,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "gpt-6-astra#xhigh",
+              "lent": "stand-in"
             },
             "agentic": {
               "value": 0.1384,
@@ -288,28 +294,29 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "gpt-6-astra#max",
+              "lent": "stand-in"
             },
             "agentic": {
-              "value": 0.1455,
-              "benchmark": "Arena agent, net improvement 2026-09-30",
+              "value": 0.1384,
+              "benchmark": "Arena agent, net improvement 2026-09-27",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-09-30"
+              "date": "2026-09-27"
             },
             "steer": {
-              "value": 0.0895,
-              "benchmark": "Arena agent steerability 2026-09-30",
+              "value": 0.0832,
+              "benchmark": "Arena agent steerability 2026-09-27",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-09-30"
+              "date": "2026-09-27"
             },
             "frontend": {
-              "value": 1749.2436,
-              "benchmark": "Arena WebDev rating 2026-10-01",
+              "value": 1751.4868,
+              "benchmark": "Arena WebDev rating 2026-09-25",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-10-01"
+              "date": "2026-09-25"
             }
           },
           "treatLike": null,
@@ -353,9 +360,7 @@
         "cached": 0.25,
         "output": 50
       },
-      "speed": {
-        "openrouter.uptime_last_30m": 99.64684730961861
-      },
+      "speed": {},
       "rungs": [
         {
           "rung": "claude-code:claude-fable-5-1#low",
@@ -367,7 +372,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "claude-opus-5-5#low"
+              "from": "claude-opus-5-5#low",
+              "lent": "stand-in"
             },
             "terminal": {
               "value": 55.8,
@@ -382,7 +388,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#low"
+              "from": "gpt-6-astra#low",
+              "lent": "stand-in"
             },
             "agentic": {
               "value": 0.1384,
@@ -424,7 +431,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "claude-opus-5-5#high"
+              "from": "claude-opus-5-5#medium",
+              "lent": "stand-in"
             },
             "terminal": {
               "value": 55.8,
@@ -439,7 +447,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "gpt-6-astra#medium",
+              "lent": "stand-in"
             },
             "agentic": {
               "value": 0.1384,
@@ -481,7 +490,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "claude-opus-5-5#high"
+              "from": "claude-opus-5-5#high",
+              "lent": "stand-in"
             },
             "terminal": {
               "value": 55.8,
@@ -496,7 +506,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "gpt-6-astra#high",
+              "lent": "stand-in"
             },
             "agentic": {
               "value": 0.1384,
@@ -533,12 +544,13 @@
           "enabled": true,
           "scores": {
             "repo_code": {
-              "value": 74,
+              "value": 74.2,
               "benchmark": "DeepSWE 1.1",
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "claude-opus-5-5#xhigh",
+              "lent": "stand-in"
             },
             "terminal": {
               "value": 55.8,
@@ -553,7 +565,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "gpt-6-astra#xhigh",
+              "lent": "stand-in"
             },
             "agentic": {
               "value": 0.1384,
@@ -609,28 +622,29 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "gpt-6-astra#max",
+              "lent": "stand-in"
             },
             "agentic": {
-              "value": 0.1455,
-              "benchmark": "Arena agent, net improvement 2026-09-30",
+              "value": 0.1384,
+              "benchmark": "Arena agent, net improvement 2026-09-27",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-09-30"
+              "date": "2026-09-27"
             },
             "steer": {
-              "value": 0.0895,
-              "benchmark": "Arena agent steerability 2026-09-30",
+              "value": 0.0832,
+              "benchmark": "Arena agent steerability 2026-09-27",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-09-30"
+              "date": "2026-09-27"
             },
             "frontend": {
-              "value": 1749.2436,
-              "benchmark": "Arena WebDev rating 2026-10-01",
+              "value": 1751.4868,
+              "benchmark": "Arena WebDev rating 2026-09-25",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-10-01"
+              "date": "2026-09-25"
             }
           },
           "treatLike": null,
@@ -668,7 +682,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "claude-opus-5-5#low"
+              "from": "claude-opus-5-5#low",
+              "lent": "stand-in"
             },
             "terminal": {
               "value": 55.8,
@@ -683,7 +698,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#low"
+              "from": "gpt-6-astra#low",
+              "lent": "stand-in"
             },
             "agentic": {
               "value": 0.1384,
@@ -725,7 +741,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "claude-opus-5-5#high"
+              "from": "claude-opus-5-5#medium",
+              "lent": "stand-in"
             },
             "terminal": {
               "value": 55.8,
@@ -740,7 +757,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "gpt-6-astra#medium",
+              "lent": "stand-in"
             },
             "agentic": {
               "value": 0.1384,
@@ -782,7 +800,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "claude-opus-5-5#high"
+              "from": "claude-opus-5-5#high",
+              "lent": "stand-in"
             },
             "terminal": {
               "value": 55.8,
@@ -797,7 +816,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "gpt-6-astra#high",
+              "lent": "stand-in"
             },
             "agentic": {
               "value": 0.1384,
@@ -834,12 +854,13 @@
           "enabled": true,
           "scores": {
             "repo_code": {
-              "value": 74,
+              "value": 74.2,
               "benchmark": "DeepSWE 1.1",
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "claude-opus-5-5#xhigh",
+              "lent": "stand-in"
             },
             "terminal": {
               "value": 55.8,
@@ -854,7 +875,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "gpt-6-astra#xhigh",
+              "lent": "stand-in"
             },
             "agentic": {
               "value": 0.1384,
@@ -910,28 +932,29 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "gpt-6-astra#max",
+              "lent": "stand-in"
             },
             "agentic": {
-              "value": 0.1455,
-              "benchmark": "Arena agent, net improvement 2026-09-30",
+              "value": 0.1384,
+              "benchmark": "Arena agent, net improvement 2026-09-27",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-09-30"
+              "date": "2026-09-27"
             },
             "steer": {
-              "value": 0.0895,
-              "benchmark": "Arena agent steerability 2026-09-30",
+              "value": 0.0832,
+              "benchmark": "Arena agent steerability 2026-09-27",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-09-30"
+              "date": "2026-09-27"
             },
             "frontend": {
-              "value": 1749.2436,
-              "benchmark": "Arena WebDev rating 2026-10-01",
+              "value": 1751.4868,
+              "benchmark": "Arena WebDev rating 2026-09-25",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-10-01"
+              "date": "2026-09-25"
             }
           },
           "treatLike": null,
@@ -966,7 +989,7 @@
         "writer",
         "researcher"
       ],
-      "listed": false,
+      "listed": null,
       "notes": {
         "plan": "Pro and Team Standard pay usage credits for Fable; Max includes it up to half the weekly limit"
       },
@@ -975,9 +998,7 @@
         "cached": 0.25,
         "output": 50
       },
-      "speed": {
-        "openrouter.uptime_last_30m": 99.64684730961861
-      },
+      "speed": {},
       "rungs": [
         {
           "rung": "opencode:opencode/claude-fable-5-1#low",
@@ -989,7 +1010,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "claude-opus-5-5#low"
+              "from": "claude-opus-5-5#low",
+              "lent": "stand-in"
             },
             "terminal": {
               "value": 55.8,
@@ -1004,7 +1026,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#low"
+              "from": "gpt-6-astra#low",
+              "lent": "stand-in"
             },
             "agentic": {
               "value": 0.1384,
@@ -1046,7 +1069,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "claude-opus-5-5#high"
+              "from": "claude-opus-5-5#medium",
+              "lent": "stand-in"
             },
             "terminal": {
               "value": 55.8,
@@ -1061,7 +1085,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "gpt-6-astra#medium",
+              "lent": "stand-in"
             },
             "agentic": {
               "value": 0.1384,
@@ -1103,7 +1128,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "claude-opus-5-5#high"
+              "from": "claude-opus-5-5#high",
+              "lent": "stand-in"
             },
             "terminal": {
               "value": 55.8,
@@ -1118,7 +1144,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "gpt-6-astra#high",
+              "lent": "stand-in"
             },
             "agentic": {
               "value": 0.1384,
@@ -1155,12 +1182,13 @@
           "enabled": true,
           "scores": {
             "repo_code": {
-              "value": 74,
+              "value": 74.2,
               "benchmark": "DeepSWE 1.1",
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "claude-opus-5-5#xhigh",
+              "lent": "stand-in"
             },
             "terminal": {
               "value": 55.8,
@@ -1175,7 +1203,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "gpt-6-astra#xhigh",
+              "lent": "stand-in"
             },
             "agentic": {
               "value": 0.1384,
@@ -1231,28 +1260,29 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-6-astra#max"
+              "from": "gpt-6-astra#max",
+              "lent": "stand-in"
             },
             "agentic": {
-              "value": 0.1455,
-              "benchmark": "Arena agent, net improvement 2026-09-30",
+              "value": 0.1384,
+              "benchmark": "Arena agent, net improvement 2026-09-27",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-09-30"
+              "date": "2026-09-27"
             },
             "steer": {
-              "value": 0.0895,
-              "benchmark": "Arena agent steerability 2026-09-30",
+              "value": 0.0832,
+              "benchmark": "Arena agent steerability 2026-09-27",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-09-30"
+              "date": "2026-09-27"
             },
             "frontend": {
-              "value": 1749.2436,
-              "benchmark": "Arena WebDev rating 2026-10-01",
+              "value": 1751.4868,
+              "benchmark": "Arena WebDev rating 2026-09-25",
               "confidence": "measured",
               "source": "arena",
-              "date": "2026-10-01"
+              "date": "2026-09-25"
             }
           },
           "treatLike": null,
@@ -1296,9 +1326,7 @@
         "cached": 0.1,
         "output": 5
       },
-      "speed": {
-        "openrouter.uptime_last_30m": 100
-      },
+      "speed": {},
       "rungs": [
         {
           "rung": "claude:claude-haiku-4-5-20251001#default",
@@ -1310,7 +1338,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "claude-sonnet-5#low"
+              "from": "claude-sonnet-5#high",
+              "lent": "stand-in"
             },
             "terminal": {
               "value": 37.3,
@@ -1318,7 +1347,8 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-5.6-sol#high"
+              "from": "gpt-5.6-sol#high",
+              "lent": "stand-in"
             },
             "honesty": {
               "value": 21.8,
@@ -1326,22 +1356,24 @@
               "confidence": "inferred",
               "source": "shipped",
               "date": "2026-09-22",
-              "from": "gpt-5.6-luna#xhigh"
+              "from": "gpt-5.6-luna#high",
+              "lent": "stand-in"
             },
             "agentic": {
-              "value": -0.0735,
-              "benchmark": "Arena agent, net improvement 2026-09-30",
+              "value": 0.0482,
+              "benchmark": "Arena agent, net improvement 2026-09-27",
               "confidence": "inferred",
               "source": "arena",
-              "date": "2026-09-30",
-              "from": "gemini-3-1-pro#default"
+              "date": "2026-09-27",
+              "from": "claude-sonnet-5#high",
+              "lent": "stand-in"
             },
             "frontend": {
-              "value": 1337.9113,
-              "benchmark": "WebDev Arena (Epoch AI) 2026-10-02",
+              "value": 1337.5807,
+              "benchmark": "WebDev Arena (Epoch AI) 2026-09-28",
               "confidence": "calibrated",
               "source": "epoch",
-              "date": "2026-10-02"
+              "date": "2026-09-28"
             }
           },
           "treatLike": null,

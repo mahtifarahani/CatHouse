@@ -26,7 +26,7 @@ With catherd alone, you install Bun, the catherd CLI, the Claude plugin and each
 
 The views in detail:
 
-- **Setup** installs and checks everything catherd needs: Bun, catherd 1.4.0, the selected host's plugin and login, and your worker backends. Codex hosting also checks its app-server daemon. Nothing is installed or started until you click.
+- **Setup** installs and checks everything catherd needs: Bun, catherd 1.5.0, the selected host's plugin and login, and your worker backends. Codex hosting also checks its app-server daemon. Nothing is installed or started until you click.
 - **Chat** runs a catherd task through Claude Code or Codex directly from the CatHouse Activity Bar view. Questions and permission requests appear as cards, and you get a notification when the orchestrator is waiting for you. If Claude hits its session limit, a Switch to Codex action appears beside the message for new tasks. A run can continue after a window reload.
 - **Runs** shows live roles, budget, climbs, routes, landed milestones, each role's reply and debug output, and `state.md`. You can cancel a live role.
 - **Profile** switches the orchestration host between Claude Code and Codex and edits catherd profiles: rungs per role, access, failover, budget, isolation and more. Picking a profile makes it active; each profile change saves itself, with Undo.

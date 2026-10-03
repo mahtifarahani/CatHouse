@@ -20,3 +20,9 @@ catherd 1.1 removed `wait`. A finished role's record now stays *unread* until `r
 - Forbidden from CatHouse: `result`, `cancel`, `peek`, `park`, `answer`, `gate_check`, `gate_pass`, `dispatch`, `run_start`, `route`, `preflight`, `climb`, `ask`, `land`, `set_next`, `record_agent_run`, `write_run_file`.
 - Role replies are read with `read_run_file(run, record.replyPath)`. A role is cancelled with the CLI `catherd runs cancel <run> <name>`, then the live session gets a note that the user did it.
 - The gateway's `catherd mcp` must never see `CLAUDE_CODE_*` session variables (`processEnv()` strips them), or it would count as a session.
+
+## Amendment (2026-10-03): catherd 1.5 coordinator tools and role scope
+
+catherd 1.5 has 38 MCP tools. The new coordinator tools change a run's plan or ownership: `test_push`, `run_pin`, `lane_set`, `owns_add`, `workspace_start`, `workspace_contract`, `workspace_child_start`, `workspace_budget`, `workspace_pause` and `workspace_resume`. They join the forbidden list. The allowlist is unchanged. The read-only `workspace_status` and `workspace_inspect` may be allowed later, once a Workspaces view needs them.
+
+catherd 1.5 treats any process carrying `CATHERD_ROLE=<run>/<name>` as a role and refuses its coordinator calls, `profile_set` included, with `E_ROLE_SCOPE` (catherd `src/domain/role-scope.ts:8,57`, commit `2061e6e`). CatHouse is never a role, so `processEnv()` also strips `CATHERD_ROLE`. Details: `docs/research/catherd-1.5-upgrade.md`.

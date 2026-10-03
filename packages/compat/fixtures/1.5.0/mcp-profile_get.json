@@ -64,7 +64,7 @@
       "antigravity": "metered"
     },
     "jev": {
-      "use": "off"
+      "use": "auto"
     },
     "isolated": {
       "codex": false,
@@ -76,9 +76,7 @@
     },
     "failover": {
       "codex:gpt-6-luna#high": "opencode:opencode-go/gpt-6-luna#high",
-      "codex:gpt-6-sol#medium": "opencode:opencode-go/kimi-k3#max",
-      "codex:gpt-6-sol#high": "claude-code:claude-sonnet-5-5#high",
-      "codex:gpt-6-sol#xhigh": "claude-code:claude-sonnet-5-5#xhigh"
+      "codex:gpt-6-sol#medium": "opencode:opencode-go/kimi-k3#max"
     },
     "budget": {},
     "timeouts": {

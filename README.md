@@ -14,7 +14,7 @@ catherd still does the real work: the selected Claude Code or Codex host orchest
 
 ## What CatHouse adds
 
-- **Guided Setup** — checks Bun, `catherd-cli@1.4.0`, the selected host's plugin and login, and worker backends. For Codex hosting it also checks the app-server daemon. Installers and daemon startup run only after you click.
+- **Guided Setup** — checks Bun, `catherd-cli@1.5.0`, the selected host's plugin and login, and worker backends. For Codex hosting it also checks the app-server daemon. Installers and daemon startup run only after you click.
 - **Chat** — starts a catherd task through the selected Claude Code or Codex host in the Activity Bar. If Claude hits its session limit, the transcript offers a switch to Codex for new tasks. Role completion notices return to the active host's chat.
 - **Human-in-the-loop cards** — answers orchestrator questions and permission requests without leaving the editor, with notifications when a run needs attention.
 - **Runs** — follows live roles, budget, climbs, routes, landed milestones, replies, state, and debug output; live roles can be cancelled from the UI.

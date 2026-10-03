@@ -3,7 +3,7 @@
     "name": "default",
     "objective": "cost",
     "jev": {
-      "use": "off"
+      "use": "auto"
     },
     "billing": {
       "codex": "chatgpt-plan",
@@ -85,9 +85,7 @@
     },
     "failover": {
       "codex:gpt-6-luna#high": "opencode:opencode-go/gpt-6-luna#high",
-      "codex:gpt-6-sol#medium": "opencode:opencode-go/kimi-k3#max",
-      "codex:gpt-6-sol#high": "claude-code:claude-sonnet-5-5#high",
-      "codex:gpt-6-sol#xhigh": "claude-code:claude-sonnet-5-5#xhigh"
+      "codex:gpt-6-sol#medium": "opencode:opencode-go/kimi-k3#max"
     },
     "budget": {},
     "timeouts": {
@@ -117,9 +115,9 @@
     {
       "from": "codex:gpt-6-luna#high",
       "to": "opencode:opencode-go/gpt-6-luna#high",
-      "inferred": false,
-      "via": null,
-      "note": null
+      "inferred": true,
+      "via": "gpt-5.6-luna#high",
+      "note": "agentic, steer borrowed from gpt-5.6-luna#high"
     },
     {
       "from": "codex:gpt-6-sol#medium",
@@ -127,20 +125,6 @@
       "inferred": true,
       "via": "gpt-6-sol#medium",
       "note": "scores borrowed from gpt-6-sol#medium"
-    },
-    {
-      "from": "codex:gpt-6-sol#high",
-      "to": "claude-code:claude-sonnet-5-5#high",
-      "inferred": true,
-      "via": null,
-      "note": null
-    },
-    {
-      "from": "codex:gpt-6-sol#xhigh",
-      "to": "claude-code:claude-sonnet-5-5#xhigh",
-      "inferred": true,
-      "via": null,
-      "note": null
     }
   ]
 }

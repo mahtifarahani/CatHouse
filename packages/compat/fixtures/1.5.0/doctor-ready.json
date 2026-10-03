@@ -1,0 +1,185 @@
+{
+  "host": {
+    "host": "claude-code",
+    "conflict": null,
+    "session": null
+  },
+  "queue": null,
+  "push": null,
+  "ready": true,
+  "version": "1.5.0",
+  "checks": [
+    {
+      "id": "bun",
+      "label": "Bun",
+      "state": "ok",
+      "word": "ready",
+      "detail": "1.4.2"
+    },
+    {
+      "id": "config",
+      "label": "config",
+      "state": "ok",
+      "word": "ready",
+      "detail": "active profile mahdi-routine"
+    },
+    {
+      "id": "profile",
+      "label": "profile mahdi-routine",
+      "state": "warn",
+      "word": "warning",
+      "detail": "roles.writer.access: writer runs full; catherd's default for it is workspace-write (and more)",
+      "fix": "catherd profile validate mahdi-routine --host claude-code"
+    },
+    {
+      "id": "backend:codex",
+      "label": "codex",
+      "state": "ok",
+      "word": "ready",
+      "detail": "0.160.0 · ChatGPT login · 8 models"
+    },
+    {
+      "id": "backend:claude-code",
+      "label": "claude-code",
+      "state": "ok",
+      "word": "ready",
+      "detail": "2.1.283 · 5 models"
+    },
+    {
+      "id": "backend:opencode",
+      "label": "opencode",
+      "state": "ok",
+      "word": "ready",
+      "detail": "2.0.18 · 10 models"
+    },
+    {
+      "id": "backend:cursor",
+      "label": "cursor",
+      "state": "ok",
+      "word": "ready",
+      "detail": "2026.09.28 · Cursor login · 131 models"
+    },
+    {
+      "id": "backend:grok",
+      "label": "grok",
+      "state": "warn",
+      "word": "missing",
+      "detail": "grok is not on PATH (a failover stand-in uses it)",
+      "fix": "curl -fsSL https://x.ai/cli/install.sh | bash"
+    },
+    {
+      "id": "backend:antigravity",
+      "label": "antigravity",
+      "state": "skip",
+      "word": "missing",
+      "detail": "agy is not on PATH (no profile uses it)",
+      "fix": "curl -fsSL https://antigravity.google/cli/install.sh | bash (it installs ~/.local/bin/agy: put that dir on PATH), or brew install --cask antigravity-cli"
+    },
+    {
+      "id": "role-mcp:mahdi-routine:codex",
+      "label": "mahdi-routine codex role MCP",
+      "state": "info",
+      "word": "configured",
+      "detail": "architect, verifier, worker, reviewer, ui-reviewer, artist, writer, researcher: scoped catherd_role exposes read_run_file, read_knowledge, write_run_file, gate_check, gate_pass; per-tool approval_mode=approve. Model invocation not tested; managed policy may still deny tools. Starts in 87 ms (limit 30 s)."
+    },
+    {
+      "id": "jev",
+      "label": "Jev",
+      "state": "ok",
+      "word": "ready",
+      "detail": "the key answers"
+    },
+    {
+      "id": "sources",
+      "label": "sources",
+      "state": "ok",
+      "word": "fresh",
+      "detail": "models-dev 12 h, openrouter-models 12 h, openrouter-endpoints 12 h, litellm 12 h, arena 12 h, vectara 12 h, epoch 12 h, artificial-analysis 12 h; Artificial Analysis key set; stand-ins to confirm: composer-2-5#default (repo_code, terminal, honesty, agentic, frontend), grok-4-7#low (repo_code, terminal, honesty), grok-4-7#medium (repo_code, terminal, honesty), grok-4-7#high (repo_code, terminal, honesty), claude-fable-5-1#medium (repo_code, honesty)"
+    },
+    {
+      "id": "plugin",
+      "label": "Claude Code plugin",
+      "state": "ok",
+      "word": "ready",
+      "detail": "1.5.0"
+    },
+    {
+      "id": "agents",
+      "label": "Claude agents",
+      "state": "ok",
+      "word": "ready",
+      "detail": "1 linked"
+    },
+    {
+      "id": "mcp",
+      "label": "MCP server",
+      "state": "ok",
+      "word": "ready",
+      "detail": "answers tools/list with 38 tools"
+    },
+    {
+      "id": "locks",
+      "label": "heavy-lock dir",
+      "state": "ok",
+      "word": "ready",
+      "detail": "/Users/dev/.local/share/catherd/locks"
+    },
+    {
+      "id": "caches",
+      "label": "toolchain caches",
+      "state": "ok",
+      "word": "ready",
+      "detail": "in every workspace-write worker's writable roots: /Users/dev/Library/pnpm/store/v10, /Users/dev/Library/pnpm/store, /Users/dev/.bun/install/cache, /Users/dev/.npm"
+    },
+    {
+      "id": "access:cursor",
+      "label": "cursor worker access",
+      "state": "warn",
+      "word": "blocked",
+      "detail": "in Cursor's sandbox (cursor-agent sandbox run), a worker cannot: lock-dir write (Error: command failed unexpectedly.); loopback bind (Error: command failed unexpectedly.); outbound HTTPS (Error: command failed unexpectedly.); docker version (Error: command failed unexpectedly.)",
+      "fix": "lock-dir write: a native Cursor worker writes only where ~/.cursor/sandbox.json or the repo's .cursor/sandbox.json lets it: add the directory to additionalReadwritePaths there, or isolate cursor (harness.cursor.isolated), whose sandbox.json catherd writes\nloopback bind: Cursor's sandbox blocks this bind: allow it in ~/.cursor/sandbox.json's networkPolicy, or isolate cursor\noutbound HTTPS: Cursor's sandbox reaches only the domains networkPolicy allows: add the registry to networkPolicy.allow in ~/.cursor/sandbox.json, or isolate cursor\ndocker version: Cursor's sandbox cannot reach the Docker socket: run the Docker checks in the verifier (full access), or give the role full access"
+    },
+    {
+      "id": "sandbox:codex",
+      "label": "codex sandbox",
+      "state": "ok",
+      "word": "ready",
+      "detail": "codex sandbox"
+    },
+    {
+      "id": "access:codex",
+      "label": "codex worker access",
+      "state": "ok",
+      "word": "ready",
+      "detail": "lock-dir write, temp write, loopback bind, outbound HTTPS, docker version in codex sandbox"
+    },
+    {
+      "id": "access:full",
+      "label": "full access",
+      "state": "warn",
+      "word": "warning",
+      "detail": "no sandbox for: writer (mahdi-routine); as shipped: verifier (mahdi-routine), ui-reviewer (mahdi-routine)"
+    },
+    {
+      "id": "isolation:cursor",
+      "label": "cursor isolation",
+      "state": "warn",
+      "word": "weak",
+      "detail": "native Cursor loads your Claude Code hooks, skills, plugins and permission rules, and your Cursor User Rules; isolation cannot remove the User Rules"
+    },
+    {
+      "id": "isolation:grok",
+      "label": "grok isolation",
+      "state": "warn",
+      "word": "weak",
+      "detail": "native grok loads your Claude Code plugins, agents, skills, hooks and permission rules, and your Cursor rules and MCP"
+    },
+    {
+      "id": "credentials",
+      "label": "credentials.json",
+      "state": "ok",
+      "word": "ready",
+      "detail": "mode 600"
+    }
+  ]
+}

@@ -108,6 +108,9 @@ export const zh: Partial<Record<StringKey, string>> = {
   "runs.session": "会话 {name}",
   "runs.sessionLive": "会话 {name}（活跃）",
   "runs.continuedIn": "在 {name} 中继续",
+  "runs.supersededBy": "已被 {id} 取代",
+  "runs.waiting": "{n} 个结果等待编排器",
+  "runs.waitingStalled": "已停滞：{n} 个结果等待编排器",
   "runs.questionsTitle": "搁置的问题",
   "runs.questionsHelp":
     "catherd 搁置了这些里程碑以等待您的回答；其他里程碑会继续。请在编排器聊天中回答。",

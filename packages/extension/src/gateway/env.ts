@@ -29,6 +29,9 @@ const STRIPPED_PREFIXES = [
   "ANTHROPIC_BASE_URL",
   "CODEX_THREAD_ID",
   "CODEX_SESSION_ID",
+  // catherd 1.5 treats a process carrying CATHERD_ROLE as a role of that run and refuses profile_set
+  // with E_ROLE_SCOPE. CatHouse is never a role, so a value inherited from a role's shell must not leak.
+  "CATHERD_ROLE",
 ];
 
 let loginPath: Promise<string> | undefined;

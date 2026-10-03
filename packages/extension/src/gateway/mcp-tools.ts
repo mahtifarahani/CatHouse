@@ -36,6 +36,17 @@ export const ORCHESTRATOR_TOOLS = [
   "set_next",
   "record_agent_run",
   "write_run_file",
+  // 1.5 coordinator tools (a role gets E_ROLE_SCOPE for them)
+  "test_push",
+  "run_pin",
+  "lane_set",
+  "owns_add",
+  "workspace_start",
+  "workspace_contract",
+  "workspace_child_start",
+  "workspace_budget",
+  "workspace_pause",
+  "workspace_resume",
 ] as const;
 
 export function isAllowedTool(name: string): name is AllowedTool {

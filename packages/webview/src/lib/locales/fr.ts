@@ -120,6 +120,9 @@ export const fr: Partial<Record<StringKey, string>> = {
   "runs.session": "session {name}",
   "runs.sessionLive": "session {name} (en direct)",
   "runs.continuedIn": "continué dans {name}",
+  "runs.supersededBy": "remplacé par {id}",
+  "runs.waiting": "{n} résultats attendent l'orchestrateur",
+  "runs.waitingStalled": "bloqué : {n} résultats attendent l'orchestrateur",
   "runs.questionsTitle": "Questions en attente",
   "runs.questionsHelp":
     "catherd a mis en attente ces étapes pour votre réponse ; les autres étapes continuent. Répondez dans le chat de l'orchestrateur.",

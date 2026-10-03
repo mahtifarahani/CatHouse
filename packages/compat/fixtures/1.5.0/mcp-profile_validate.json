@@ -1,0 +1,10 @@
+{
+  "valid": true,
+  "errors": [],
+  "warnings": [
+    {
+      "path": "roles.worker.rungs",
+      "message": "no worker rung clears repo_code logic, hard; terminal build, logic, hard; ui logic, hard; prose logic, hard; research logic, hard: those lanes start at the default rung and climb only onto rungs at least as strong (route names the closest)"
+    }
+  ]
+}

@@ -16,9 +16,9 @@ curl -fsSL https://bun.sh/install | bash
 ```
 
 ```bash
-# catherd 1.4.0: installs the global `catherd` too, syncs the public model sources,
+# catherd 1.5.0: installs the global `catherd` too, syncs the public model sources,
 # and keeps an existing profile. The first bunx resolve is silent ~30 s.
-bunx catherd-cli@1.4.0 init --no-input --plain </dev/null
+bunx catherd-cli@1.5.0 init --no-input --plain </dev/null
 ```
 
 ```bash
@@ -35,7 +35,7 @@ codex login
 
 ```bash
 # Verify: exit 3 means not ready; read each failing row's fix
-bunx catherd-cli@1.4.0 doctor
+bunx catherd-cli@1.5.0 doctor
 ```
 
 ```bash
@@ -49,7 +49,7 @@ Once CatHouse's Setup screen exists, it performs these steps from buttons. Use t
 
 ### Optional Codex orchestrator
 
-Select **Profile → Orchestrator → Codex**. This preference is global to CatHouse; role models remain in catherd's profile. The Codex path needs CLI >= 0.159.2, `codex login`, and the native `catherd@catherd` plugin at 1.4.0. Setup offers update/install/login actions and runs them only after a click. Equivalent manual dev-machine commands:
+Select **Profile → Orchestrator → Codex**. This preference is global to CatHouse; role models remain in catherd's profile. The Codex path needs CLI >= 0.159.2, `codex login`, and the native `catherd@catherd` plugin at 1.5.0. Setup offers update/install/login actions and runs them only after a click. Equivalent manual dev-machine commands:
 
 ```bash
 npm i -g @openai/codex@latest
@@ -109,7 +109,7 @@ pnpm build
 | Symptom | Cause | Fix |
 |---|---|---|
 | `ssh: connect to host github.com port 22` on plugin install | a catherd 1.0 marketplace clone (`git-subdir` over SSH) | `claude plugin marketplace update catherd` (1.1+ uses HTTPS), or pass the `GIT_CONFIG_*` HTTPS env (`url.https://github.com/.insteadOf git@github.com:`) |
-| Setup: catherd "found 1.3.0, CatHouse needs 1.4.0" / plugin "outdated" | machine still on an older catherd | click **Install and set up catherd**, then **Update plugin**; start a new chat |
+| Setup: catherd "found 1.4.0, CatHouse needs 1.5.0" / plugin "outdated" | machine still on an older catherd | click **Install and set up catherd**, then **Update plugin**; start a new chat |
 | the chat goes idle right after a role is dispatched | expected since catherd 1.1: roles report back by push | wait for the "catherd reported back" divider; you can chat meanwhile |
 | doctor `push` row "no session" | doctor ran outside a Claude Code session (always the case from CatHouse) | nothing to fix; run `catherd doctor` from a Claude Code session's Bash tool to test push |
 | `error E_RUNTIME_TOO_OLD` | Bun < 1.4 | `bun upgrade` |

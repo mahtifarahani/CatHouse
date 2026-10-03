@@ -6,8 +6,8 @@
   },
   "queue": null,
   "push": null,
-  "ready": true,
-  "version": "1.4.0",
+  "ready": false,
+  "version": "1.5.0",
   "checks": [
     {
       "id": "bun",
@@ -26,31 +26,31 @@
     {
       "id": "profile",
       "label": "profile default",
-      "state": "warn",
-      "word": "warning",
-      "detail": "failover.codex:gpt-6-sol#high: stand-in to confirm: claude-sonnet-5-5#high has no repo_code, terminal, honesty or agentic value of its own; routing uses gpt-6-sol#high's repo_code, gpt-6-sol#high's terminal, gpt-6-sol#high's honesty, gpt-6-sol#high's agentic (inferred) (and more)",
-      "fix": "confirm or replace it: catherd catalog treat-like --suggest claude-code:claude-sonnet-5-5#high, then catherd catalog treat-like claude-code:claude-sonnet-5-5#high <a rung>"
+      "state": "ok",
+      "word": "ready",
+      "detail": "valid"
     },
     {
       "id": "backend:codex",
       "label": "codex",
       "state": "ok",
       "word": "ready",
-      "detail": "0.158.0 · ChatGPT login · 7 models"
+      "detail": "0.160.0 · ChatGPT login · 8 models"
     },
     {
       "id": "backend:claude-code",
       "label": "claude-code",
-      "state": "ok",
-      "word": "ready",
-      "detail": "2.1.283 · 5 models"
+      "state": "skip",
+      "word": "not logged in",
+      "detail": "claude is not logged in (no profile uses it)",
+      "fix": "claude auth login"
     },
     {
       "id": "backend:opencode",
       "label": "opencode",
       "state": "ok",
       "word": "ready",
-      "detail": "2.0.18 · 9 models"
+      "detail": "2.0.18 · 10 models"
     },
     {
       "id": "backend:cursor",
@@ -76,25 +76,35 @@
       "fix": "curl -fsSL https://antigravity.google/cli/install.sh | bash (it installs ~/.local/bin/agy: put that dir on PATH), or brew install --cask antigravity-cli"
     },
     {
+      "id": "role-mcp:default:codex",
+      "label": "default codex role MCP",
+      "state": "info",
+      "word": "configured",
+      "detail": "worker, reviewer, ui-reviewer, artist, writer, researcher: scoped catherd_role exposes read_run_file, read_knowledge, write_run_file; per-tool approval_mode=approve. Model invocation not tested; managed policy may still deny tools. Starts in 84 ms (limit 30 s)."
+    },
+    {
       "id": "jev",
       "label": "Jev",
-      "state": "skip",
-      "word": "off",
-      "detail": "off in the profile"
+      "state": "warn",
+      "word": "no key",
+      "detail": "optional: routing uses each lane's Kind and Difficulty instead",
+      "fix": "catherd init, or export TYPESAFE_API_KEY=<key>"
     },
     {
       "id": "sources",
       "label": "sources",
-      "state": "ok",
-      "word": "fresh",
-      "detail": "models-dev 6 min, openrouter-models 6 min, openrouter-endpoints 6 min, litellm 6 min, arena 6 min, vectara 6 min, epoch 6 min; no Artificial Analysis key; stand-ins to confirm: claude-sonnet-5-5#high (repo_code, terminal, honesty, agentic), claude-sonnet-5-5#xhigh (repo_code, terminal, honesty, agentic)"
+      "state": "info",
+      "word": "not synced",
+      "detail": "routing uses the shipped scores; no Artificial Analysis key",
+      "fix": "catherd catalog sync"
     },
     {
       "id": "plugin",
       "label": "Claude Code plugin",
-      "state": "ok",
-      "word": "ready",
-      "detail": "1.4.0"
+      "state": "fail",
+      "word": "missing",
+      "detail": "not installed in Claude Code",
+      "fix": "claude plugin marketplace add 47vigen/catherd && claude plugin install catherd@catherd"
     },
     {
       "id": "agents",
@@ -108,14 +118,21 @@
       "label": "MCP server",
       "state": "ok",
       "word": "ready",
-      "detail": "answers tools/list with 26 tools"
+      "detail": "answers tools/list with 38 tools"
     },
     {
       "id": "locks",
       "label": "heavy-lock dir",
       "state": "ok",
       "word": "ready",
-      "detail": "/Users/dev/.local/share/catherd/locks"
+      "detail": "/Users/dev/.local/share/catherd/data/locks"
+    },
+    {
+      "id": "caches",
+      "label": "toolchain caches",
+      "state": "ok",
+      "word": "ready",
+      "detail": "in every workspace-write worker's writable roots: /Users/dev/Library/pnpm/store/v10, /Users/dev/Library/pnpm/store, /Users/dev/.bun/install/cache, /Users/dev/.npm"
     },
     {
       "id": "sandbox:codex",
@@ -137,13 +154,6 @@
       "state": "ok",
       "word": "ready",
       "detail": "lock-dir write, temp write, loopback bind, outbound HTTPS, docker version in an unsandboxed shell (opencode has no sandbox)"
-    },
-    {
-      "id": "access:claude-code",
-      "label": "claude-code worker access",
-      "state": "ok",
-      "word": "ready",
-      "detail": "lock-dir write, temp write, loopback bind, outbound HTTPS, docker version in an unsandboxed shell (Claude Code's sandbox is off)"
     },
     {
       "id": "access:full",

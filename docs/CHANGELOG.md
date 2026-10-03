@@ -4,6 +4,8 @@ GitHub Release notes are the version sections below. Keep unfinished work under 
 
 ## Unreleased
 
+- **catherd 1.5.0.** CatHouse now pins catherd-cli 1.5.0 and plugin 1.5.0. Setup offers the update ("found 1.4.0, CatHouse needs 1.5.0") and then the plugin update. Runs rows show when finished results are waiting for the orchestrator (and when that wait has stalled) and which run superseded a closed run. Profile saves keep working if CatHouse inherits a catherd role variable from its shell.
+
 ## [0.4.4] - 2026-10-02
 
 - **Fix native Codex chat in Cursor.** Connect to the managed daemon through its Unix WebSocket, select the installed catherd skill by its qualified name, and show the Codex response in Chat. A failed start keeps the message in the composer and transcript and displays a readable error instead of an empty red bar.

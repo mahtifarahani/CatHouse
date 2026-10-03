@@ -223,7 +223,7 @@ describe("SessionController", () => {
       kind: "init" as const,
       sessionId: "s1",
       claudeCodeVersion: "2.1.283",
-      catherdPlugin: { name: "catherd", path: "/p", version: "1.4.0" },
+      catherdPlugin: { name: "catherd", path: "/p", version: "1.5.0" },
       catherdMcpStatus: "connected",
       pluginErrors: [],
       agents: [],

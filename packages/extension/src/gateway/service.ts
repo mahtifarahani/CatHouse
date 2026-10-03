@@ -140,6 +140,10 @@ export class CatherdGateway {
       roleRuns: r.roleRuns,
       session: r.session ? { name: r.session.name, live: r.session.live } : null,
       continuedIn: r.continuedIn,
+      waiting: r.waiting
+        ? { seconds: r.waiting.seconds, stalled: r.waiting.stalled, unread: r.waiting.unread }
+        : null,
+      supersededBy: r.supersededBy ?? null,
     }));
     await Promise.all(
       runs.slice(0, 10).map(async (r) => {

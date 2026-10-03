@@ -19,7 +19,7 @@ The Codex thread uses the installed catherd skill from `skills/list`, loaded as 
 ## Invariants and traps
 
 - Never switch while a session is starting or running. The Profile control disables itself and the host rejects a raced request.
-- The Codex Setup gate requires CLI >= 0.159.2, a logged-in account, plugin version 1.4.0, and a running app-server daemon at >= 0.159.2. Installers run only after a Setup click. Claude's SDK, plugin and login gate the Claude path only.
+- The Codex Setup gate requires CLI >= 0.159.2, a logged-in account, plugin version 1.5.0 (the pinned catherd version), and a running app-server daemon at >= 0.159.2. Installers run only after a Setup click. Claude's SDK, plugin and login gate the Claude path only.
 - Codex's daemon may outlive the CatHouse panel. Closing a CatHouse session interrupts an active turn before closing its WebSocket; it does not stop the user's daemon.
 - catherd 1.4.0 profiles with explicit native `claude:` architect/verifier rungs are invalid under Codex. The user must choose valid Codex rungs in Profile or use catherd's reviewed host-default reset. CatHouse does not rewrite profiles to make this switch.
 - `doctor` remains user-triggered because it has side effects. Its `push-capability` row only establishes that the CLI exposes the queue command; a live pushed role completion still needs a separate run check.

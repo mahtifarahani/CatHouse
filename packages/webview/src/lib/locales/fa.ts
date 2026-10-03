@@ -115,6 +115,9 @@ export const fa: Partial<Record<StringKey, string>> = {
   "runs.session": "نشست {name}",
   "runs.sessionLive": "نشست {name} (زنده)",
   "runs.continuedIn": "ادامه‌یافته در {name}",
+  "runs.supersededBy": "جایگزین‌شده با {id}",
+  "runs.waiting": "{n} نتیجه منتظر ارکستراتور",
+  "runs.waitingStalled": "متوقف: {n} نتیجه منتظر ارکستراتور",
   "runs.questionsTitle": "سوالات پارک‌شده",
   "runs.questionsHelp":
     "catherd این نقاط عطف را برای پاسخ شما پارک کرده است؛ سایر نقاط عطف ادامه می‌یابند. در چت هماهنگ‌کننده پاسخ دهید.",

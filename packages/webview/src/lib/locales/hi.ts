@@ -112,6 +112,9 @@ export const hi: Partial<Record<StringKey, string>> = {
   "runs.session": "सत्र {name}",
   "runs.sessionLive": "सत्र {name} (लाइव)",
   "runs.continuedIn": "{name} में जारी रखा गया",
+  "runs.supersededBy": "{id} द्वारा प्रतिस्थापित",
+  "runs.waiting": "{n} परिणाम ऑर्केस्ट्रेटर की प्रतीक्षा में",
+  "runs.waitingStalled": "रुका हुआ: {n} परिणाम ऑर्केस्ट्रेटर की प्रतीक्षा में",
   "runs.questionsTitle": "पार्क किए गए प्रश्न",
   "runs.questionsHelp":
     "catherd ने आपके उत्तर के लिए इन मील के पत्थरों को पार्क किया; अन्य मील के पत्थर जारी रहते हैं। ऑर्केस्ट्रेटर चैट में उत्तर दें।",

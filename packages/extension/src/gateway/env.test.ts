@@ -15,4 +15,13 @@ describe("processEnv", () => {
       delete process.env.CLAUDE_CODE_SESSION_ID;
     }
   });
+
+  it("strips a leaked catherd role scope", async () => {
+    process.env.CATHERD_ROLE = "20261003-120000-x/worker-m1";
+    try {
+      expect((await processEnv()).CATHERD_ROLE).toBeUndefined();
+    } finally {
+      delete process.env.CATHERD_ROLE;
+    }
+  });
 });

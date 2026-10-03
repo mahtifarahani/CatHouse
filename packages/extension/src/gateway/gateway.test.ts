@@ -15,7 +15,7 @@ import {
 
 const fixture = (name: string) =>
   readFileSync(
-    fileURLToPath(new URL(`../../../compat/fixtures/1.4.0/${name}`, import.meta.url)),
+    fileURLToPath(new URL(`../../../compat/fixtures/1.5.0/${name}`, import.meta.url)),
     "utf8",
   );
 
@@ -95,7 +95,7 @@ describe("CatherdCli", () => {
     });
     const report = await cli.doctor();
     expect(report.ready).toBe(false);
-    expect(seen[0]).toEqual(["bunx", "catherd-cli@1.4.0", "doctor", "--json"]);
+    expect(seen[0]).toEqual(["bunx", "catherd-cli@1.5.0", "doctor", "--json"]);
   });
 
   it("accepts 1.1's info rows in doctor", async () => {
@@ -105,7 +105,7 @@ describe("CatherdCli", () => {
       runner: fakeRunner({ code: 0, stdout: fixture("doctor-ready.json") }, []),
     });
     const report = await cli.doctor();
-    expect(report.checks.find((c) => c.id === "access:full")?.state).toBe("info");
+    expect(report.checks.some((c) => c.state === "info")).toBe(true);
   });
 
   it("turns stderr into CatherdError", async () => {

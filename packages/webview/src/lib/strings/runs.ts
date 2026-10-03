@@ -11,6 +11,9 @@ export const STRINGS = {
   "runs.session": "session {name}",
   "runs.sessionLive": "session {name} (live)",
   "runs.continuedIn": "continued in {name}",
+  "runs.supersededBy": "superseded by {id}",
+  "runs.waiting": "{n} results waiting for the orchestrator",
+  "runs.waitingStalled": "stalled: {n} results waiting for the orchestrator",
   "runs.questionsTitle": "Parked questions",
   "runs.questionsHelp":
     "catherd parked these milestones for your answer; the other milestones go on. Answer in the orchestrator chat.",

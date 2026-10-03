@@ -118,6 +118,9 @@ export const es: Partial<Record<StringKey, string>> = {
   "runs.session": "sesión {name}",
   "runs.sessionLive": "sesión {name} (en vivo)",
   "runs.continuedIn": "continuado en {name}",
+  "runs.supersededBy": "reemplazado por {id}",
+  "runs.waiting": "{n} resultados esperan al orquestador",
+  "runs.waitingStalled": "detenido: {n} resultados esperan al orquestador",
   "runs.questionsTitle": "Preguntas estacionadas",
   "runs.questionsHelp":
     "catherd estacionó estos hitos para su respuesta; los otros hitos continúan. Responde en el chat del orquestador.",

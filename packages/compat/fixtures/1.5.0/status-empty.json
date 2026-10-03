@@ -1,0 +1,12 @@
+{
+  "paused": [],
+  "host": {
+    "host": "claude-code",
+    "conflict": null,
+    "session": null
+  },
+  "queue": null,
+  "version": "1.5.0",
+  "runs": [],
+  "warnings": []
+}

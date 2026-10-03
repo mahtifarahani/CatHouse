@@ -37,7 +37,7 @@ Compat pins live in `packages/compat/src/index.ts` (`PINNED`, `SUPPORTED`, `find
 
 - Only the allowlisted MCP tools are ever called. A unit test proves no orchestrator tool is allowed.
 - **Never mark a record read and never claim a run** (catherd 1.1+). catherd pushes a finished role only to the session that owns the run, and only while its record is unread. MCP `result` and `cancel` mark records read, and `peek` claims the run, so the gateway uses neither. The gateway's own `catherd mcp` gets no `CLAUDE_CODE_*` session variables (`processEnv()` strips them), so it never owns a run.
-- Every catherd invocation uses the pinned version (`bunx catherd-cli@<PINNED.catherd>`, now 1.4.0), the same one the plugin's MCP server runs.
+- Every catherd invocation uses the pinned version (`bunx catherd-cli@<PINNED.catherd>`, now 1.5.0), the same one the plugin's MCP server runs.
 - `doctor` runs only on demand (it has side effects; `docs/research/catherd-doctor-setup.md`).
 - Secrets never go to logs. The gateway never logs env values.
 
@@ -45,7 +45,7 @@ Compat pins live in `packages/compat/src/index.ts` (`PINNED`, `SUPPORTED`, `find
 
 - Unit: `gateway.test.ts`. It covers stderr parsing on a real fixture, the allowlist (including `result`, `cancel`, `peek`), `decodeToolResult`, every fixture against its schema, doctor `info` rows, and `CatherdCli` with a fake runner (pinning, doctor exit 3, stderr → CatherdError, contract break, missing bunx). `service.test.ts` adds: reply read from `replyPath` with no `result` call, cancel through the CLI with no MCP call, runs list with its session, and 1.2 `inferred` scores not counted as scored.
 - Live contract (opt-in): `CATHOUSE_CONTRACT=1 pnpm test`. It runs against the real catherd on the machine: CLI version, MCP handshake, `status`/`profile_get`/`profile_validate`/`catalog_query` decoding, `profile_set` with an invalid patch (must return `saved: false` and write nothing), `E_RUN_NOT_FOUND` from `read_run_file`, and forbidden tools. With `CATHOUSE_CONTRACT_RUN_REPO=<repo with a run>` it also reads a real run and a reply. `CATHOUSE_RECORD=1` refreshes the fixtures (home dir redacted to `/Users/dev`; redact any scratch repo path by hand). Last run: 7/7 on 2026-10-01 against 1.3.0.
-- Fixtures: `packages/compat/fixtures/1.4.0/` (MCP, doctor and profile show re-recorded 2026-10-02 against 1.4.0 with `CATHERD_ORCHESTRATION_HOST=claude-code`; `gw-run-detail.json` and the empty status/runs/stderr fixtures carried over from 1.2.0): doctor ready/not-ready (clean env, so `push` is `skip`), status/runs list (empty), profile list/show, MCP status/profile_get/profile_validate/catalog_query/profile_set-refused, stderr E_RUN_NOT_FOUND, and `gw-run-detail.json` (a real 1.2 run through the gateway). The CLI fixtures are captured by hand, with a clean env (no `CLAUDE_CODE_*`) and a temporary `CATHERD_HOME` for the not-ready doctor.
+- Fixtures: `packages/compat/fixtures/1.5.0/` (re-recorded 2026-10-03 against 1.5.0 with `CATHERD_ORCHESTRATION_HOST=claude-code`: every fixture except `gw-run-detail.json`, which carried over from 1.2.0; everything but `doctor-ready.json` comes from an isolated `CATHERD_HOME`/`CLAUDE_CONFIG_DIR`/`CATHERD_CLAUDE_AGENTS_DIR` with a fresh default profile and `CATHERD_NO_SYNC=1`): doctor ready/not-ready (clean env, so `push` is `skip`), status/runs list (empty), profile list/show, MCP status/profile_get/profile_validate/catalog_query/profile_set-refused, stderr E_RUN_NOT_FOUND, and `gw-run-detail.json` (a real 1.2 run through the gateway). The CLI fixtures are captured by hand, with a clean env (no `CLAUDE_CODE_*`) and a temporary `CATHERD_HOME` for the not-ready doctor.
 
 ## Contract details found live (1.0.0, still true in 1.2.0)
 
@@ -53,7 +53,7 @@ Compat pins live in `packages/compat/src/index.ts` (`PINNED`, `SUPPORTED`, `find
 - `catalog_query` returns `name: null` for models known only from a backend's listing.
 - `read_run_file` can read catherd's own run files (`routes.jsonl`, `runs.jsonl`, `state.md`, `meta.json`), so CatHouse reads nothing from disk (ADR 0007). In 1.2 this also covers each record's reply (`dispatches/<name>/…`, the record's `replyPath`).
 
-## Contract details found live (1.2.0, still true in 1.4.0)
+## Contract details found live (1.2.0, still true in 1.5.0)
 
 - `doctor --json` rows can be `state: "info"`; without that in the schema, the whole report failed with `E_CONTRACT`.
 - `runs list --json` rows carry `session {sessionId, hostSessionId, name, live}`. The gateway passes only `{name, live}` to the webview.

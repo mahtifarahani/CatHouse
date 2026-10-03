@@ -14,10 +14,10 @@ import { type ReadinessSnapshot, SetupService } from "./service";
 
 const ready: SetupFacts = {
   bun: { version: "1.4.2" },
-  catherd: { version: "1.4.0" },
+  catherd: { version: "1.5.0" },
   catherdConfig: { exists: true, path: "/c/config.json" },
   sdkBinary: { path: "/sdk/claude", version: "2.1.283" },
-  plugin: { version: "1.4.0", installPath: "/p" },
+  plugin: { version: "1.5.0", installPath: "/p" },
   claudeLogin: { loggedIn: true, method: "claude.ai", email: "a@b" },
   codex: {},
   codexDaemon: { running: false },
@@ -26,7 +26,7 @@ const ready: SetupFacts = {
   claudeCli: {},
   doctor: {
     ready: true,
-    version: "1.4.0",
+    version: "1.5.0",
     checks: [
       { id: "bun", label: "Bun", state: "ok", word: "ready", detail: "1.4.2" },
       {
@@ -65,7 +65,7 @@ describe("evaluate", () => {
         claudeLogin: { loggedIn: false },
         codex: { version: "0.159.2", loggedIn: true },
         codexDaemon: { running: true, version: "0.159.2" },
-        codexPlugin: { version: "1.4.0" },
+        codexPlugin: { version: "1.5.0" },
       },
       PINNED,
       "codex",
@@ -89,7 +89,7 @@ describe("evaluate", () => {
       {
         ...ready,
         codex: { version: "0.159.2", loggedIn: true },
-        codexPlugin: { version: "1.4.0" },
+        codexPlugin: { version: "1.5.0" },
       },
       PINNED,
       "codex",
@@ -158,7 +158,7 @@ describe("evaluate", () => {
         codexPlugin: {},
         doctor: {
           ready: false,
-          version: "1.4.0",
+          version: "1.5.0",
           checks: [
             {
               id: "backend:codex",
@@ -213,7 +213,7 @@ describe("actions", () => {
   it("pins catherd and opens logins in a terminal", () => {
     expect(stepsFor("init-catherd", ctx)[0]).toMatchObject({
       cmd: "bunx",
-      args: ["catherd-cli@1.4.0", "init", "--no-input", "--plain", "--host", "claude-code"],
+      args: ["catherd-cli@1.5.0", "init", "--no-input", "--plain", "--host", "claude-code"],
     });
     expect(stepsFor("login-claude", ctx)[0]).toMatchObject({
       kind: "terminal",
@@ -286,7 +286,7 @@ describe("detect", () => {
     const f = await detect(detectDeps(run, home));
     expect(calls.find((c) => c.cmd === "bunx")?.args).toEqual([
       "--no-install",
-      "catherd-cli@1.4.0",
+      "catherd-cli@1.5.0",
       "--version",
     ]);
     expect(f.catherd).toEqual({});
@@ -308,20 +308,20 @@ describe("detect", () => {
       join(home, "claude", "plugins", "installed_plugins.json"),
       JSON.stringify({
         version: 2,
-        plugins: { "catherd@catherd": [{ scope: "user", installPath: "/p", version: "1.4.0" }] },
+        plugins: { "catherd@catherd": [{ scope: "user", installPath: "/p", version: "1.5.0" }] },
       }),
     );
     const run = fakeRun(({ cmd, args }) =>
       cmd === "bunx"
-        ? { stdout: "1.4.0\n" }
+        ? { stdout: "1.5.0\n" }
         : args.includes("auth")
           ? { stdout: '{"loggedIn":true,"authMethod":"claude.ai"}' }
           : { stdout: "1.4.2" },
     );
     const f = await detect(detectDeps(run, home));
-    expect(f.catherd.version).toBe("1.4.0");
+    expect(f.catherd.version).toBe("1.5.0");
     expect(f.catherdConfig.exists).toBe(true);
-    expect(f.plugin).toEqual({ installPath: "/p", version: "1.4.0" });
+    expect(f.plugin).toEqual({ installPath: "/p", version: "1.5.0" });
     expect(f.claudeLogin).toMatchObject({ loggedIn: true, method: "claude.ai" });
   });
 });
@@ -349,7 +349,7 @@ describe("SetupService", () => {
         code: 0,
         signal: null,
         timedOut: false,
-        stdout: cmd === "bunx" ? "1.4.0" : "1.4.2",
+        stdout: cmd === "bunx" ? "1.5.0" : "1.4.2",
         stderr: "",
       };
     };
@@ -392,13 +392,13 @@ describe("SetupService", () => {
       JSON.stringify({
         version: 2,
         plugins: {
-          "catherd@catherd": [{ scope: "user", installPath: "/p", version: "1.4.0" }],
+          "catherd@catherd": [{ scope: "user", installPath: "/p", version: "1.5.0" }],
         },
       }),
     );
     const run = fakeRun(({ cmd, args }) =>
       cmd === "bunx"
-        ? { stdout: "1.4.0\n" }
+        ? { stdout: "1.5.0\n" }
         : args.includes("auth")
           ? { stdout: '{"loggedIn":true,"authMethod":"claude.ai"}' }
           : { stdout: "1.4.2" },
