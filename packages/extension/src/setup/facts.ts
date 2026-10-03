@@ -16,6 +16,8 @@ export interface SetupFacts {
   /** Whether the profile this repo runs on has claude-code: rungs (then the standalone CLI is needed). */
   needsClaudeCli: boolean;
   claudeCli: { version?: string; error?: string };
+  /** Whether credentials.json holds each optional key (presence only, never the value). */
+  savedKeys?: { jev: boolean; aa: boolean };
   doctor?: DoctorReport;
   doctorError?: string;
 }

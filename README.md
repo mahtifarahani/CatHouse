@@ -84,7 +84,7 @@ cursor --install-extension cathouse.cathouse
 
 ### Manual or offline install
 
-GitHub Releases also provides a platform-specific VSIX and `SHA256SUMS`. Download the file that matches your machine; `<version>` is the release number, for example `0.5.0` when that release is published.
+GitHub Releases also provides a platform-specific VSIX and `SHA256SUMS`. Download the file that matches your machine; `<version>` is the release number, for example `0.5.1` when that release is published.
 
 | Machine                                         | File                                   |
 | ----------------------------------------------- | -------------------------------------- |

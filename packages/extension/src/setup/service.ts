@@ -58,6 +58,7 @@ export class SetupService {
       ...evaluate(this.facts, this.deps.pin, this.deps.host()),
       ...(this.checkedAt ? { checkedAt: this.checkedAt } : {}),
       ...(this.doctorAt ? { doctorAt: this.doctorAt } : {}),
+      ...(this.facts.savedKeys ? { savedKeys: this.facts.savedKeys } : {}),
     };
   }
 
@@ -185,7 +186,7 @@ export class SetupService {
   /** Runs one action (user click). One at a time; results stream on the "setup" topic. */
   async run(action: SetupActionId): Promise<void> {
     if (action === "save-api-keys") {
-      throw new HandlerError("E_SETUP_KEYS", "Use the API key form in Setup");
+      throw new HandlerError("E_SETUP_KEYS", "Use the API key fields in Profile");
     }
     if (this.running) {
       throw new HandlerError("E_SETUP_BUSY", `${this.running} is still running`);

@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 import { CatherdCli } from "../gateway/cli";
 import type { RunOptions, RunResult } from "../gateway/process";
 import { GIT_HTTPS_ENV, stepsFor } from "./actions";
-import { type DetectDeps, detect } from "./detect";
+import { type DetectDeps, detect, savedKeys } from "./detect";
 import { evaluate } from "./evaluate";
 import type { SetupFacts } from "./facts";
 import { type ReadinessSnapshot, SetupService } from "./service";
@@ -470,5 +470,25 @@ describe("SetupService", () => {
       ok: true,
     });
     expect(svc.state().items.find((i) => i.id === "bun")?.state).toBe("ok");
+  });
+});
+
+describe("savedKeys", () => {
+  it("reports which keys credentials.json holds, never their values", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "cathouse-keys-"));
+    expect(await savedKeys(dir)).toEqual({ jev: false, aa: false });
+    writeFileSync(
+      join(dir, "credentials.json"),
+      JSON.stringify({
+        schema: 1,
+        typesafeApiKey: "secret-value-123",
+        artificialAnalysisApiKey: " ",
+      }),
+    );
+    const got = await savedKeys(dir);
+    expect(got).toEqual({ jev: true, aa: false });
+    expect(JSON.stringify(got)).not.toContain("secret-value-123");
+    writeFileSync(join(dir, "credentials.json"), "{not json");
+    expect(await savedKeys(dir)).toEqual({ jev: false, aa: false });
   });
 });

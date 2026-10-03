@@ -68,6 +68,23 @@ async function hasActiveConfig(dir: string): Promise<boolean> {
   }
 }
 
+/**
+ * Which keys catherd's credentials.json holds, read like src/services/credentials.ts upstream. Only
+ * presence leaves this function; the values are never kept or logged (AGENTS rule 6).
+ */
+export async function savedKeys(dir: string): Promise<{ jev: boolean; aa: boolean }> {
+  try {
+    const c = JSON.parse(await readFile(join(dir, "credentials.json"), "utf8")) as Record<
+      string,
+      unknown
+    >;
+    const has = (k: string) => typeof c[k] === "string" && (c[k] as string).trim().length > 0;
+    return { jev: has("typesafeApiKey"), aa: has("artificialAnalysisApiKey") };
+  } catch {
+    return { jev: false, aa: false };
+  }
+}
+
 async function claudeLogin(
   deps: DetectDeps,
   bin: string | undefined,
@@ -105,7 +122,7 @@ export async function detect(deps: DetectDeps): Promise<SetupFacts> {
   const host = deps.host();
   const bin = deps.bundledClaude();
   const configDir = catherdConfigDir(deps.vars);
-  const [bun, catherd, sdkVersion, plugin, login, configExists, codex] = await Promise.all([
+  const [bun, catherd, sdkVersion, plugin, login, configExists, codex, keys] = await Promise.all([
     version(deps, "bun", ["--version"]),
     version(deps, "bunx", ["--no-install", `catherd-cli@${deps.pin.catherd}`, "--version"]),
     bin
@@ -119,6 +136,7 @@ export async function detect(deps: DetectDeps): Promise<SetupFacts> {
     host === "codex"
       ? version(deps, "codex", ["--version"])
       : Promise.resolve<{ version?: string; error?: string }>({}),
+    savedKeys(configDir),
   ]);
   let codexPlugin: SetupFacts["codexPlugin"] = {};
   let codexLogin = false;
@@ -183,5 +201,6 @@ export async function detect(deps: DetectDeps): Promise<SetupFacts> {
     codexPlugin,
     needsClaudeCli,
     claudeCli,
+    savedKeys: keys,
   };
 }

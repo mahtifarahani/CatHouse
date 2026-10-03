@@ -21,12 +21,7 @@ export const STRINGS = {
   "setup.allChecks": "Other checks ({n})",
   "setup.tools": "Logs and tools",
   "setup.copied": "Copied",
-  "setup.keysTitle": "API keys",
-  "setup.keysHelp":
-    "Optional. catherd checks and saves new keys on this machine. Existing saved keys are kept.",
   "setup.jevKey": "Jev (TypeSafe) API key",
   "setup.aaKey": "Artificial Analysis API key",
-  "setup.saveKeys": "Save keys",
-  "setup.keysSaved": "Saved and checked by catherd",
   "setup.keysError": "Could not start saving the keys",
 } as const;

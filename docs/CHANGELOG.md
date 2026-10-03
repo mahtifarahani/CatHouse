@@ -4,6 +4,10 @@ GitHub Release notes are the version sections below. Keep unfinished work under 
 
 ## Unreleased
 
+## [0.5.1] - 2026-10-03
+
+- **API keys in Profile.** The optional Jev (TypeSafe) and Artificial Analysis fields moved from Setup to Profile, under the Jev switch. A key that catherd already saved shows as saved and is not asked for again. A missing key has its own masked field and Save. Values still go only to catherd `init` and never into logs.
+
 ## [0.5.0] - 2026-10-03
 
 - **catherd 1.5.0.** CatHouse now pins catherd-cli 1.5.0 and plugin 1.5.0. Setup offers the update ("found 1.4.0, CatHouse needs 1.5.0") and then the plugin update. Runs rows show when finished results are waiting for the orchestrator (and when that wait has stalled) and which run superseded a closed run. Profile saves keep working if CatHouse inherits a catherd role variable from its shell.

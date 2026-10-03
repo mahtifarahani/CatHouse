@@ -10,6 +10,7 @@ import {
 } from "@cathouse/ui";
 import { useState } from "react";
 import { t } from "../../lib/strings";
+import { ApiKeyRows } from "./ApiKeyRows";
 import { Group, NumberField, Row } from "./fields";
 import type { Edit } from "./RolesEditor";
 
@@ -55,6 +56,7 @@ export function SettingsEditor({
             }
           />
         </Row>
+        <ApiKeyRows jevOn={doc.jev.use !== "off"} />
       </Group>
 
       <Group title={t("profiles.budget")} help={t("profiles.help.budget")}>

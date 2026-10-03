@@ -48,6 +48,8 @@ export const SetupStateSchema = z.object({
   canStartReason: z.string().optional(),
   checkedAt: z.string().optional(),
   doctorAt: z.string().optional(),
+  /** Which optional catherd keys are already saved; never the values. */
+  savedKeys: z.object({ jev: z.boolean(), aa: z.boolean() }).optional(),
 });
 export type SetupState = z.infer<typeof SetupStateSchema>;
 
